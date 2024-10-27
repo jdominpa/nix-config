@@ -1,7 +1,4 @@
-{
-  lib,
-  ...
-}: {
+{lib, ...}: {
   programs.git = {
     enable = true;
     userName = "Joan Domingo Pasarin";
