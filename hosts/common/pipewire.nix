@@ -4,11 +4,7 @@
   ...
 }: {
   options = {
-    pipewire.enable = lib.mkOption {
-      description = "Enable pipewire service and configure it.";
-      type = lib.types.bool;
-      default = false;
-    };
+    pipewire.enable = lib.mkEnableOption "Configure the low-level multimedia framework pipewire.";
   };
 
   config = lib.mkIf config.pipewire.enable {

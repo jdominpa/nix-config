@@ -7,6 +7,9 @@
   ...
 }: {
   imports = [
+    inputs.hardware.nixosModules.common-cpu-intel
+    inputs.hardware.nixosModules.common-gpu-nvidia
+    inputs.hardware.nixosModules.common-pc-ssd
     ./hardware-configuration.nix
     ../common
   ];
@@ -17,7 +20,14 @@
     loader.efi.canTouchEfiVariables = true;
   };
 
-  nvidia.enable = true;
+  # Nvidia settings needed for nixos-hardware
+  hardware = {
+    graphics.enable = true;
+    nvidia.prime = {
+      amdgpuBusId = "PCI:6:0:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
   pipewire.enable = true;
 
   networking = {
@@ -46,8 +56,8 @@
     brave
     emacs
     git
-    neovim
     headsetcontrol # Control logitech headset
+    neovim
     ripgrep
     tree
     unrar

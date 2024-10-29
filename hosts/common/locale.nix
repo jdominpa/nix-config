@@ -13,6 +13,6 @@
       LC_TIME = "es_ES.UTF-8";
     };
   };
-  time.timeZone = "Europe/Madrid";
+  time.timeZone = lib.mkDefault "Europe/Madrid";
   time.hardwareClockInLocalTime = true; # Use local time (needed for windows dual boot)
 }

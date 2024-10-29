@@ -4,11 +4,7 @@
   ...
 }: {
   options = {
-    steam.enable = lib.mkOption {
-      description = "Enable and configure steam.";
-      type = lib.types.bool;
-      default = false;
-    };
+    steam.enable = lib.mkEnableOption "Install and configure Steam.";
   };
 
   config = lib.mkIf config.steam.enable {

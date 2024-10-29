@@ -8,7 +8,6 @@
     ./jdominpa.nix
     ./locale.nix
     ./nix.nix
-    ./nvidia.nix
     ./openssh.nix
     ./pipewire.nix
     ./steam.nix

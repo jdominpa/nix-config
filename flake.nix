@@ -5,6 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
+    hardware.url = "github:nixos/nixos-hardware";
 
     # nix-darwin
     darwin = {
@@ -17,14 +18,22 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Plasma manager
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
+    systems,
     darwin,
     home-manager,
-    systems,
+    plasma-manager,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -64,7 +73,11 @@
     homeConfigurations = {
       # Desktop
       "jdominpa@alpha" = lib.homeManagerConfiguration {
-        modules = [./home-manager/alpha ./home-manager/nixpkgs.nix];
+        modules = [
+          inputs.plasma-manager.homeManagerModules.plasma-manager
+          ./home-manager/alpha
+          ./home-manager/nixpkgs.nix
+        ];
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
       };
