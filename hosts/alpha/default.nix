@@ -51,12 +51,13 @@
 
   # List packages installed in system profile.
   # To search, run:
-  # $ nix search wget
+  # $ nix search program
   environment.systemPackages = with pkgs; [
     brave
     emacs
     git
     headsetcontrol # Control logitech headset
+    iosevka-comfy.comfy
     neovim
     ripgrep
     tree
