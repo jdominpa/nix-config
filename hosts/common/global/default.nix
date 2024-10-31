@@ -5,12 +5,9 @@
 }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    ./jdominpa.nix
     ./locale.nix
     ./nix.nix
     ./openssh.nix
-    ./pipewire.nix
-    ./steam.nix
     ./zsh.nix
   ];
 

@@ -1,0 +1,5 @@
+{
+  imports = [
+    ./jdominpa.nix
+  ];
+}

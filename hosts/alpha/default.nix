@@ -11,7 +11,9 @@
     inputs.hardware.nixosModules.common-gpu-nvidia
     inputs.hardware.nixosModules.common-pc-ssd
     ./hardware-configuration.nix
-    ../common
+    ../common/global
+    ../common/optional
+    ../common/users
   ];
 
   # Bootloader
@@ -34,6 +36,9 @@
     hostName = "alpha";
     networkmanager.enable = true;
   };
+
+  # User
+  jdominpa.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
