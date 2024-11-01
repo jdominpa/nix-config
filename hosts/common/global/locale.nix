@@ -14,5 +14,4 @@
     };
   };
   time.timeZone = lib.mkDefault "Europe/Madrid";
-  time.hardwareClockInLocalTime = true; # Use local time (needed for windows dual boot)
 }
