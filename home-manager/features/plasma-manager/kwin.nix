@@ -13,15 +13,14 @@
           night = 3500;
         };
       };
-      # FIXME: currently not working
-      # virtualDesktops = let
-      #   number = 5;
-      # in {
-      #   names = map (n: "${toString n}") (lib.range 1 number);
-      #   inherit number;
-      #   rows = 1;
-      # };
-      # tiling.padding = 10;
+      virtualDesktops = let
+        number = 5;
+      in {
+        names = map (n: "${toString n}") (lib.range 1 number);
+        inherit number;
+        rows = 1;
+      };
+      tiling.padding = 10;
       titlebarButtons = {
         left = [
           "on-all-desktops"
