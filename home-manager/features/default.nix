@@ -41,6 +41,7 @@
   # Packages used in every system
   home.packages = with pkgs; [
     discord
+    stow
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

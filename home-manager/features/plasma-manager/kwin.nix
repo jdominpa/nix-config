@@ -1,5 +1,6 @@
 {lib, ...}: {
   programs.plasma = {
+    windows.allowWindowsToRememberPositions = true;
     kwin = {
       nightLight = {
         enable = true;
