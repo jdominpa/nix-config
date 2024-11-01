@@ -9,6 +9,7 @@
   imports = [
     ./fzf.nix
     ./git.nix
+    ./plasma-manager
     ./zsh.nix
   ];
 

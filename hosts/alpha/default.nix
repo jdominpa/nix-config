@@ -25,9 +25,12 @@
   # Nvidia settings needed for nixos-hardware
   hardware = {
     graphics.enable = true;
-    nvidia.prime = {
-      amdgpuBusId = "PCI:6:0:0";
-      nvidiaBusId = "PCI:1:0:0";
+    nvidia = {
+      open = true;
+      prime = {
+        amdgpuBusId = "PCI:6:0:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
     };
   };
   pipewire.enable = true;
@@ -62,7 +65,7 @@
     emacs
     git
     headsetcontrol # Control logitech headset
-    iosevka-comfy.comfy
+    stable.iosevka-comfy.comfy
     neovim
     ripgrep
     tree

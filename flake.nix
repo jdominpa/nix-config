@@ -2,9 +2,11 @@
   description = "My NixOS/macOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     systems.url = "github:nix-systems/default";
+
+    # Collection of hardware configurations
     hardware.url = "github:nixos/nixos-hardware";
 
     # nix-darwin
@@ -15,7 +17,7 @@
 
     # Home manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -74,7 +76,6 @@
       # Desktop
       "jdominpa@alpha" = lib.homeManagerConfiguration {
         modules = [
-          inputs.plasma-manager.homeManagerModules.plasma-manager
           ./home-manager/alpha
           ./home-manager/nixpkgs.nix
         ];
