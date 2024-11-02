@@ -7,16 +7,14 @@
   imports = [
     inputs.plasma-manager.homeManagerModules.plasma-manager
     ./input.nix
-    ./keybinds.nix
     ./konsole.nix
     ./kwin.nix
     ./panels.nix
+    ./shortcuts.nix
     ./theme.nix
   ];
 
-  options = {
-    plasma-manager.enable = lib.mkEnableOption "plasma-manager";
-  };
+  options.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
 
   config = lib.mkIf config.plasma-manager.enable {
     programs.plasma = {
@@ -28,7 +26,6 @@
         "baloofilerc"."General"."exclude filters version" = 9;
         "dolphinrc"."KFileDialog Settings"."Places Icons Auto-resize" = false;
         "dolphinrc"."KFileDialog Settings"."Places Icons Static Size" = 22;
-        # "kcminputrc"."Libinput/1133/49291/Logitech G502 HERO Gaming Mouse"."PointerAccelerationProfile" = 1;
         "kcminputrc"."Mouse"."cursorTheme" = "breeze_cursors";
         "kded5rc"."Module-browserintegrationreminder"."autoload" = false;
         "kded5rc"."Module-device_automounter"."autoload" = false;
