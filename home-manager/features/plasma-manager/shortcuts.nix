@@ -93,11 +93,6 @@ in {
             _launch = "Meta+E";
           };
         }
-        {
-          "services/brave.desktop" = {
-            new-window = "Meta+B";
-          };
-        }
         (lib.mkIf config.programs.konsole.enable {
           "services/org.kde.konsole.desktop" = {
             _launch = "Meta+X";
