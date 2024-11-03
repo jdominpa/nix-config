@@ -19,6 +19,7 @@ in {
         iconTheme = "Breeze Dark";
         lookAndFeel = "org.kde.breezedark.desktop";
         theme = "breeze-dark";
+        wallpaperPlainColor = "000000";
       };
     };
   };
