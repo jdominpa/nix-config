@@ -8,6 +8,7 @@
       commit.verbose = true;
       # Automatically track remote branch
       push.autoSetupRemote = true;
+      core.editor = "emacs";
     };
     aliases = {
       a = "add";
