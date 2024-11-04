@@ -22,41 +22,37 @@ in {
               map (number: {
                 name = "Switch to Desktop ${toString number}";
                 value =
-                  if number > 5 then
-                    ""
-                  else
-                    "Meta+${toString number}";
+                  if number > 5
+                  then ""
+                  else "Meta+${toString number}";
               }) (lib.range 1 virtualDesktopMax)
             ))
             // (builtins.listToAttrs (
               map (number: {
                 name = "Window to Desktop ${toString number}";
                 value =
-                  if shiftedNumbersMap ? "${toString number}" then
-                    "Meta+${shiftedNumbersMap.${toString number}}"
-                  else
-                    "";
+                  if shiftedNumbersMap ? "${toString number}"
+                  then "Meta+${shiftedNumbersMap.${toString number}}"
+                  else "";
               }) (lib.range 1 virtualDesktopMax)
             ))
             // (builtins.listToAttrs (
               map (number: {
                 name = "Switch to Screen ${toString (number - 1)}"; # Screens are 0th indexed
                 value =
-                  if number > 5 then
-                    ""
-                  else
-                    "Meta+Alt+${toString number}";
-              }) (lib.range 1 7)  # 7 is the maximum number of screens for KDE Plasma
+                  if number > 5
+                  then ""
+                  else "Meta+Alt+${toString number}";
+              }) (lib.range 1 7) # 7 is the maximum number of screens for KDE Plasma
             ))
             // (builtins.listToAttrs (
               map (number: {
                 name = "Window to Screen ${toString (number - 1)}"; # Screens are 0th indexed
                 value =
-                  if number > 5 then
-                    ""
-                  else
-                    "Meta+Ctrl+${toString number}";
-              }) (lib.range 1 7)  # 7 is the maximum number of screens for KDE Plasma
+                  if number > 5
+                  then ""
+                  else "Meta+Ctrl+${toString number}";
+              }) (lib.range 1 7) # 7 is the maximum number of screens for KDE Plasma
             ));
         }
         {
