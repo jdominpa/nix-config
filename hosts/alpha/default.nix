@@ -11,9 +11,7 @@
     inputs.hardware.nixosModules.common-gpu-nvidia
     inputs.hardware.nixosModules.common-pc-ssd
     ./hardware-configuration.nix
-    ../common/global
-    ../common/optional
-    ../common/users
+    ../common
   ];
 
   # Bootloader

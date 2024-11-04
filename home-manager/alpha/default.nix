@@ -7,7 +7,7 @@
   ...
 }: {
   imports = [
-    ../features
+    ../common
   ];
 
   plasma-manager.enable = true;
