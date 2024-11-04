@@ -80,8 +80,8 @@ in {
             "Window Quick Tile Right" = "Meta+Right";
             "Toggle Window Raise/Lower" = "Meta+T";
             "Window On All Desktops" = "Meta+P";
-            "Walk Through Windows" = "Meta+Tab";
-            "Walk Through Windows (Reverse)" = "Meta+Shift+Tab";
+            "Walk Through Windows" = "Alt+Tab";
+            "Walk Through Windows (Reverse)" = "Alt+Shift+Tab";
           };
           "services/org.kde.krunner.desktop" = {
             _launch = builtins.concatStringsSep "\t" [
@@ -96,6 +96,11 @@ in {
         (lib.mkIf config.programs.konsole.enable {
           "services/org.kde.konsole.desktop" = {
             _launch = "Meta+X";
+          };
+        })
+        (lib.mkIf config.programs.firefox.enable {
+          "services/firefox.desktop" = {
+            new-window = "Meta+B";
           };
         })
       ];

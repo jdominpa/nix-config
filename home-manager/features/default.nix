@@ -41,7 +41,10 @@
   # Packages used in every system
   home.packages = with pkgs; [
     discord
+    ripgrep
     stow
+    tree
+    unrar
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

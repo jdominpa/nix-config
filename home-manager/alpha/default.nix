@@ -24,11 +24,12 @@
     powerdevil = {
       AC = {
         autoSuspend.action = "nothing";
-        powerButtonAction = "showLogoutScreen";
+        dimDisplay.enable = false;
         turnOffDisplay = {
-          idleTimeout = 900;
+          idleTimeout = 1200;
           idleTimeoutWhenLocked = 60;
         };
+        powerButtonAction = "showLogoutScreen";
         powerProfile = "performance";
       };
       general.pausePlayersOnSuspend = true;

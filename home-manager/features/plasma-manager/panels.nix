@@ -172,35 +172,6 @@ in {
               ];
             };
           }
-          "org.kde.plasma.marginsseparator"
-          {
-            plasmusicToolbar = {
-              musicControls = {
-                showPlaybackControls = true;
-                volumeStep = 1;
-              };
-              panelIcon = {
-                albumCover = {
-                  useAsIcon = false;
-                  radius = 8;
-                };
-                icon = "view-media-track";
-              };
-              songText = {
-                displayInSeparateLines = true;
-                maximumWidth = 600;
-                scrolling = {
-                  behavior = "alwaysScrollExceptOnHover";
-                  enable = true;
-                  resetOnPause = true;
-                  speed = 3;
-                };
-              };
-              settings = {
-                choosePlayerAutomatically = true;
-              };
-            };
-          }
         ];
       }
     ];

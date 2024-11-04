@@ -16,7 +16,7 @@ in {
       lockOnResume = true;
       passwordRequired = true;
       passwordRequiredDelay = 10;
-      timeout = 10;
+      timeout = 20;
     };
   };
 }
