@@ -2,6 +2,7 @@
   inputs,
   config,
   lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -25,5 +26,10 @@
       immutableByDefault = true;
       krunner.position = "center";
     };
+
+    # Extra KDE applications
+    home.packages = with pkgs.kdePackages; [
+      kcalc
+    ];
   };
 }

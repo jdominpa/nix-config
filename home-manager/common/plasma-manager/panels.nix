@@ -35,16 +35,6 @@ in {
             };
           }
           {
-            pager = {
-              general = {
-                showWindowOutlines = true;
-                showApplicationIconsOnWindowOutlines = true;
-                displayedText = "none";
-                selectingCurrentVirtualDesktop = "showDesktop";
-              };
-            };
-          }
-          {
             appMenu = {
               compactView = false;
             };
@@ -55,34 +45,12 @@ in {
             };
           }
           {
-            applicationTitleBar = {
-              behavior = {
-                activeTaskSource = "activeTask";
-                disableButtonsForNotHovered = false;
-                disableForNotMaximized = false;
-                filterByActivity = true;
-                filterByScreen = true;
-                filterByVirtualDesktop = true;
-              };
-              layout = {
-                elements = ["windowTitle"];
-                fillFreeSpace = false;
-                horizontalAlignment = "center";
-                verticalAlignment = "center";
-                showDisabledElements = "deactivated";
-              };
-              windowControlButtons = {
-                buttonsAnimationSpeed = 100;
-                buttonsAspectRatio = 100;
-                buttonsMargin = 0;
-                iconSource = "plasma";
-              };
-              windowTitle = {
-                font.bold = false;
-                hideEmptyTitle = true;
-                maximumWidth = 640;
-                source = "appName";
-                undefinedWindowTitle = "";
+            pager = {
+              general = {
+                showWindowOutlines = true;
+                showApplicationIconsOnWindowOutlines = true;
+                displayedText = "none";
+                selectingCurrentVirtualDesktop = "showDesktop";
               };
             };
           }

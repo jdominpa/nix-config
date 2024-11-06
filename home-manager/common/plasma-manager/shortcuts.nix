@@ -62,8 +62,6 @@ in {
             "Window Fullscreen" = "Meta+Shift+F";
             "Window Maximize" = "Meta+F";
             "Window Minimize" = "Meta+M";
-            "MoveMouseToCenter" = "Meta+C";
-            "MoveMouseToFocus" = "Meta+Shift+C";
             "Overview" = "Meta+W";
             "Show Desktop" = "Meta+D";
             "Switch Window Left" = "Meta+J";
@@ -74,7 +72,6 @@ in {
             "Window Quick Tile Bottom" = "Meta+Down";
             "Window Quick Tile Top" = "Meta+Up";
             "Window Quick Tile Right" = "Meta+Right";
-            "Toggle Window Raise/Lower" = "Meta+T";
             "Window On All Desktops" = "Meta+P";
             "Walk Through Windows" = "Alt+Tab";
             "Walk Through Windows (Reverse)" = "Alt+Shift+Tab";
@@ -92,11 +89,6 @@ in {
         (lib.mkIf config.programs.konsole.enable {
           "services/org.kde.konsole.desktop" = {
             _launch = "Meta+X";
-          };
-        })
-        (lib.mkIf config.programs.firefox.enable {
-          "services/firefox.desktop" = {
-            new-window = "Meta+B";
           };
         })
       ];

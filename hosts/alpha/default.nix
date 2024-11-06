@@ -59,6 +59,7 @@
   # To search, run:
   # $ nix search program
   environment.systemPackages = with pkgs; [
+    brave
     emacs
     firefox
     git

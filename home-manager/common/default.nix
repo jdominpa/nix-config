@@ -41,7 +41,7 @@
   # Packages used in every system
   home.packages = with pkgs; [
     discord
-    neofetch
+    fastfetch
     ripgrep
     stow
     tree
