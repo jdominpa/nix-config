@@ -17,7 +17,9 @@
     ./theme.nix
   ];
 
-  options.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
+  options.plasma-manager = {
+    enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
+  };
 
   config = lib.mkIf config.plasma-manager.enable {
     programs.plasma = {

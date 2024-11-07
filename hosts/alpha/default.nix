@@ -42,9 +42,7 @@
   jdominpa.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  plasma.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -66,7 +64,11 @@
     headsetcontrol # Control logitech headset
     stable.iosevka-comfy.comfy
     neovim
+    piper # Control logitech mice
   ];
+
+  # Needed for piper
+  services.ratbagd.enable = true;
 
   # Steam
   steam.enable = true;
