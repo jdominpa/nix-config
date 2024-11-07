@@ -44,6 +44,9 @@
   # Enable the KDE Plasma Desktop Environment.
   plasma.enable = true;
 
+  # Enable Hyprland
+  hyprland.enable = true;
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
