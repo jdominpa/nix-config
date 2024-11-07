@@ -3,8 +3,8 @@
   lib,
   ...
 }: {
-  options.plasma = {
-    enable = lib.mkEnableOption "Enable and configure the KDE Plasma desktop environment.";
+  options = {
+    plasma.enable = lib.mkEnableOption "Enable and configure the KDE Plasma desktop environment.";
   };
 
   config = lib.mkIf config.plasma.enable {
