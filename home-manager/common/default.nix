@@ -7,10 +7,8 @@
   ...
 }: {
   imports = [
-    ./fzf.nix
-    ./git.nix
-    ./plasma-manager
-    ./zsh.nix
+    ./global
+    ./optional
   ];
 
   nix = {
@@ -40,8 +38,8 @@
 
   # Packages used in every system
   home.packages = with pkgs; [
-    discord
     fastfetch
+    stable.iosevka-comfy.comfy
     ripgrep
     stow
     tree

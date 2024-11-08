@@ -136,7 +136,8 @@ in {
                 "applications:org.kde.dolphin.desktop"
                 "preferred://browser"
                 "applications:org.kde.konsole.desktop"
-                "preferred://text-editor"
+                "preferred://editor"
+                "applications:emacs.desktop"
               ];
             };
           }

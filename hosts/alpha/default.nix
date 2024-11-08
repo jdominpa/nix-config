@@ -60,12 +60,9 @@
   # To search, run:
   # $ nix search program
   environment.systemPackages = with pkgs; [
-    brave
     emacs
-    firefox
     git
     headsetcontrol # Control logitech headset
-    stable.iosevka-comfy.comfy
     neovim
     piper # Control logitech mice
   ];
