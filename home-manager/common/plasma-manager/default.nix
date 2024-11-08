@@ -9,7 +9,7 @@
     inputs.plasma-manager.homeManagerModules.plasma-manager
     ./files.nix
     ./input.nix
-    ./konsole.nix
+    ./konsole
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix

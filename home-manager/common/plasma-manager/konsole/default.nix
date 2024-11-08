@@ -9,8 +9,12 @@ in {
     programs.konsole = {
       enable = true;
       defaultProfile = "default";
+      customColorSchemes = {
+        modus-vivendi = ./modus-vivendi.colorscheme;
+      };
       profiles = {
         default = {
+          colorScheme = "modus-vivendi";
           font.size = 13;
         };
       };
