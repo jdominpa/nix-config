@@ -44,9 +44,6 @@
   # Enable the KDE Plasma Desktop Environment.
   plasma.enable = true;
 
-  # Enable Hyprland
-  hyprland.enable = true;
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -56,14 +53,9 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # List packages installed in system profile.
-  # To search, run:
-  # $ nix search program
+  # System specific packages
   environment.systemPackages = with pkgs; [
-    emacs
-    git
     headsetcontrol # Control logitech headset
-    neovim
     piper # Control logitech mice
   ];
 

@@ -10,6 +10,7 @@
     ../common
   ];
 
+  # KDE Plasma configuration
   plasma-manager.enable = true;
   programs.plasma = {
     input.mice = [
