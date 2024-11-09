@@ -137,6 +137,8 @@ in {
                 "preferred://browser"
                 "applications:org.kde.konsole.desktop"
                 "applications:emacs.desktop"
+                "applications:discord.desktop"
+                "applications:steam.desktop"
               ];
             };
           }

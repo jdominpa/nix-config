@@ -22,6 +22,9 @@ in {
           "General"."RaiseMaximumVolume" = true;
           "General"."VolumeStep" = 2;
         };
+        kwinrc = {
+          "TabBox"."LayoutName" = "compact";
+        };
       };
     };
   };
