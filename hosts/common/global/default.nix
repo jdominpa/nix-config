@@ -21,7 +21,7 @@
     overlays = builtins.attrValues outputs.overlays;
     config.allowUnfree = true;
   };
-  
+
   # Packages installed in every system.
   # To search for packages, run:
   # $ nix search program
