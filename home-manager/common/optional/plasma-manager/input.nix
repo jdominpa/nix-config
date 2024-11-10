@@ -9,7 +9,8 @@ in {
     programs.plasma = {
       input = {
         keyboard = {
-          repeatDelay = 300;
+          repeatDelay = 150;
+          repeatRate = 65;
           layouts = [
             {
               layout = "us";

@@ -9,21 +9,27 @@ in {
     programs.plasma = {
       configFile = {
         dolphinrc = {
-          "KFileDialog Settings"."Places Icons Auto-resize" = false;
-          "KFileDialog Settings"."Places Icons Static Size" = 22;
+          "KFileDialog Settings" = {
+            "Places Icons Auto-resize" = false;
+            "Places Icons Static Size" = 22;
+          };
+          CompactMode.IconSize = 22;
+          DetailsMode = {
+            IconSize = 22;
+            PreviewSize = 22;
+          };
         };
         kded5rc = {
-          "Module-browserintegrationreminder"."autoload" = false;
+          Module-browserintegrationreminder.autoload = false;
         };
         kwalletrc = {
-          "Wallet"."Enabled" = false;
+          Wallet.Enabled = false;
         };
         plasmarc = {
-          "General"."RaiseMaximumVolume" = true;
-          "General"."VolumeStep" = 2;
-        };
-        kwinrc = {
-          "TabBox"."LayoutName" = "compact";
+          General = {
+            RaiseMaximumVolume = true;
+            VolumeStep = 2;
+          };
         };
       };
     };
