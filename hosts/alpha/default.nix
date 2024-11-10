@@ -41,7 +41,10 @@
   # User
   jdominpa.enable = true;
 
-  # Enable the KDE Plasma Desktop Environment.
+  # Sddm display manager
+  sddm.enable = true;
+
+  # KDE Plasma Desktop Environment.
   plasma.enable = true;
 
   # Configure keymap in X11
