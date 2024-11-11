@@ -1,4 +1,11 @@
 {
+  home.file = {
+    ".emacs.d/jdp-core".source = ../../../config/emacs/jdp-core;
+    ".emacs.d/snippets".source = ../../../config/emacs/snippets;
+    ".emacs.d/early-init.el".source = ../../../config/emacs/early-init.el;
+    ".emacs.d/init.el".source = ../../../config/emacs/init.el;
+  };
+
   programs.emacs = {
     enable = true;
     extraPackages = epkgs: with epkgs; [

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: calloc
+# key: cal
+# --
+calloc(${1:n}, sizeof($2))

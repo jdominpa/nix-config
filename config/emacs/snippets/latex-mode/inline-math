@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: inline math
+# key: jk
+# condition: (not (texmathp))
+# --
+\\($0\\)

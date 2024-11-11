@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: malloc
+# key: mal
+# --
+malloc(${1:n} * sizeof($2))
