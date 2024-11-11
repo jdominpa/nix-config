@@ -10,7 +10,7 @@
     hardware.url = "github:nixos/nixos-hardware";
 
     # nix-darwin
-    darwin = {
+    nix-darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -33,13 +33,13 @@
     self,
     nixpkgs,
     systems,
-    darwin,
+    nix-darwin,
     home-manager,
     plasma-manager,
     ...
   } @ inputs: let
     inherit (self) outputs;
-    lib = nixpkgs.lib // home-manager.lib;
+    lib = nixpkgs.lib // nix-darwin.lib // home-manager.lib;
     pkgsFor = lib.genAttrs (import systems) (
       system:
         import nixpkgs {
