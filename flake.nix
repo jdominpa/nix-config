@@ -57,6 +57,8 @@
 
     # Custom packages.  Accessible through 'nix build', 'nix shell', etc
     packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
+    # Expose a devshell for bootstraping the configuration
+    devShells = forEachSystem (pkgs: import ./shell.nix {inherit pkgs;});
     # Formatter for your nix files, available through 'nix fmt'
     formatter = forEachSystem (pkgs: pkgs.alejandra);
 

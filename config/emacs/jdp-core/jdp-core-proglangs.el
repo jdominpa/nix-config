@@ -103,7 +103,12 @@
   (c-default-style "k&r")
   (c-basic-offset 4))
 
-;; Nix (nix-ts-mode)
+;; Markdown (markdown-mode)
+(use-package markdown-mode
+  :ensure t
+  :mode "\\.md\\'")
+
+;; Nix (nix-mode)
 (use-package nix-mode
   :ensure t
   :mode "\\.nix\\'"

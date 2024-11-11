@@ -26,6 +26,7 @@
       macrostep
       magit
       marginalia
+      markdown-mode
       meow
       mini-echo
       modus-themes
