@@ -22,6 +22,9 @@ in {
         kded5rc = {
           Module-browserintegrationreminder.autoload = false;
         };
+        ksmserverrc = {
+          General.loginMode = "emptySession";
+        };
         kwalletrc = {
           Wallet.Enabled = false;
         };
