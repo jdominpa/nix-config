@@ -12,11 +12,10 @@ in {
       experimental-features = "nix-command flakes";
       warn-dirty = false;
     };
-
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than +3"; # Keep the last 3 generations
+      options = "--delete-older-than 7d"; # Keep generations from the last 7 days
     };
   };
 }
