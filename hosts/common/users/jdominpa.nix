@@ -21,6 +21,6 @@
       packages = [pkgs.home-manager];
     };
 
-    home-manager.users.jdominpa = import ../../../home-manager/${config.networking.hostName};
+    home-manager.users.jdominpa = import ../../../home/${config.networking.hostName};
   };
 }
