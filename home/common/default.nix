@@ -38,10 +38,8 @@
 
   # Packages used in every system
   home.packages = with pkgs; [
-    fastfetch
     stable.iosevka-comfy.comfy
     ripgrep
-    stow
     tree
     unrar
   ];

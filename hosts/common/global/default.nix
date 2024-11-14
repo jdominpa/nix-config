@@ -26,8 +26,10 @@
   # To search for packages, run:
   # $ nix search program
   environment.systemPackages = with pkgs; [
+    fastfetch
     emacs
     git
+    just
     neovim
   ];
 }

@@ -103,6 +103,9 @@
   (c-default-style "k&r")
   (c-basic-offset 4))
 
+(use-package just-mode
+  :ensure t)
+
 ;; Markdown (markdown-mode)
 (use-package markdown-mode
   :ensure t

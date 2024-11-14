@@ -23,6 +23,7 @@
         fontaine
         hl-todo
         jinx
+        just-mode
         kind-icon
         macrostep
         magit
