@@ -8,7 +8,7 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
-  
+
   options = {
     jdominpa.enable = lib.mkEnableOption "Create and configure user jdominpa.";
   };
