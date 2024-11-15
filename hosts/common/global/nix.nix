@@ -1,11 +1,4 @@
-{
-  inputs,
-  lib,
-  pkgs,
-  ...
-}: let
-  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
-in {
+{lib, ...}: {
   nix = {
     settings = {
       auto-optimise-store = lib.mkDefault true;

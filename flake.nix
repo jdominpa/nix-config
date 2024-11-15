@@ -55,16 +55,15 @@
         }
     );
     forAllSystems = f: lib.genAttrs systems f;
-    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
   in {
     overlays = import ./overlays {inherit inputs;};
 
     # Custom packages.  Accessible through 'nix build', 'nix shell', etc
-    packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
+    packages = forAllSystems (system: import ./pkgs pkgsFor.${system});
     # Expose a devshell for bootstraping the configuration
-    devShells = forEachSystem (pkgs: import ./shell.nix {inherit pkgs;});
+    devShells = forAllSystems (system: import ./shell.nix pkgsFor.${system});
     # Formatter for your nix files, available through 'nix fmt'
-    formatter = forEachSystem (pkgs: pkgs.alejandra);
+    formatter = forAllSystems (system: pkgsFor.${system}.alejandra);
 
     checks = forAllSystems (
       system: {
