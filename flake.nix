@@ -39,6 +39,9 @@
     ...
   } @ inputs: let
     inherit (self) outputs;
+    myVars = {
+      username = "jdominpa";
+    };
     lib = nixpkgs.lib // nix-darwin.lib // home-manager.lib;
     pkgsFor = lib.genAttrs (import systems) (
       system:
@@ -67,22 +70,18 @@
     nixosConfigurations = {
       # Desktop
       alpha = lib.nixosSystem {
-        modules = [./hosts/alpha];
         specialArgs = {inherit inputs outputs;};
-      };
-    };
-
-    # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#username@hostname'
-    homeConfigurations = {
-      # Desktop
-      "jdominpa@alpha" = lib.homeManagerConfiguration {
         modules = [
-          ./home-manager/alpha
-          ./home-manager/nixpkgs.nix
+          ./hosts/alpha
+          home-manager.nixosModules.home-manager {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {inherit inputs outputs;};
+              users."${myVars.username}" = import ./home/alpha;
+            };
+          }
         ];
-        pkgs = pkgsFor.x86_64-linux;
-        extraSpecialArgs = {inherit inputs outputs;};
       };
     };
   };
