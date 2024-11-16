@@ -84,9 +84,9 @@ repair-store *paths:
 # Usage: just switch alpha
 [linux]
 [group('NixOS')]
-switch name="" mode="default":
+switch name mode="default":
   #!/usr/bin/env bash
-  if [[ {{mode}} == "debug" ]]; then
+  if [ "{{mode}}" = "debug" ]; then
     sudo nixos-rebuild switch --flake .#{{name}} --show-trace --verbose
   else
     sudo nixos-rebuild switch --flake .#{{name}}
@@ -95,13 +95,7 @@ switch name="" mode="default":
 # Deploy alpha's configuration (Desktop PC)
 [linux]
 [group('NixOS')]
-alpha mode="default":
-  #!/usr/bin/env bash
-  if [[ {{mode}} == "debug" ]]; then
-    sudo nixos-rebuild switch --flake .#alpha --show-trace --verbose
-  else
-    sudo nixos-rebuild switch --flake .#alpha
-  fi
+alpha mode="default": (switch "alpha" mode)
 
 ############################################################################
 #
@@ -120,7 +114,7 @@ darwin-rollback:
 [group('Darwin')]
 switch name="" mode="default":
   #!/usr/bin/env bash
-  if [[ {{mode}} == "debug" ]]; then
+  if [ "{{mode}}" = "debug" ]; then
     nix build .#darwinConfigurations.{{name}}.system --extra-experimental-features "nix-command flakes" --show-trace --verbose
     ./result/sw/bin/darwin-rebuild switch --flake .#{{name}} --show-trace --verbose
   else
