@@ -30,6 +30,7 @@
       nushell
       ripgrep
       tree
+      unrar
       wget
       which
       zip

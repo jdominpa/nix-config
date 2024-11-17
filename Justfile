@@ -45,13 +45,6 @@ gc:
   nix-collect-garbage --delete-older-than 7d
 
 # Enter a shell session which has all the necessary tools for this flake
-[linux]
-[group('nix')]
-shell:
-  nix shell nixpkgs#git nixpkgs#neovim nixpkgs#home-manager
-
-# Enter a shell session which has all the necessary tools for this flake
-[macos]
 [group('nix')]
 shell:
   nix shell nixpkgs#git nixpkgs#neovim

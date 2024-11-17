@@ -36,10 +36,8 @@
 
   # Packages used in every system
   home.packages = with pkgs; [
-    stable.iosevka-comfy.comfy
-    ripgrep
-    tree
-    unrar
+    nix-output-monitor
+    nix-tree
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
