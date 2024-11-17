@@ -58,11 +58,9 @@
   in {
     overlays = import ./overlays {inherit inputs;};
 
-    # Custom packages.  Accessible through 'nix build', 'nix shell', etc
+    # Custom packages.
     packages = forAllSystems (system: import ./pkgs pkgsFor.${system});
-    # Expose a devshell for bootstraping the configuration
-    devShells = forAllSystems (system: import ./shell.nix pkgsFor.${system});
-    # Formatter for your nix files, available through 'nix fmt'
+    # Formatter for the nix code in the flake
     formatter = forAllSystems (system: pkgsFor.${system}.alejandra);
 
     checks = forAllSystems (
@@ -71,8 +69,28 @@
           src = myLib.relativeToRoot ".";
           hooks = {
             alejandra.enable = true; # formatter
-            deadnix.enable = true; # detect unused variable bindings in `*.nix`
           };
+        };
+      }
+    );
+
+    devShells = forAllSystems (
+      system: let
+        pkgs = pkgsFor.${system};
+      in {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            # fix https://discourse.nixos.org/t/non-interactive-bash-errors-from-flake-nix-mkshell/33310
+            bashInteractive
+            # fix `cc` replaced by clang, which causes nvim-treesitter compilation error
+            gcc
+            # Nix-related
+            alejandra
+          ];
+          name = "dots";
+          shellHook = ''
+            ${self.checks.${system}.pre-commit-check.shellHook}
+          '';
         };
       }
     );
