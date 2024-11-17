@@ -102,7 +102,12 @@
         inherit inputs myLib;
         system = "x86_64-linux";
         specialArgs = {inherit inputs outputs myLib;};
-        nixosModules = [./hosts/alpha];
+        nixosModules = [
+          ./hosts/alpha
+          ./modules/base.nix
+          ./modules/nixos/base
+          ./modules/nixos/desktop
+        ];
         homeManagerModules = [./home/alpha];
       };
     };

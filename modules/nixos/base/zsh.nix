@@ -9,7 +9,6 @@
   # Basic system wide settings for zsh
   programs.zsh = {
     enable = true;
-    histSize = 10000;
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
   };

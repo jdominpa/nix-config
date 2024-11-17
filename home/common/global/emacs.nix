@@ -1,9 +1,9 @@
-{
+{myLib, ...}: {
   home.file = {
-    ".emacs.d/jdp-core".source = ../../../config/emacs/jdp-core;
-    ".emacs.d/snippets".source = ../../../config/emacs/snippets;
-    ".emacs.d/early-init.el".source = ../../../config/emacs/early-init.el;
-    ".emacs.d/init.el".source = ../../../config/emacs/init.el;
+    ".emacs.d/jdp-core".source = myLib.relativeToRoot "config/emacs/jdp-core";
+    ".emacs.d/snippets".source = myLib.relativeToRoot "config/emacs/snippets";
+    ".emacs.d/early-init.el".source = myLib.relativeToRoot "config/emacs/early-init.el";
+    ".emacs.d/init.el".source = myLib.relativeToRoot "config/emacs/init.el";
   };
 
   programs.emacs = {
