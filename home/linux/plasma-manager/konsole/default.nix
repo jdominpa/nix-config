@@ -16,7 +16,6 @@ in {
       profiles = {
         default = {
           colorScheme = "modus-vivendi";
-          command = "${pkgs.bash}/bin/bash --login -c 'nu --login --interactive'";
           font.size = 13;
         };
       };

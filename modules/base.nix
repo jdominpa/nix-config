@@ -33,7 +33,6 @@
       nix-melt
       nix-output-monitor
       nix-tree
-      nushell
       ripgrep
       tldr
       tree

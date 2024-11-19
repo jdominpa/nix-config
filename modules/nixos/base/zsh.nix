@@ -3,7 +3,6 @@
     ls = "ls -h --color=auto --group-directories-first";
     ll = "ls -l";
     la = "ls -la";
-    ".." = "cd ..";
   };
 
   # Basic system wide settings for zsh
