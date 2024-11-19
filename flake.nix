@@ -108,7 +108,11 @@
           ./modules/nixos/base
           ./modules/nixos/desktop
         ];
-        homeManagerModules = [./home/alpha];
+        homeManagerModules = [
+          ./hosts/alpha/home.nix
+          ./home/base
+          ./home/linux
+        ];
       };
     };
   };

@@ -1,6 +1,8 @@
 {lib, ...}: {
   vars = {
     username = "jdominpa";
+    userFullName = "Joan Domingo Pasarin";
+    userEmail = "jdomingopasarin@icloud.com";
   };
 
   nixosSystem = import ./nixosSystem.nix;

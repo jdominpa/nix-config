@@ -1,10 +1,5 @@
 {pkgs, ...}: {
-  imports = [
-    ../common
-  ];
-
-  # KDE Plasma configuration
-  plasma-manager.enable = true;
+  modules.plasma-manager.enable = true;
   programs.plasma = {
     input.mice = [
       {
@@ -29,12 +24,4 @@
       general.pausePlayersOnSuspend = true;
     };
   };
-
-  home.packages = with pkgs; [
-    brave
-    discord
-  ];
-
-  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "24.05";
 }

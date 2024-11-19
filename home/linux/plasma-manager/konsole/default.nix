@@ -1,9 +1,10 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
-  cfg = config.plasma-manager;
+  cfg = config.modules.plasma-manager;
 in {
   config = lib.mkIf cfg.enable {
     programs.konsole = {
@@ -15,6 +16,7 @@ in {
       profiles = {
         default = {
           colorScheme = "modus-vivendi";
+          command = "${pkgs.bash}/bin/bash --login -c 'nu --login --interactive'";
           font.size = 13;
         };
       };

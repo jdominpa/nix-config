@@ -1,8 +1,15 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{config, ...}: let
+  shellAliases = {
+    ll = "ls -l";
+    la = "ls -la";
+  };
+in {
+  programs.nushell = {
+    enable = true;
+    configFile.source = ./config.nu;
+    inherit shellAliases;
+  };
+
   programs.zsh = {
     enable = true;
     dotDir = ".config/zsh";

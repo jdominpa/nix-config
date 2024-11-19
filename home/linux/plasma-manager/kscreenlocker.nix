@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  cfg = config.plasma-manager;
+  cfg = config.modules.plasma-manager;
 in {
   config = lib.mkIf cfg.enable {
     programs.plasma.kscreenlocker = {

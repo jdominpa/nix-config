@@ -1,3 +1,10 @@
+# Use nushell for shell commands
+# To usage this justfile, you need to enter a shell with just & nushell installed:
+# 
+#   nix shell nixpkgs#just nixpkgs#nushell
+set shell := ["nu", "-c"]
+utils_nu := absolute_path("utils.nu")
+
 ############################################################################
 #
 #  Common commands(suitable for all machines)
@@ -78,12 +85,9 @@ repair-store *paths:
 [linux]
 [group('NixOS')]
 switch name mode="default":
-  #!/usr/bin/env bash
-  if [ "{{mode}}" = "debug" ]; then
-    sudo nixos-rebuild switch --flake .#{{name}} --show-trace --verbose
-  else
-    sudo nixos-rebuild switch --flake .#{{name}}
-  fi
+  #!/usr/bin/env nu
+  use {{utils_nu}} *;
+  nixos-switch {{name}} {{mode}};
 
 # Deploy alpha's configuration (Desktop PC)
 [linux]
@@ -99,21 +103,19 @@ alpha mode="default": (switch "alpha" mode)
 [macos]
 [group('Darwin')]
 darwin-rollback:
-  ./result/sw/bin/darwin-rebuild --rollback
+  #!/usr/bin/env nu
+  use {{utils_nu}} *;
+  darwin-rollback
 
 # Rebuild and switch to the specified Darwin configuration
 # Usage: just switch beta
 [macos]
 [group('Darwin')]
-switch name="" mode="default":
-  #!/usr/bin/env bash
-  if [ "{{mode}}" = "debug" ]; then
-    nix build .#darwinConfigurations.{{name}}.system --extra-experimental-features "nix-command flakes" --show-trace --verbose
-    ./result/sw/bin/darwin-rebuild switch --flake .#{{name}} --show-trace --verbose
-  else
-    nix build .#darwinConfigurations.{{name}}.system --extra-experimental-features "nix-command flakes"
-    ./result/sw/bin/darwin-rebuild switch --flake .#{{name}}
-  fi
+switch name mode="default":
+  #!/usr/bin/env nu
+  use {{utils_nu}} *;
+  darwin-build {{name}} {{mode}};
+  darwin-switch {{name}} {{mode}};
 
 # Reset launchpad to force it to reindex Applications
 [macos]

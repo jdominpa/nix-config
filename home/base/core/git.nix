@@ -1,8 +1,8 @@
-{lib, ...}: {
+{myLib, ...}: {
   programs.git = {
     enable = true;
-    userName = "Joan Domingo Pasarin";
-    userEmail = lib.mkDefault "jdomingopasarin@icloud.com";
+    userName = myLib.vars.userFullName;
+    userEmail = myLib.vars.userEmail;
     extraConfig = {
       init.defaultBranch = "main";
       commit.verbose = true;
