@@ -109,6 +109,8 @@
      ;; Actions
      '("q" . meow-quit)
      '("Q" . kill-current-buffer)
+     '("[" . scroll-down-command)
+     '("]" . scroll-up-command)
      '("'" . repeat)
      '("<escape>" . ignore)))
 
