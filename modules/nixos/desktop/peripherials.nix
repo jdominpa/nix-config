@@ -9,12 +9,4 @@
     jack.enable = true;
   };
   services.printing.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    headsetcontrol # Control logitech headset
-    piper # Control logitech mice
-  ];
-
-  # Needed for piper
-  services.ratbagd.enable = true;
 }

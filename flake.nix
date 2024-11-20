@@ -115,5 +115,24 @@
         ];
       };
     };
+
+    # Darwin hosts
+    darwinConfigurations = {
+      # Work laptop
+      beta = myLib.darwinSystem {
+        inherit inputs myLib;
+        system = "aarch64-darwin";
+        specialArgs = {inherit inputs outputs myLib;};
+        darwinModules = [
+          ./hosts/beta
+          ./modules/base.nix
+          ./modules/darwin
+        ];
+        homeManagerModules = [
+          ./home/base
+          ./home/darwin
+        ];
+      };
+    };
   };
 }

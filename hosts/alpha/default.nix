@@ -1,4 +1,8 @@
-{inputs, ...}: let
+{
+  inputs,
+  pkgs,
+  ...
+}: let
   hostName = "alpha";
 in {
   imports = [
@@ -39,4 +43,13 @@ in {
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";
+
+  # Peripherials
+  environment.systemPackages = with pkgs; [
+    headsetcontrol # Control logitech headset
+    piper # Control logitech mice
+  ];
+
+  # Needed for piper
+  services.ratbagd.enable = true;
 }
