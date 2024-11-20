@@ -104,7 +104,7 @@
         specialArgs = {inherit inputs outputs myLib;};
         nixosModules = [
           ./hosts/alpha
-          ./modules/base.nix
+          ./modules/base
           ./modules/nixos/base
           ./modules/nixos/desktop
         ];
@@ -125,7 +125,7 @@
         specialArgs = {inherit inputs outputs myLib;};
         darwinModules = [
           ./hosts/beta
-          ./modules/base.nix
+          ./modules/base
           ./modules/darwin
         ];
         homeManagerModules = [
