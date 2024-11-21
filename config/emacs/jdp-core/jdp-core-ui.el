@@ -18,6 +18,7 @@
 (use-package fontaine
   :ensure t
   :demand t
+  :if (display-graphic-p)
   :bind ("C-c f" . fontaine-set-preset)
   :custom
   (fontaine-presets '((regular

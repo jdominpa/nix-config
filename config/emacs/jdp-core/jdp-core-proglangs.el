@@ -41,6 +41,8 @@
 
 ;; Emacs native LSP client
 (use-package eglot
+  :functions (eglot-ensure)
+  :commands (eglot)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
               ("C-c l s" . eglot-shutdown)
@@ -51,7 +53,9 @@
               ("C-c l a" . eglot-code-actions)
               ("C-c l d" . flymake-show-buffer-diagnostics)
               ("C-c l D" . flymake-show-project-diagnostics))
-  :custom (eglot-ignored-server-capabilities '(:documentHighlightProvider)))
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-ignored-server-capabilities '(:documentHighlightProvider)))
 
 (use-package consult-eglot
   :ensure t

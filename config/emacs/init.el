@@ -43,7 +43,7 @@
 (require 'jdp-core-search)
 (require 'jdp-core-dired)
 (require 'jdp-core-window)
-(require 'jdp-core-vc)
+(require 'jdp-core-git)
 (require 'jdp-core-shell)
 (require 'jdp-core-write)
 (require 'jdp-core-proglangs)

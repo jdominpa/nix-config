@@ -18,4 +18,4 @@
   :custom
   (magit-diff-refine-hunk t))
 
-(provide 'jdp-core-vc)
+(provide 'jdp-core-git)
