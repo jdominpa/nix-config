@@ -16,10 +16,17 @@
 
       # Dock settings
       dock = {
+        tilesize = 36;
         autohide = true;
+        showhidden = true;
         show-recents = false;
         mru-spaces = false;
         expose-group-by-app = true; # group windows by application
+        mineffect = "scale"; # faster animation when minimizing windows
+        minimize-to-application = true; # minimize application to its dock icon
+        enable-spring-load-actions-on-all-items = true;
+        launchanim = false; # don't animate opening applications
+        expose-animation-duration = 0.5;
       };
 
       # Finder settings
@@ -28,6 +35,7 @@
         FXEnableExtensionChangeWarning = false; # don't warn when changing file extensions
         FXPreferredViewStyle = "Nlsv"; # set list as default view style
         _FXSortFoldersFirst = true; # keep folders on top
+        FXDefaultSearchScope = "SCcf";
         FXRemoveOldTrashItems = true;
         ShowExternalHardDrivesOnDesktop = true;
         ShowHardDrivesOnDesktop = true;
@@ -44,6 +52,18 @@
         TrackpadThreeFingerDrag = true; # enable three finger drag
       };
 
+      LaunchServices = {
+        LSQuarantine = false; # disable "Are you sure you want to open this application?" message
+      };
+
+      # Activity monitor
+      ActivityMonitor = {
+        IconType = 5;
+        ShowCategory = 100;
+        SortColumn = "CPUUsage";
+        SortDirection = 0;
+      };
+
       # macOS settings
       NSGlobalDomain = {
         # `defaults read NSGlobalDomain <key>`
@@ -53,6 +73,7 @@
         AppleMetricUnits = 1;
         AppleInterfaceStyle = "Dark"; # dark mode
         AppleShowScrollBars = "Always";
+        AppleFontSmoothing = 1;
         AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.
         ApplePressAndHoldEnabled = true; # enable press and hold
         InitialKeyRepeat = 12; # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
@@ -91,13 +112,6 @@
           DSDontWriteNetworkStores = true;
           DSDontWriteUSBStores = true;
         };
-        # "com.apple.WindowManager" = {
-        #   EnableStandardClickToShowDesktop = 0; # Click wallpaper to reveal desktop
-        #   StandardHideDesktopIcons = 0; # Show items on desktop
-        #   HideDesktop = 0; # Do not hide items on desktop & stage manager
-        #   StageManagerHideWidgets = 0;
-        #   StandardHideWidgets = 0;
-        # };
         "com.apple.screensaver" = {
           # Require password immediately after sleep or screen saver begins
           askForPassword = 1;
@@ -122,6 +136,12 @@
       enableKeyMapping = true;
       remapCapsLockToEscape = true;
     };
+  };
+
+  power = {
+    restartAfterPowerFailure = true;
+    restartAfterFreeze = true;
+    sleep.display = 15;
   };
 
   fonts.packages = with pkgs; [
