@@ -1,8 +1,9 @@
 {pkgs, ...}: {
   environment = {
     systemPackages = with pkgs; [
+      btop
       curl
-      neofetch
+      exfat # ExFAT drives
       findutils
       fzf
       emacs
@@ -13,14 +14,15 @@
       gnupg
       gnused
       gnutar
+      hfsprogs # macOS drives
       stable.iosevka-comfy.comfy
       just
+      neofetch
       neovim
-      nix-melt
-      nix-output-monitor
-      nix-tree
+      nix-melt # Ranger-like `flake.lock` file viewer
+      nix-tree # Nix dependency tree
+      ntfs3g # Windows drives
       ripgrep
-      tldr
       tree
       unrar
       wget

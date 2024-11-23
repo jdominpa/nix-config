@@ -80,8 +80,7 @@ repair-store *paths:
 switch name mode="default":
   #!/usr/bin/env bash
   if [ "{{mode}}" == "debug" ]; then
-    # show details via nix-output-monitor
-    nom build ".#nixosConfigurations.{{name}}.config.system.build.toplevel" --show-trace --verbose
+    nix build ".#nixosConfigurations.{{name}}.config.system.build.toplevel" --show-trace --verbose
     nixos-rebuild switch --flake ".#{{name}}" --show-trace --verbose
   else
     nixos-rebuild switch --use-remote-sudo --flake ".#{{name}}"
@@ -110,7 +109,7 @@ darwin-rollback:
 switch name mode="default":
   #!/usr/bin/env bash
   if [ "{{mode}}" == "debug" ]; then
-    nom build ".#darwinConfigurations.{{name}}.system" --extra-experimental-features "nix-command flakes" --show-trace --verbose
+    nix build ".#darwinConfigurations.{{name}}.system" --extra-experimental-features "nix-command flakes" --show-trace --verbose
     ./result/sw/bin/darwin-rebuild switch --flake ".#{{name}}" --show-trace --verbose
   else
     nix build ".#darwinConfigurations.{{name}}.system" --extra-experimental-features "nix-command flakes"

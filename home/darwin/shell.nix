@@ -10,6 +10,6 @@ in {
   # in /opt/homebrew for Apple Silicon and /usr/local for Rosetta 2 to coexist and use bottles.
   programs.zsh = {
     enable = true;
-    inherit envExtra initExtra;
+    inherit envExtra;
   };
 }
