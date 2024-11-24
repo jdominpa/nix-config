@@ -5,18 +5,20 @@
   myLib,
   pkgs,
   ...
-}: {
+}: let
+  cfg = config.jdp.home.plasma-manager;
+in {
   imports =
     (myLib.scanPaths ./.)
     ++ [
       inputs.plasma-manager.homeManagerModules.plasma-manager
     ];
 
-  options.modules = {
-    plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
+  options.jdp = {
+    home.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
   };
 
-  config = lib.mkIf config.modules.plasma-manager.enable {
+  config = lib.mkIf cfg.enable {
     programs.plasma = {
       enable = true;
       overrideConfig = true;

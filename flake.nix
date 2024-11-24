@@ -129,6 +129,7 @@
           ./modules/darwin
         ];
         homeManagerModules = [
+          ./hosts/beta/home.nix
           ./home/base
           ./home/darwin
         ];

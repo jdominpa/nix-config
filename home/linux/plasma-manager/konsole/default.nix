@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfg = config.modules.plasma-manager;
+  cfg = config.jdp.home.plasma-manager;
 in {
   config = lib.mkIf cfg.enable {
     programs.konsole = {
