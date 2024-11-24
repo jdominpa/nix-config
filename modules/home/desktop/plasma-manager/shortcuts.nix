@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  cfg = config.jdp.home.plasma-manager;
+  cfg = config.jdp.home.desktop.plasma-manager;
   virtualDesktopMax = builtins.length config.programs.plasma.kwin.virtualDesktops.names;
   shiftedNumbersMap = {
     "1" = "!";

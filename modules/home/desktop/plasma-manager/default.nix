@@ -15,7 +15,7 @@ in {
     ];
 
   options.jdp = {
-    home.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
+    home.desktop.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
   };
 
   config = lib.mkIf cfg.enable {

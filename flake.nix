@@ -110,8 +110,7 @@
         ];
         homeManagerModules = [
           ./hosts/alpha/home.nix
-          ./home/base
-          ./home/linux
+          ./modules/home
         ];
       };
     };
@@ -130,8 +129,7 @@
         ];
         homeManagerModules = [
           ./hosts/beta/home.nix
-          ./home/base
-          ./home/darwin
+          ./modules/home
         ];
       };
     };

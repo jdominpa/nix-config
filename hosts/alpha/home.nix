@@ -5,6 +5,10 @@
 }: {
   jdp.home = {
     homeDirectory = "/home/${myLib.vars.username}";
+    apps = {
+      brave.enable = true;
+      discord.enable = true;
+    };
     cli = {
       fzf.enable = true;
       git.enable = true;
