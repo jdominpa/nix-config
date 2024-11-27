@@ -1,6 +1,7 @@
 let
   hostName = "beta";
-in {
+in
+{
   networking = {
     inherit hostName;
     computerName = hostName;

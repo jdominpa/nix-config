@@ -2,7 +2,8 @@
   myLib,
   pkgs,
   ...
-}: {
+}:
+{
   jdp.home = {
     homeDirectory = "/Users/${myLib.vars.username}";
     cli = {

@@ -148,7 +148,7 @@
     stable.iosevka-comfy.comfy
     font-awesome
     (nerdfonts.override {
-      fonts = ["Iosevka"];
+      fonts = [ "Iosevka" ];
     })
   ];
 }

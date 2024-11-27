@@ -2,24 +2,30 @@
   config,
   lib,
   ...
-}: let
+}:
+with lib;
+let
   cfg = config.jdp.home.desktop.plasma-manager;
-in {
-  config = lib.mkIf cfg.enable {
-    programs.plasma = {
-      fonts = {
-        fixedWidth = {
-          family = "Iosevka Comfy";
-          pointSize = 10;
+  user = config.jdp.base.user;
+in
+{
+  config = mkIf cfg.enable {
+    home-manager.users.${user.name} = {
+      programs.plasma = {
+        fonts = {
+          fixedWidth = {
+            family = "Iosevka Comfy";
+            pointSize = 10;
+          };
         };
-      };
-      workspace = {
-        clickItemTo = "select";
-        colorScheme = "BreezeDark";
-        iconTheme = "Breeze Dark";
-        lookAndFeel = "org.kde.breezedark.desktop";
-        theme = "breeze-dark";
-        wallpaperPlainColor = "000000";
+        workspace = {
+          clickItemTo = "select";
+          colorScheme = "BreezeDark";
+          iconTheme = "Breeze Dark";
+          lookAndFeel = "org.kde.breezedark.desktop";
+          theme = "breeze-dark";
+          wallpaperPlainColor = "000000";
+        };
       };
     };
   };

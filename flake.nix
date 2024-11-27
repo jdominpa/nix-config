@@ -34,104 +34,100 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    pre-commit-hooks,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-    inherit (nixpkgs) lib;
-    myLib = import ./lib {inherit lib;};
-    systems = [
-      "x86_64-linux"
-      "aarch64-darwin"
-    ];
-    pkgsFor = lib.genAttrs systems (
-      system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      pre-commit-hooks,
+      ...
+    }@inputs:
+    let
+      inherit (self) outputs;
+      inherit (nixpkgs) lib;
+      myLib = import ./lib { inherit lib; };
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
+      forAllSystems = lib.genAttrs systems;
+      pkgsFor = forAllSystems (
+        system:
         import nixpkgs {
           inherit system;
           config.allowUnfree = true;
         }
-    );
-    forAllSystems = f: lib.genAttrs systems f;
-  in {
-    overlays = import ./overlays {inherit inputs;};
+      );
+    in
+    {
+      overlays = import ./overlays { inherit inputs; };
 
-    # Custom packages.
-    packages = forAllSystems (system: import ./pkgs pkgsFor.${system});
-    # Formatter for the nix code in the flake
-    formatter = forAllSystems (system: pkgsFor.${system}.alejandra);
+      # Custom packages.
+      packages = forAllSystems (system: import ./pkgs pkgsFor.${system});
+      # Formatter for the nix code in the flake
+      formatter = forAllSystems (system: pkgsFor.${system}.nixfmt-rfc-style);
 
-    checks = forAllSystems (
-      system: {
+      checks = forAllSystems (system: {
         pre-commit-check = pre-commit-hooks.lib.${system}.run {
-          src = myLib.relativeToRoot ".";
+          src = ./.;
           hooks = {
-            alejandra.enable = true; # formatter
+            nixfmt-rfc-style.enable = true; # formatter
           };
         };
-      }
-    );
+      });
 
-    devShells = forAllSystems (
-      system: let
-        pkgs = pkgsFor.${system};
-      in {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-            # fix https://discourse.nixos.org/t/non-interactive-bash-errors-from-flake-nix-mkshell/33310
-            bashInteractive
-            # fix `cc` replaced by clang, which causes nvim-treesitter compilation error
-            gcc
-            # Nix-related
-            alejandra
-          ];
-          name = "dots";
-          shellHook = ''
-            ${self.checks.${system}.pre-commit-check.shellHook}
-          '';
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = pkgsFor.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            # packages = with pkgs; [
+            #   # fix https://discourse.nixos.org/t/non-interactive-bash-errors-from-flake-nix-mkshell/33310
+            #   bashInteractive
+            #   # fix `cc` replaced by clang, which causes nvim-treesitter compilation error
+            #   gcc
+            #   # Formatter
+            #   nixfmt-rfc-style
+            # ];
+            name = "nix-config";
+            inherit (self.checks.${system}.pre-commit-check) shellHook;
+            buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+          };
+        }
+      );
+
+      # NixOS hosts
+      nixosConfigurations = {
+        # Desktop
+        alpha = lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs outputs myLib;
+          };
+          modules = [ ./hosts/alpha ];
         };
-      }
-    );
+      };
 
-    # NixOS hosts
-    nixosConfigurations = {
-      # Desktop
-      alpha = myLib.nixosSystem {
-        inherit inputs myLib;
-        system = "x86_64-linux";
-        specialArgs = {inherit inputs outputs myLib;};
-        nixosModules = [
-          ./hosts/alpha
-          ./modules/base
-          ./modules/nixos/base
-          ./modules/nixos/desktop
-        ];
-        homeManagerModules = [
-          ./hosts/alpha/home.nix
-          ./modules/home
-        ];
+      # Darwin hosts
+      darwinConfigurations = {
+        # Work laptop
+        beta = myLib.darwinSystem {
+          inherit inputs myLib;
+          system = "aarch64-darwin";
+          specialArgs = {
+            inherit inputs outputs myLib;
+          };
+          darwinModules = [
+            ./hosts/beta
+            ./modules/base
+            ./modules/darwin
+          ];
+          homeManagerModules = [
+            ./hosts/beta/home.nix
+            ./modules/home
+          ];
+        };
       };
     };
-
-    # Darwin hosts
-    darwinConfigurations = {
-      # Work laptop
-      beta = myLib.darwinSystem {
-        inherit inputs myLib;
-        system = "aarch64-darwin";
-        specialArgs = {inherit inputs outputs myLib;};
-        darwinModules = [
-          ./hosts/beta
-          ./modules/base
-          ./modules/darwin
-        ];
-        homeManagerModules = [
-          ./hosts/beta/home.nix
-          ./modules/home
-        ];
-      };
-    };
-  };
 }

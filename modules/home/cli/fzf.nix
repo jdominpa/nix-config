@@ -2,14 +2,20 @@
   config,
   lib,
   ...
-}: let
+}:
+with lib;
+let
   cfg = config.jdp.home.cli.fzf;
-in {
-  options.jdp = {
-    home.cli.fzf.enable = lib.mkEnableOption "Enable fzf fuzzy finder.";
+  user = config.jdp.base.user;
+in
+{
+  options.jdp.home = {
+    cli.fzf.enable = mkEnableOption "Enable fzf fuzzy finder.";
   };
 
-  config = lib.mkIf cfg.enable {
-    programs.fzf.enable = true;
+  config = mkIf cfg.enable {
+    home-manager.users.${user.name} = {
+      programs.fzf.enable = true;
+    };
   };
 }

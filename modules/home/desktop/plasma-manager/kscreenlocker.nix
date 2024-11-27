@@ -2,21 +2,28 @@
   config,
   lib,
   ...
-}: let
+}:
+with lib;
+let
   cfg = config.jdp.home.desktop.plasma-manager;
-in {
-  config = lib.mkIf cfg.enable {
-    programs.plasma.kscreenlocker = {
-      appearance = {
-        alwaysShowClock = true;
-        showMediaControls = false;
-        inherit (config.programs.plasma.workspace) wallpaperPlainColor;
+  user = config.jdp.base.user;
+  plasma = config.home-manager.users.${user.name}.programs.plasma;
+in
+{
+  config = mkIf cfg.enable {
+    home-manager.users.${user.name} = {
+      programs.plasma.kscreenlocker = {
+        appearance = {
+          alwaysShowClock = true;
+          showMediaControls = false;
+          inherit (plasma.workspace) wallpaperPlainColor;
+        };
+        autoLock = true;
+        lockOnResume = true;
+        passwordRequired = true;
+        passwordRequiredDelay = 10;
+        timeout = 20;
       };
-      autoLock = true;
-      lockOnResume = true;
-      passwordRequired = true;
-      passwordRequiredDelay = 10;
-      timeout = 20;
     };
   };
 }
