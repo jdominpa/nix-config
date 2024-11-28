@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.jdp.nixos.system.shell.aliases;
+  cfg = config.jdp.base.system.shell.aliases;
 in
 {
-  options.jdp.nixos = {
+  options.jdp.base = {
     system.shell.aliases.enable = mkEnableOption "Enable general shell aliases.";
   };
 

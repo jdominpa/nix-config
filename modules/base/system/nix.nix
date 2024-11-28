@@ -6,12 +6,12 @@
 }:
 with lib;
 let
-  cfg = config.jdp.base.nix;
+  cfg = config.jdp.base.system.nix;
   user = config.jdp.base.user;
 in
 {
-  options.jdp = {
-    base.nix.enable = mkEnableOption "Enable essential configurations for Nix.";
+  options.jdp.base = {
+    system.nix.enable = mkEnableOption "Enable essential configurations for Nix.";
   };
 
   config = mkIf cfg.enable {

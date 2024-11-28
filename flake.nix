@@ -44,9 +44,7 @@
     }@inputs:
     let
       inherit (self) outputs;
-      # inherit (nixpkgs) lib;
       lib = nixpkgs.lib.extend (self: super: { jdp = import ./lib { lib = self; }; });
-      # myLib = import ./lib { inherit lib; };
       systems = [
         "x86_64-linux"
         "aarch64-darwin"
@@ -106,21 +104,12 @@
       # Darwin hosts
       darwinConfigurations = {
         # Work laptop
-        beta = myLib.darwinSystem {
-          inherit inputs myLib;
+        beta = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           specialArgs = {
-            inherit inputs outputs myLib;
+            inherit inputs outputs;
           };
-          darwinModules = [
-            ./hosts/beta
-            ./modules/base
-            ./modules/darwin
-          ];
-          homeManagerModules = [
-            ./hosts/beta/home.nix
-            ./modules/home
-          ];
+          darwinModules = [ ./hosts/beta ];
         };
       };
     };

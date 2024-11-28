@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.jdp.base.packages;
+  cfg = config.jdp.base.system.packages;
 in
 {
-  options.jdp = {
-    base.packages.enable = lib.mkEnableOption "Install useful base packages suitable for any system.";
+  options.jdp.base = {
+    system.packages.enable = lib.mkEnableOption "Install useful base packages suitable for any system.";
   };
 
   config = lib.mkIf cfg.enable {

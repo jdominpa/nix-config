@@ -35,8 +35,11 @@ in
 
   jdp = {
     base = {
-      nix.enable = true;
-      packages.enable = true;
+      system = {
+        nix.enable = true;
+        packages.enable = true;
+        shell.aliases.enable = true;
+      };
       user = {
         enable = true;
         name = "jdominpa";
@@ -74,10 +77,7 @@ in
         };
         nix.enable = true;
         pipewire.enable = true;
-        shell = {
-          aliases.enable = true;
-          zsh.enable = true;
-        };
+        shell.zsh.enable = true;
         utils.enable = true;
       };
     };
