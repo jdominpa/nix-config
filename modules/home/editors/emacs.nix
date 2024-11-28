@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -10,7 +11,10 @@ let
 in
 {
   options.jdp.home = {
-    editors.emacs.enable = mkEnableOption "Enable personal emacs configuration.";
+    editors.emacs = {
+      enable = mkEnableOption "Enable personal emacs configuration.";
+      withLsp = mkEnableOption "Install language servers for emacs.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -58,6 +62,14 @@ in
             yasnippet
           ];
       };
+
+      # LSP servers
+      home.packages = optionals cfg.withLsp (
+        with pkgs;
+        [
+          nixd
+        ]
+      );
     };
   };
 }

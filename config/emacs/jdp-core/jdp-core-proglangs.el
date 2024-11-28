@@ -118,6 +118,7 @@
 ;; Nix (nix-mode)
 (use-package nix-mode
   :ensure t
+  :hook (nix-mode . eglot-ensure)
   :mode "\\.nix\\'"
   :custom
   (nix-prettify-global-mode t))
