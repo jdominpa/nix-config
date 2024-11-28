@@ -1,20 +1,20 @@
 {
   config,
   lib,
-  myLib,
   outputs,
   ...
 }:
+with lib;
 let
   cfg = config.jdp.base.nix;
   user = config.jdp.base.user;
 in
 {
   options.jdp = {
-    base.nix.enable = lib.mkEnableOption "Enable essential configurations for Nix.";
+    base.nix.enable = mkEnableOption "Enable essential configurations for Nix.";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     nixpkgs = {
       config.allowUnfree = true;
       overlays = builtins.attrValues outputs.overlays;

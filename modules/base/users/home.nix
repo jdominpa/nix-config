@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  myLib,
   outputs,
   ...
 }:
@@ -24,7 +23,6 @@ in
         inherit
           inputs
           outputs
-          myLib
           user
           ;
       };

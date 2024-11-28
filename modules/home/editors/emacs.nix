@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  myLib,
   ...
 }:
 with lib;
@@ -17,10 +16,10 @@ in
   config = mkIf cfg.enable {
     home-manager.users.${user.name} = {
       home.file = {
-        ".emacs.d/jdp-core".source = myLib.relativeToRoot "config/emacs/jdp-core";
-        ".emacs.d/snippets".source = myLib.relativeToRoot "config/emacs/snippets";
-        ".emacs.d/early-init.el".source = myLib.relativeToRoot "config/emacs/early-init.el";
-        ".emacs.d/init.el".source = myLib.relativeToRoot "config/emacs/init.el";
+        ".emacs.d/jdp-core".source = jdp.relativeToRoot "config/emacs/jdp-core";
+        ".emacs.d/snippets".source = jdp.relativeToRoot "config/emacs/snippets";
+        ".emacs.d/early-init.el".source = jdp.relativeToRoot "config/emacs/early-init.el";
+        ".emacs.d/init.el".source = jdp.relativeToRoot "config/emacs/init.el";
       };
 
       programs.emacs = {

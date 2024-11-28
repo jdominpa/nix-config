@@ -5,9 +5,9 @@
 }:
 with lib;
 let
-  cfg = config.jdp.nixos.system.networking.networkmanager;
-  user = config.jdp.base.user;
   networking = config.jdp.nixos.system.networking;
+  cfg = networking.networkmanager;
+  user = config.jdp.base.user;
 in
 {
   options.jdp.nixos = {

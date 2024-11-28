@@ -1,10 +1,11 @@
 {
   config,
   inputs,
-  myLib,
+  lib,
   pkgs,
   ...
 }:
+with lib;
 let
   hostName = "alpha";
   user = config.jdp.base.user;
@@ -15,9 +16,9 @@ in
     inputs.hardware.nixosModules.common-cpu-intel
     inputs.hardware.nixosModules.common-gpu-nvidia
     inputs.hardware.nixosModules.common-pc-ssd
-    (myLib.relativeToRoot "modules/base")
-    (myLib.relativeToRoot "modules/nixos")
-    (myLib.relativeToRoot "modules/home")
+    (jdp.relativeToRoot "modules/base")
+    (jdp.relativeToRoot "modules/nixos")
+    (jdp.relativeToRoot "modules/home")
   ];
 
   # Nvidia settings needed for nixos-hardware
@@ -59,6 +60,9 @@ in
         sddm.enable = true;
       };
       system = {
+        boot = {
+          systemd.enable = true;
+        };
         fonts.enable = true;
         locale = {
           enable = true;
@@ -70,11 +74,11 @@ in
         };
         nix.enable = true;
         pipewire.enable = true;
-        boot = {
-          systemd.enable = true;
+        shell = {
+          aliases.enable = true;
+          zsh.enable = true;
         };
         utils.enable = true;
-        zsh.enable = true;
       };
     };
     home = {

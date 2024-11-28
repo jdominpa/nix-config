@@ -1,13 +1,6 @@
 { lib, ... }:
 with lib;
 {
-  vars = {
-    username = "jdominpa";
-    userFullName = "Joan Domingo Pasarin";
-    userEmail = "jdomingopasarin@icloud.com";
-  };
-
-  nixosSystem = import ./nixosSystem.nix;
   darwinSystem = import ./darwinSystem.nix;
 
   # Use path relative to root of the project

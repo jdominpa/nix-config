@@ -36,15 +36,17 @@
 
   outputs =
     {
-      self,
       nixpkgs,
+      nix-darwin,
       pre-commit-hooks,
+      self,
       ...
     }@inputs:
     let
       inherit (self) outputs;
-      inherit (nixpkgs) lib;
-      myLib = import ./lib { inherit lib; };
+      # inherit (nixpkgs) lib;
+      lib = nixpkgs.lib.extend (self: super: { jdp = import ./lib { lib = self; }; });
+      # myLib = import ./lib { inherit lib; };
       systems = [
         "x86_64-linux"
         "aarch64-darwin"
@@ -82,14 +84,6 @@
         in
         {
           default = pkgs.mkShell {
-            # packages = with pkgs; [
-            #   # fix https://discourse.nixos.org/t/non-interactive-bash-errors-from-flake-nix-mkshell/33310
-            #   bashInteractive
-            #   # fix `cc` replaced by clang, which causes nvim-treesitter compilation error
-            #   gcc
-            #   # Formatter
-            #   nixfmt-rfc-style
-            # ];
             name = "nix-config";
             inherit (self.checks.${system}.pre-commit-check) shellHook;
             buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
@@ -103,7 +97,7 @@
         alpha = lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
-            inherit inputs outputs myLib;
+            inherit inputs outputs;
           };
           modules = [ ./hosts/alpha ];
         };

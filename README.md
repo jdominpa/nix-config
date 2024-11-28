@@ -51,6 +51,7 @@ sudo nixos-rebuild switch --flake .#<hostname>
 
 Other nix configuration that inspired this one:
 
-- [Misterio77/nix-config](https://github.com/Misterio77/nix-config/tree/main)
-- [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config/tree/main)
+- [Misterio77/nix-config](https://github.com/Misterio77/nix-config)
+- [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config)
 - [hlissner/dotfiles](https://github.com/hlissner/dotfiles)
+- [thursdaddy/nixos-config](https://github.com/thursdaddy/nixos-config)
