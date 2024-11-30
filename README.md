@@ -1,25 +1,28 @@
-My personal NixOS/macOS configuration using [nix](https://nixos.org),
+Modular NixOS/macOS configuration using [nix](https://nixos.org),
 [flakes](https://nixos.wiki/wiki/Flakes) and
 [home-manager](https://nixos.wiki/wiki/Home_Manager).
 
 ## Structure
 
 - `flake.nix`: Entrypoint to the configuration.
-- `lib`: Personal library containing some helper functions and variables.
+- `lib`: Personal library containing helper functions.
 - `hosts`: Directory with host specific configurations. Each subdirectory
   corresponds to a specific host and contains both the system and home-manager
-  configuration for that host.
+  configuration for that host. This is done by enabling/disabling the modules
+  that can be found in `modules`.
   - `alpha`: Desktop PC - 64GB RAM, Intel i9-10850K, RTX 3090 | KDE Plasma
   - `beta`: Macbook for work
-- `home`: Home manager configuration modules.
-  - `base`: Home manager modules suitable for both Linux and macOS systems.
-  - `linux`: Home manager modules specific to Linux systems.
-  - `darwin`: Home manager modules specific to macOS systems.
-- `modules`: System configuration modules.
-  - `base`: Common system modules for both NixOS and macOS
-    ([nix-darwin](https://github.com/LnL7/nix-darwin/tree/master)).
+- `modules`: Configuration modules. Each subdirectory contains a `default.nix`
+  that imports all modules, i.e., `*.nix` files (including those in nested
+  subdirectories). Each module declares an enable option to toggle
+  it. Additionally, it may declare extra options to further customize that
+  module.
+  - `base`: Common system modules for both NixOS and Darwin (macOS). Notably, it
+    contains the `user` submodule used to declare the user's information and
+    whether to enable home-manager or not.
   - `nixos`: System modules specific to NixOS.
   - `darwin`: System modules specific to nix-darwin.
+  - `home`: Home-manager modules usable by both NixOS and Darwin.
 - `overlays`: Patches and overrides for some packages.
 - `pkgs`: Custom packages accessible via `nix build`.
 - `config`: Directory containing dotfiles that are symlinked with home-manager.
@@ -28,7 +31,7 @@ My personal NixOS/macOS configuration using [nix](https://nixos.org),
 
 ```sh
 # Prepare the deployment environment
-nix-shell -p just bash
+nix-shell -p just
 
 # Deploy using `just` & Justfile
 just switch <hostname>
