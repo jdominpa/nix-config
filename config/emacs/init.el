@@ -46,7 +46,7 @@
 (require 'jdp-core-git)
 (require 'jdp-core-shell)
 (require 'jdp-core-write)
-(require 'jdp-core-proglangs)
+(require 'jdp-core-prog)
 
 
 ;;; System settings

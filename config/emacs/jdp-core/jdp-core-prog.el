@@ -43,6 +43,7 @@
 (use-package eglot
   :functions (eglot-ensure)
   :commands (eglot)
+  :hook ((c-mode nix-mode) . eglot-ensure)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
               ("C-c l s" . eglot-shutdown)
@@ -55,7 +56,8 @@
               ("C-c l D" . flymake-show-project-diagnostics))
   :custom
   (eglot-autoshutdown t)
-  (eglot-ignored-server-capabilities '(:documentHighlightProvider)))
+  (eglot-ignored-server-capabilities
+   '(:documentHighlightProvider)))
 
 (use-package consult-eglot
   :ensure t
@@ -96,11 +98,10 @@
   :bind (:map emacs-lisp-mode-map
               ("C-c e" . macrostep-expand)))
 
-;;; Programming language modes configurations 
+;;; Programming language modes configurations
 
 ;; C/C++ (cc-mode)
 (use-package cc-mode
-  :hook (c-mode . eglot-ensure)
   :bind (:map c-mode-base-map
               ("TAB" . nil))
   :custom
@@ -118,9 +119,8 @@
 ;; Nix (nix-mode)
 (use-package nix-mode
   :ensure t
-  :hook (nix-mode . eglot-ensure)
   :mode "\\.nix\\'"
   :custom
   (nix-prettify-global-mode t))
 
-(provide 'jdp-core-proglangs)
+(provide 'jdp-core-prog)
