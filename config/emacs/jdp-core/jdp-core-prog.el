@@ -26,7 +26,10 @@
 (use-package emacs
   :hook ((prog-mode . goto-address-prog-mode)
          (prog-mode . (lambda ()
-                        (setq-local comment-auto-fill-only-comments t)))))
+                        (with-eval-after-load 'corfu
+                          (setq-local corfu-auto t)))))
+  :custom
+  (comment-auto-fill-only-comments t))
 
 ;; Eldoc
 (use-package eldoc

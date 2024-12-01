@@ -23,24 +23,18 @@ in
         inherit
           inputs
           outputs
-          user
           ;
       };
-      users.${user.name}.imports = [
-        (
-          { user, ... }:
-          {
-            # Let home-manager manage itself
-            programs.home-manager.enable = true;
-            home = {
-              username = user.name;
-              homeDirectory = user.homeDirectory;
-              # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-              stateVersion = "24.05";
-            };
-          }
-        )
-      ];
+      users.${user.name} = {
+        # Let home-manager manage itself
+        programs.home-manager.enable = true;
+        home = {
+          username = user.name;
+          homeDirectory = user.homeDirectory;
+          # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+          stateVersion = "24.05";
+        };
+      };
     };
   };
 }

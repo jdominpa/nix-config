@@ -92,10 +92,6 @@ in
         starship.enable = true;
         zsh.enable = true;
       };
-      editors.emacs = {
-        enable = true;
-        withLsp = true;
-      };
       desktop.plasma-manager = {
         enable = true;
         input.mice = [
@@ -107,6 +103,10 @@ in
             vendorId = "046d";
           }
         ];
+      };
+      editors.emacs = {
+        enable = true;
+        withLsp = true;
       };
     };
   };
