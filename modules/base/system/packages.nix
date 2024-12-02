@@ -15,9 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
-        btop
         curl
-        exfat # ExFAT drives
         findutils
         fzf
         emacs
@@ -28,14 +26,11 @@ in
         gnupg
         gnused
         gnutar
-        hfsprogs # macOS drives
         stable.iosevka-comfy.comfy
         just
-        neofetch
         neovim
         nix-melt # Ranger-like `flake.lock` file viewer
         nix-tree # Nix dependency tree
-        ntfs3g # Windows drives
         ripgrep
         tree
         unrar

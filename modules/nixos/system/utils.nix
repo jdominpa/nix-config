@@ -15,7 +15,11 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      btop
+      exfat # ExFAT drives
+      hfsprogs # macOS drives
       lm_sensors
+      ntfs3g # Windows drives
       pciutils
       usbutils
     ];

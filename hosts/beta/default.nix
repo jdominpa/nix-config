@@ -57,6 +57,7 @@ in
     };
     home = {
       cli = {
+        direnv.enable = true;
         fzf.enable = true;
         git.enable = true;
         starship.enable = true;
