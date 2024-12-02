@@ -90,7 +90,7 @@
   :ensure t
   :hook (prog-mode . hl-todo-mode))
 
-;; Color delimiters
+;; Colored delimiters
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -100,6 +100,11 @@
   :ensure t
   :bind (:map emacs-lisp-mode-map
               ("C-c e" . macrostep-expand)))
+
+;; Direnv integration
+(use-package envrc
+  :ensure t
+  :hook (after-init . envrc-global-mode))
 
 ;;; Programming language modes configurations
 

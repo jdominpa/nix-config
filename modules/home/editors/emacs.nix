@@ -40,6 +40,7 @@ in
             consult-eglot
             corfu
             diff-hl
+            envrc
             fontaine
             hl-todo
             jinx
