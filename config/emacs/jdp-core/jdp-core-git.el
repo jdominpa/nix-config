@@ -3,7 +3,7 @@
   :custom
   (vc-follow-symlinks t))
 
-;;; Highlight changes on the sidebar
+;;; `diff-hl-mode'
 (use-package diff-hl
   :ensure t
   :custom

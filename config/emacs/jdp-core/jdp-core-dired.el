@@ -36,13 +36,9 @@
   :custom
   (ibuffer-expert t)
   (ibuffer-display-summary nil)
-  (ibuffer-use-other-window nil)
   (ibuffer-show-empty-filter-groups nil)
   (ibuffer-movement-cycle nil)
   (ibuffer-default-sorting-mode 'filename/process)
-  (ibuffer-use-header-line t)
-  (ibuffer-default-shrink-to-minimum-size nil)
-  (ibuffer-saved-filter-groups nil)
   (ibuffer-old-time 48))
 
 (provide 'jdp-core-dired)

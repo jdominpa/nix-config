@@ -88,12 +88,16 @@
 (use-package corfu
   :ensure t
   :custom
+  (corfu-min-width 20)
   (global-corfu-mode t)
   (corfu-popupinfo-delay '(1.25 . 0.5))
   (corfu-popupinfo-mode t)
+  (corfu-history-mode t)
   :config
   (with-eval-after-load 'meow
-    (add-hook 'meow-insert-exit-hook 'corfu-quit)))
+    (add-hook 'meow-insert-exit-hook 'corfu-quit))
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 ;;; Completion backends
 (use-package cape

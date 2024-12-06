@@ -3,6 +3,7 @@
   :demand t
   :bind (("C-x C-z" . nil)
          ("C-z" . nil)
+         ("M-o" . other-window)
          ;; Help commands
          ("C-h K" . describe-keymap)
          ("C-h c" . describe-char)

@@ -26,7 +26,6 @@
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
      ;; Window management
-     '("o" . other-window)
      '("s" . split-window-right)
      '("w" . split-window-below)
      '("q" . delete-window)
@@ -109,8 +108,6 @@
      ;; Actions
      '("q" . meow-quit)
      '("Q" . kill-current-buffer)
-     '("[" . scroll-down-command)
-     '("]" . scroll-up-command)
      '("'" . repeat)
      '("<escape>" . ignore)))
 

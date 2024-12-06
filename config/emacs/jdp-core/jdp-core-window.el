@@ -1,7 +1,9 @@
 ;;; Unique buffer names
-(custom-set-variables '(uniquify-buffer-name-style 'forward)
-                      '(uniquify-strip-common-suffix t)
-                      '(uniquify-after-kill-buffer-p t))
+(use-package emacs
+  :custom
+  (uniquify-buffer-name-style 'forward)
+  (uniquify-strip-common-suffix t)
+  (uniquify-after-kill-buffer-p t))
 
 ;;; Whitespace and line numbers modes
 (bind-keys ([f6] . whitespace-mode)
@@ -21,7 +23,6 @@
          ("<" . shrink-window-horizontally))
   :custom
   (window-combination-resize t)
-  (window-sides-vertical nil)
   (switch-to-buffer-in-dedicated-window 'pop))
 
 (use-package ace-window
