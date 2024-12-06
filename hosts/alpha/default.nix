@@ -58,6 +58,7 @@ in
         plasma.enable = true;
       };
       services = {
+        bluetooth.enable = true;
         openssh.enable = true;
         power.enable = true;
         sddm.enable = true;
