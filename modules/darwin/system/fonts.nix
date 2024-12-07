@@ -15,8 +15,8 @@ in
 
   config = mkIf cfg.enable {
     fonts.packages = with pkgs; [
-      stable.iosevka-comfy.comfy
       font-awesome
+      stable.iosevka-comfy.comfy
       (nerdfonts.override {
         fonts = [ "Iosevka" ];
       })
