@@ -42,6 +42,13 @@
   :custom
   (global-so-long-mode t))
 
+;; Treesitter
+(use-package treesit
+  :config
+  (dolist (mapping '((c-mode . c-ts-mode)
+                     (c++-mode . c++-ts-mode)))
+    (add-to-list 'major-mode-remap-alist mapping)))
+
 ;; Emacs native LSP client
 (use-package eglot
   :functions (eglot-ensure)
@@ -59,6 +66,7 @@
               ("C-c l D" . flymake-show-project-diagnostics))
   :custom
   (eglot-autoshutdown t)
+  (eglot-events-buffer-size '(:size 20000 :format short))
   (eglot-ignored-server-capabilities
    '(:documentHighlightProvider)))
 
