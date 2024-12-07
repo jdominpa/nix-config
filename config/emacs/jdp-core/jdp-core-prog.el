@@ -53,7 +53,7 @@
 (use-package eglot
   :functions (eglot-ensure)
   :commands (eglot)
-  :hook ((c-mode nix-mode) . eglot-ensure)
+  :hook ((c-mode c-ts-mode nix-mode) . eglot-ensure)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
               ("C-c l s" . eglot-shutdown)
@@ -116,7 +116,7 @@
 
 ;;; Programming language modes configurations
 
-;; C/C++ (cc-mode)
+;; C/C++
 (use-package cc-mode
   :bind (:map c-mode-base-map
               ("TAB" . nil))
@@ -124,15 +124,20 @@
   (c-default-style "k&r")
   (c-basic-offset 4))
 
+(use-package c-ts-mode
+  :custom
+  (c-ts-mode-indent-offset 4))
+
+;; Justfile
 (use-package just-mode
   :ensure t)
 
-;; Markdown (markdown-mode)
+;; Markdown
 (use-package markdown-mode
   :ensure t
   :mode "\\.md\\'")
 
-;; Nix (nix-mode)
+;; Nix
 (use-package nix-mode
   :ensure t
   :mode "\\.nix\\'"
