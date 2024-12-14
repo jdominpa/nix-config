@@ -80,16 +80,16 @@
 ;; Flymake
 (use-package flymake
   :bind (:map flymake-mode-map
+              ("M-n" . flymake-goto-next-error)
+              ("M-p" . flymake-goto-prev-error)
               ("C-c ! d" . flymake-show-buffer-diagnostics)
-              ("C-c ! D" . flymake-show-project-diagnostics)
-              ("C-c ! n" . flymake-goto-next-error)
-              ("C-c ! p" . flymake-goto-prev-error))
+              ("C-c ! D" . flymake-show-project-diagnostics))
   :custom
   (flymake-no-changes-timeout nil)
   (flymake-proc-compilation-prevents-syntax-check t)
   (flymake-start-on-flymake-mode t)
   (flymake-start-on-save-buffer t)
-  (flymake-wrap-around nil)
+  (flymake-show-diagnostics-at-end-of-line 'short)
   (flymake-mode-line-format
    '("" flymake-mode-line-exception flymake-mode-line-counters)))
 
