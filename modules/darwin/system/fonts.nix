@@ -17,9 +17,6 @@ in
     fonts.packages = with pkgs; [
       font-awesome
       stable.iosevka-comfy.comfy
-      (nerdfonts.override {
-        fonts = [ "Iosevka" ];
-      })
     ];
   };
 }

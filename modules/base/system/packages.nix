@@ -18,7 +18,7 @@ in
         curl
         findutils
         fzf
-        emacs
+        emacs30
         gawk
         git
         gnugrep
@@ -26,7 +26,6 @@ in
         gnupg
         gnused
         gnutar
-        stable.iosevka-comfy.comfy
         just
         neovim
         nix-melt # Ranger-like `flake.lock` file viewer
