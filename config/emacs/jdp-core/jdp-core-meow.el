@@ -32,7 +32,7 @@
      '("a" . delete-other-windows)
      ;; Buffer management
      '("b" . switch-to-buffer)
-     '("p" . project-find-file))
+     `("p" . ,project-prefix-map))
     (meow-normal-define-key
      ;; Numeric arguments
      '("0" . meow-expand-0)
