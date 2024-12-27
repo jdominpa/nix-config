@@ -28,9 +28,7 @@
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-auto-fill)
-         (LaTeX-mode . prettify-symbols-mode)
-         (LaTeX-mode . (lambda ()
-                         (setq-local corfu-auto nil))))
+         (LaTeX-mode . prettify-symbols-mode))
   :config
   (setcdr (assq 'output-pdf TeX-view-program-selection)
           '("PDF Tools"))
