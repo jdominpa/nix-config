@@ -56,26 +56,29 @@
   :custom
   (cdlatex-sub-super-scripts-outside-math-mode nil)
   :config
-  (with-eval-after-load 'yasnippet
-    (defun jdp-cdlatex-in-yas-field ()
-      ;; Check if we're at the end of the Yas field
-      (when-let* ((_ (overlayp yas--active-field-overlay))
-                  (end (overlay-end yas--active-field-overlay)))
-        (if (>= (point) end)
-            ;; Call yas-next-field if cdlatex can't expand here
-            (let ((s (thing-at-point 'sexp)))
-              (unless (and s (assoc (substring-no-properties s)
-                                    cdlatex-command-alist-comb))
-                (yas-next-field-or-maybe-expand)
-                t))
-          ;; otherwise expand and jump to the correct location
-          (let (cdlatex-tab-hook minp)
-            (setq minp
-                  (min (save-excursion (cdlatex-tab)
-                                       (point))
-                       (overlay-end yas--active-field-overlay)))
-            (goto-char minp) t))))
-
+  (defun jdp-cdlatex-in-yas-field ()
+    ;; Check if we're at the end of the Yas field
+    (when-let* ((_ (overlayp yas--active-field-overlay))
+                (end (overlay-end yas--active-field-overlay)))
+      (if (>= (point) end)
+          ;; Call yas-next-field if cdlatex can't expand here
+          (let ((s (thing-at-point 'sexp)))
+            (unless (and s (assoc (substring-no-properties s)
+                                  cdlatex-command-alist-comb))
+              (yas-next-field-or-maybe-expand)
+              t))
+        ;; otherwise expand and jump to the correct location
+        (let (cdlatex-tab-hook minp)
+          (setq minp
+                (min (save-excursion (cdlatex-tab)
+                                     (point))
+                     (overlay-end yas--active-field-overlay)))
+          (goto-char minp) t))))
+  (use-package yasnippet
+    :ensure t
+    :bind (:map yas-keymap
+                ("TAB" . jdp-yas-next-field-or-cdlatex))
+    :config
     (defun jdp-yas-next-field-or-cdlatex nil
       "Jump to the next Yas field correctly with cdlatex active."
       (interactive)
@@ -83,10 +86,7 @@
           (or (bound-and-true-p cdlatex-mode)
               (bound-and-true-p org-cdlatex-mode))
           (cdlatex-tab)
-        (yas-next-field-or-maybe-expand)))
-
-    (bind-keys :map yas-keymap
-               ("TAB" . jdp-yas-next-field-or-cdlatex))))
+        (yas-next-field-or-maybe-expand)))))
 
 ;;; Spellchecking
 (use-package jinx
@@ -95,7 +95,6 @@
          (LaTeX-mode . jinx-mode))
   :bind (:map jinx-mode-map
               ("M-$" . jinx-correct)
-              ("C-M-$" . jinx-languages))
-  :custom (jinx-languages "en es"))
+              ("C-M-$" . jinx-languages)))
 
 (provide 'jdp-core-write)
