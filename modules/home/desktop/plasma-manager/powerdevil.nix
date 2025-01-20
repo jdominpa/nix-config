@@ -16,10 +16,7 @@ in
           AC = {
             autoSuspend.action = "nothing";
             dimDisplay.enable = false;
-            turnOffDisplay = {
-              idleTimeout = 1200;
-              idleTimeoutWhenLocked = 60;
-            };
+            turnOffDisplay.idleTimeout = "never";
             powerButtonAction = "showLogoutScreen";
             powerProfile = "performance";
           };
