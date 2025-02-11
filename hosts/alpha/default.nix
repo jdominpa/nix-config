@@ -84,6 +84,7 @@ in
     };
     home = {
       apps = {
+        bitwarden.enable = true;
         brave.enable = true;
         discord.enable = true;
       };

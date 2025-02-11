@@ -56,6 +56,9 @@ in
       };
     };
     home = {
+      apps = {
+        bitwarden.enable = true;
+      };
       cli = {
         direnv.enable = true;
         fzf.enable = true;
