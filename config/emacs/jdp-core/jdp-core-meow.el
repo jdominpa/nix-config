@@ -4,14 +4,11 @@
   :config
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    (meow-motion-overwrite-define-key
+    (meow-motion-define-key
      '("k" . meow-next)
      '("l" . meow-prev)
      '("<escape>" . ignore))
     (meow-leader-define-key
-     ;; SPC k/l will run the original command in MOTION state.
-     '("k" . "H-k")
-     '("l" . "H-l")
      ;; Use SPC (0-9) for digit arguments.
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
