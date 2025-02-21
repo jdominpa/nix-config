@@ -4,55 +4,50 @@
 #
 ############################################################################
 
-# List all the just commands
+# List all the commands
 default:
-  @just --list
+    @just --list
 
-# Update all the flake inputs
+# Update flake inputs (all of them if none are specified)
 [group('nix')]
-up:
-  nix flake update
-
-# Update specific input
-# Usage: just upp nixpkgs
-[group('nix')]
-upp input:
-  nix flake update {{input}}
+update *INPUTS:
+    nix flake update {{INPUTS}}
 
 # List all generations of the system profile
 [group('nix')]
 history:
-  nix profile history --profile /nix/var/nix/profiles/system
+    nix profile history --profile /nix/var/nix/profiles/system
 
 # Open a nix shell with the flake
 [group('nix')]
 repl:
-  nix repl -f flake:nixpkgs
+    nix repl -f flake:nixpkgs
 
 # Remove all generations older than 7 days
 [group('nix')]
 clean:
-  # On darwin you may need to switch to root user to run this command
-  sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
+    # On darwin you may need to switch to root user to run this command
+    sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
+    nix store gc
 
 # Garbage collect all unused nix store entries
 [group('nix')]
 gc:
-  # garbage collect all unused nix store entries (system-wide)
-  sudo nix-collect-garbage --delete-older-than 7d
-  # garbage collect all unused nix store entries (for the user - home-manager)
-  # https://github.com/NixOS/nix/issues/8508
-  nix-collect-garbage --delete-older-than 7d
+    # garbage collect all unused nix store entries (system-wide)
+    sudo nix-collect-garbage --delete-older-than 7d
+    # garbage collect all unused nix store entries (for the user - home-manager)
+    # https://github.com/NixOS/nix/issues/8508
+    nix-collect-garbage --delete-older-than 7d
 
-# Enter a shell session which has all the necessary tools for this flake
+# Check whether the flake evaluates and run its tests
 [group('nix')]
-shell:
-  nix shell nixpkgs#git nixpkgs#neovim
+check *FLAGS:
+    nix flake check --no-update-lock-file --no-write-lock-file {{FLAGS}}
 
 # Format the nix files in this repo
 [group('nix')]
 fmt:
-  nix fmt
+    nix fmt
 
 # Nix Store can contains corrupted entries if the nix store object has been modified unexpectedly.
 # This command will verify all the store entries,
@@ -60,12 +55,12 @@ fmt:
 # Verify all the store entries
 [group('nix')]
 verify-store:
-  nix store verify --all
+    nix store verify --all
 
 # Repair Nix Store Objects
 [group('nix')]
 repair-store *paths:
-  nix store repair {{paths}}
+    nix store repair {{paths}}
 
 ############################################################################
 #
@@ -73,23 +68,11 @@ repair-store *paths:
 #
 ############################################################################
 
-# Rebuild and switch to the specified NixOS configuration
-# Usage: just switch alpha
+# Rebuild and switch the specified NixOS configuration
 [linux]
 [group('NixOS')]
-switch name mode="default":
-  #!/usr/bin/env bash
-  if [ "{{mode}}" == "debug" ]; then
-    nix build ".#nixosConfigurations.{{name}}.config.system.build.toplevel" --show-trace --verbose
-    nixos-rebuild switch --flake ".#{{name}}" --show-trace --verbose
-  else
-    nixos-rebuild switch --use-remote-sudo --flake ".#{{name}}"
-  fi
-
-# Deploy alpha's configuration (Desktop PC)
-[linux]
-[group('NixOS')]
-alpha mode="default": (switch "alpha" mode)
+switch host *FLAGS:
+    nixos-rebuild switch --show-trace --use-remote-sudo --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
 
 ############################################################################
 #
@@ -97,28 +80,27 @@ alpha mode="default": (switch "alpha" mode)
 #
 ############################################################################
 
+# TODO: update this recipe
 [macos]
 [group('Darwin')]
-darwin-rollback:
-  ./result/sw/bin/darwin-rebuild --rollback
+rollback:
+    ./result/sw/bin/darwin-rebuild --rollback
 
-# Rebuild and switch to the specified Darwin configuration
-# Usage: just switch beta
+# TODO: check this works
+# Rebuild and switch the specified Darwin configuration
 [macos]
 [group('Darwin')]
-switch name mode="default":
-  #!/usr/bin/env bash
-  if [ "{{mode}}" == "debug" ]; then
-    nix build ".#darwinConfigurations.{{name}}.system" --extra-experimental-features "nix-command flakes" --show-trace --verbose
-    ./result/sw/bin/darwin-rebuild switch --flake ".#{{name}}" --show-trace --verbose
-  else
-    nix build ".#darwinConfigurations.{{name}}.system" --extra-experimental-features "nix-command flakes"
-    ./result/sw/bin/darwin-rebuild switch --flake ".#{{name}}"
-  fi
+switch host *FLAGS:
+    #!/usr/bin/env bash
+    if ! command -v darwin-rebuild 2>&1 >/dev/null; then
+        nix run nix-darwin/master#darwin-rebuild switch --show-trace --flake "{{justfile_directory()}}#{{host}}" --extra-experimental-features "nix-command flakes"
+    else
+        darwin-rebuild switch --show-trace --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+    fi
 
 # Reset launchpad to force it to reindex Applications
 [macos]
 [group('Darwin')]
 reset-launchpad:
-  defaults write com.apple.dock ResetLaunchPad -bool true
-  killall Dock
+    defaults write com.apple.dock ResetLaunchPad -bool true
+    killall Dock
