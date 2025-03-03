@@ -84,7 +84,10 @@ in
     };
     home = {
       apps = {
-        bitwarden.enable = true;
+        bitwarden = {
+          enable = true;
+          sshAgent = true;
+        };
         brave.enable = true;
         discord.enable = true;
       };

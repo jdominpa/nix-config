@@ -57,7 +57,10 @@ in
     };
     home = {
       apps = {
-        bitwarden.enable = true;
+        bitwarden = {
+          enable = true;
+          sshAgent = true;
+        };
       };
       cli = {
         direnv.enable = true;
