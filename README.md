@@ -11,7 +11,7 @@ Modular NixOS/macOS configuration using [nix](https://nixos.org),
   configuration for that host. This is done by enabling/disabling the modules
   that can be found in `modules`.
   - `alpha`: Desktop PC - 64GB RAM, Intel i9-10850K, RTX 3090 | KDE Plasma
-  - `beta`: Macbook for work
+  - `beta`: M3 Macbook Air for work
 - `modules`: Configuration modules. Each subdirectory contains a `default.nix`
   that imports all modules, i.e., `*.nix` files (including those in nested
   subdirectories). Each module declares an enable option to toggle
@@ -35,14 +35,6 @@ nix-shell -p just
 
 # Deploy using `just` & Justfile
 just switch <hostname>
-
-# Alternatively, directly deploy a specific configuration
-just <hostname>
-
-# To deploy with details use the `debug` flag
-just switch <hostname> debug
-# or
-just <hostname> debug
 ```
 
 On NixOS the configuration can also be deployed with the usual commands:

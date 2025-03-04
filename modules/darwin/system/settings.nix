@@ -30,11 +30,9 @@ in
         NSGlobalDomain = {
           # `defaults read NSGlobalDomain <key>`
           "com.apple.swipescrolldirection" = true; # enable natural scrolling(default to true)
-          "com.apple.sound.beep.feedback" = 0; # disable beep sound when pressing volume up/down key
           AppleMeasurementUnits = "Centimeters";
           AppleMetricUnits = 1;
           AppleInterfaceStyle = "Dark"; # dark mode
-          AppleShowScrollBars = "Always";
           AppleFontSmoothing = 1;
           NSAutomaticCapitalizationEnabled = false; # disable auto capitalization
           NSAutomaticDashSubstitutionEnabled = false; # disable auto dash substitution
@@ -47,7 +45,7 @@ in
           PMPrintingExpandedStateForPrint2 = true;
         };
 
-        # customize settings that not supported by nix-darwin directly
+        # customize settings that aren't supported by nix-darwin directly
         # Incomplete list of macOS `defaults` commands :
         #   https://github.com/yannbertrand/macos-defaults
         CustomUserPreferences = {
