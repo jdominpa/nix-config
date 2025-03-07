@@ -37,6 +37,7 @@ in
       apps = {
         activityMonitor.enable = true;
         finder.enable = true;
+        whatsapp.enable = true;
       };
       system = {
         dock.enable = true;

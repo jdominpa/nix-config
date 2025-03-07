@@ -30,7 +30,7 @@ in
     };
 
     homebrew.masApps = mkIf (stdenv.isDarwin && homebrew.enable) {
-      bitwarden = 1352778147;
+      Bitwarden = 1352778147;
     };
   };
 }
