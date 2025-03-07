@@ -41,6 +41,7 @@ in
       system = {
         dock.enable = true;
         fonts.enable = true;
+        homebrew.enable = true;
         keyboard.enable = true;
         locale.enable = true;
         networking = {
