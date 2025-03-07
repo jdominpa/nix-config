@@ -11,10 +11,6 @@ let
   cfg = user.home-manager;
 in
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-  ];
-
   config = mkIf cfg.enable {
     home-manager = {
       useGlobalPkgs = true;

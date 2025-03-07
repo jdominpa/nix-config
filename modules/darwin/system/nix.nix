@@ -13,9 +13,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Auto upgrade the nix-daemon service
-    services.nix-daemon.enable = true;
-
     nix = {
       # Disable auto-optimise-store because of this issue:
       #   https://github.com/NixOS/nix/issues/7273

@@ -107,9 +107,9 @@
         beta = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           specialArgs = {
-            inherit inputs outputs;
+            inherit inputs outputs lib;
           };
-          darwinModules = [ ./hosts/beta ];
+          modules = [ ./hosts/beta ];
         };
       };
     };

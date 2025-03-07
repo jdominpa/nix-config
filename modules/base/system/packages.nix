@@ -15,6 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
+        coreutils
         curl
         findutils
         fzf

@@ -14,7 +14,6 @@ in
 
   config = mkIf cfg.enable {
     power = {
-      restartAfterPowerFailure = true;
       restartAfterFreeze = true;
       sleep.display = 15;
     };

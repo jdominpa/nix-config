@@ -14,7 +14,7 @@ in
 
   config = mkIf cfg.enable {
     system = {
-      defaults = {
+      defaults.NSGlobalDomain = {
         AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.
         ApplePressAndHoldEnabled = true; # enable press and hold
         InitialKeyRepeat = 12; # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
