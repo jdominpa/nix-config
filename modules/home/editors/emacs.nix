@@ -28,7 +28,6 @@ in
 
       programs.emacs = {
         enable = true;
-        package = pkgs.emacs30;
         extraPackages =
           epkgs: with epkgs; [
             ace-window
