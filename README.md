@@ -11,7 +11,7 @@ Modular NixOS/macOS configuration using [nix](https://nixos.org),
   configuration for that host. This is done by enabling/disabling the modules
   that can be found in `modules`.
   - `alpha`: Desktop PC - 64GB RAM, Intel i9-10850K, RTX 3090 | KDE Plasma
-  - `beta`: M3 Macbook Air for work
+  - `beta`: M3 13'' MacBook Air for work
 - `modules`: Configuration modules. Each subdirectory contains a `default.nix`
   that imports all modules, i.e., `*.nix` files (including those in nested
   subdirectories). Each module declares an enable option to toggle
@@ -29,17 +29,34 @@ Modular NixOS/macOS configuration using [nix](https://nixos.org),
 
 ## Deployment
 
-```sh
+### NixOS
+
+```bash
 # Prepare the deployment environment
-nix-shell -p just
+nix-shell -p git just
 
 # Deploy using `just` & Justfile
 just switch <hostname>
 ```
 
 On NixOS the configuration can also be deployed with the usual commands:
-```sh
+
+```bash
 sudo nixos-rebuild switch --flake .#<hostname>
+```
+
+### macOS
+
+For first time deployment, install
+[nix](https://nixos.org/download/#nix-install-macos) and
+[homebrew](https://brew.sh) manually. Then proceed as follows:
+
+```bash
+# Prepare the deployment environment
+nix-shell -p git just
+
+# Deploy using `just` & Justfile
+just switch <hostname>
 ```
 
 ## References
