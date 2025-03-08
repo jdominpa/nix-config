@@ -94,8 +94,6 @@
   (corfu-popupinfo-mode t)
   (corfu-history-mode t)
   :config
-  (with-eval-after-load 'meow
-    (add-hook 'meow-insert-exit-hook 'corfu-quit))
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
