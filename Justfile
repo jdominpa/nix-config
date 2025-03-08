@@ -80,6 +80,7 @@ switch host *FLAGS:
 #
 ############################################################################
 
+# Rollback configuration
 [macos]
 [group('Darwin')]
 rollback:

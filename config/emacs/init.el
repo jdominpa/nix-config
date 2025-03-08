@@ -55,14 +55,5 @@
   (setq mac-command-modifier 'meta
         mac-option-modifier 'control))
 
-(when (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
-  (let ((cmd-exe "/mnt/c/Windows/System32/cmd.exe")
-        (cmd-args '("/c" "start")))
-    (when (file-exists-p cmd-exe)
-      (customize-set-variable 'browse-url-generic-program cmd-exe)
-      (customize-set-variable 'browse-url-generic-args cmd-args)
-      (customize-set-variable 'browse-url-browser-function 'browse-url-generic)
-      (setq search-web-default-browser 'browse-url-generic))))
-
 (provide 'init)
 ;;; init.el ends here
