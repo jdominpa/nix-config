@@ -55,6 +55,7 @@
          (cdlatex-tab . jdp-cdlatex-in-yas-field))
   :custom
   (cdlatex-sub-super-scripts-outside-math-mode nil)
+  (cdlatex-math-symbol-prefix ?\;)
   :config
   (defun jdp-cdlatex-in-yas-field ()
     ;; Check if we're at the end of the Yas field

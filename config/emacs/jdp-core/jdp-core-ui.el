@@ -24,9 +24,7 @@
   (fontaine-presets '((regular
                        :default-height 130)
                       (large
-                       :default-weight semilight
-                       :default-height 150
-                       :bold-weight extrabold)
+                       :default-height 150)
                       (t
                        :default-family "Iosevka Comfy"
                        :fixed-pitch-family "Iosevka Comfy"
