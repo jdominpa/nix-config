@@ -23,7 +23,6 @@ in
           enable = true;
           overrideConfig = true;
           immutableByDefault = true;
-          krunner.position = "center";
         };
 
         # Extra KDE applications
