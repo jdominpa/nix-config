@@ -15,7 +15,7 @@ in
         enable = true;
         defaultProfile = "default";
         customColorSchemes = {
-          modus-vivendi = ./modus-vivendi.colorscheme;
+          modus-vivendi = jdp.relativeToRoot "config/konsole/modus-vivendi.colorscheme";
         };
         profiles = {
           default = {
