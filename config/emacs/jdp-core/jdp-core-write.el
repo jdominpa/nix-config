@@ -25,10 +25,21 @@
   (pdf-loader-install))
 
 ;;; LaTeX tools
-(use-package tex
+(use-package math-delimiters
+  :commands (math-delimiters-no-dollars math-delimiters-insert))
+
+(use-package latex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . prettify-symbols-mode))
+  :bind (:map LaTeX-mode-map
+              ("$" . math-delimiters-insert)
+              ("M-n" . TeX-next-error)
+              ("M-p" . TeX-previous-error))
+  :custom
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server t)
+  (TeX-newline-function 'reindent-then-newline-and-indent)
   :config
   (setcdr (assq 'output-pdf TeX-view-program-selection)
           '("PDF Tools"))
@@ -38,6 +49,7 @@
 (use-package reftex
   :hook (LaTeX-mode . turn-on-reftex)
   :custom
+  (reftex-plug-into-AUCTeX t)
   (reftex-label-alist
    '(("theorem"     ?T "thm:"  "~\\ref{%s}" t ("theorem")     -3)
      ("proposition" ?P "prop:" "~\\ref{%s}" t ("proposition") -3)
@@ -45,17 +57,19 @@
      ("corollary"   ?C "cor:"  "~\\ref{%s}" t ("corollary")   -3)
      ("remark"      ?R "rem:"  "~\\ref{%s}" t ("remark")      -3)
      ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
-     AMSTeX))
-  (reftex-plug-into-AUCTeX t))
+     AMSTeX)))
 
 (use-package cdlatex
   :ensure t
   :hook ((LaTeX-mode . turn-on-cdlatex)
          (cdlatex-tab . yas-expand)
          (cdlatex-tab . jdp-cdlatex-in-yas-field))
+  :bind (:map cdlatex-mode-map
+              ("$" . nil))
   :custom
-  (cdlatex-sub-super-scripts-outside-math-mode nil)
   (cdlatex-math-symbol-prefix ?\;)
+  (cdlatex-takeover-parenthesis nil)
+  (cdlatex-sub-super-scripts-outside-math-mode nil)
   :config
   (defun jdp-cdlatex-in-yas-field ()
     ;; Check if we're at the end of the Yas field
@@ -83,8 +97,7 @@
     (defun jdp-yas-next-field-or-cdlatex nil
       "Jump to the next Yas field correctly with cdlatex active."
       (interactive)
-      (if
-          (or (bound-and-true-p cdlatex-mode)
+      (if (or (bound-and-true-p cdlatex-mode)
               (bound-and-true-p org-cdlatex-mode))
           (cdlatex-tab)
         (yas-next-field-or-maybe-expand)))))
