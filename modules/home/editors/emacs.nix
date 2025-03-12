@@ -27,45 +27,6 @@ in
         ".emacs.d/init.el".source = jdp.relativeToRoot "config/emacs/init.el";
       };
 
-      programs.emacs = {
-        enable = true;
-        extraPackages =
-          epkgs: with epkgs; [
-            ace-window
-            auctex
-            avy
-            cape
-            cdlatex
-            consult
-            consult-dir
-            consult-eglot
-            corfu
-            diff-hl
-            envrc
-            fontaine
-            hl-todo
-            jinx
-            just-mode
-            kind-icon
-            macrostep
-            magit
-            marginalia
-            markdown-mode
-            meow
-            mini-echo
-            modus-themes
-            nix-mode
-            orderless
-            pdf-tools
-            rainbow-delimiters
-            spacious-padding
-            treesit-grammars.with-all-grammars
-            vertico
-            which-key
-            yasnippet
-          ];
-      };
-
       # LSP servers
       home.packages = optionals cfg.withLsp (
         with pkgs;

@@ -19,7 +19,6 @@ in
         curl
         findutils
         fzf
-        emacs
         gawk
         git
         gnugrep

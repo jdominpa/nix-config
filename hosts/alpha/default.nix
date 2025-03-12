@@ -36,6 +36,9 @@ in
   jdp = {
     base = {
       system = {
+        editors = {
+          emacs.enable = true;
+        };
         nix.enable = true;
         packages.enable = true;
         shell.aliases.enable = true;
