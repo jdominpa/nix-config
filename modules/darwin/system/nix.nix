@@ -14,13 +14,27 @@ in
 
   config = mkIf cfg.enable {
     nix = {
-      # Disable auto-optimise-store because of this issue:
-      #   https://github.com/NixOS/nix/issues/7273
-      # "error: cannot link '/nix/store/.tmp-link-xxxxx-xxxxx' to '/nix/store/.links/xxxx': File exists"
-      settings.auto-optimise-store = false;
-
-      # TODO: try automatic garbage collection on macOS
-      gc.automatic = false;
+      gc = {
+        automatic = true;
+        interval = [
+          {
+            Weekday = 1;
+            Hour = 10;
+            Minute = 0;
+          }
+        ];
+        options = "--delete-older-than 7d";
+      };
+      optimise = {
+        automatic = true;
+        interval = [
+          {
+            Weekday = 1;
+            Hour = 10;
+            Minute = 0;
+          }
+        ];
+      };
     };
   };
 }

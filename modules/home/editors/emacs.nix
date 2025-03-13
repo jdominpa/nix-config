@@ -18,6 +18,14 @@ in
   };
 
   config = mkIf cfg.enable {
+    warnings =
+      if !config.jdp.base.system.editors.emacs.enable then
+        [
+          "`jdp.home.editors.emacs.enable` is enabled but emacs is not installed. Consider enabling `jdp.base.system.editors.emacs.enable`."
+        ]
+      else
+        [ ];
+
     home-manager.users.${user.name} = {
       home.file = {
         ".emacs.d/jdp-core".source = jdp.relativeToRoot "config/emacs/jdp-core";
