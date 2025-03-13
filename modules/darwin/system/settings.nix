@@ -30,10 +30,10 @@ in
         NSGlobalDomain = {
           # `defaults read NSGlobalDomain <key>`
           "com.apple.swipescrolldirection" = true; # enable natural scrolling(default to true)
+          AppleFontSmoothing = 1;
+          AppleInterfaceStyle = "Dark"; # dark mode
           AppleMeasurementUnits = "Centimeters";
           AppleMetricUnits = 1;
-          AppleInterfaceStyle = "Dark"; # dark mode
-          AppleFontSmoothing = 1;
           NSAutomaticCapitalizationEnabled = false; # disable auto capitalization
           NSAutomaticDashSubstitutionEnabled = false; # disable auto dash substitution
           NSAutomaticPeriodSubstitutionEnabled = false; # disable auto period substitution
@@ -45,22 +45,65 @@ in
           PMPrintingExpandedStateForPrint2 = true;
         };
 
-        # customize settings that aren't supported by nix-darwin directly
+        # Customize settings that aren't supported by nix-darwin directly
         # Incomplete list of macOS `defaults` commands :
         #   https://github.com/yannbertrand/macos-defaults
         CustomUserPreferences = {
           ".GlobalPreferences" = {
-            # automatically switch to a new space when switching to the application
+            # Automatically switch to a new space when switching to the application
             AppleSpacesSwitchOnActivate = true;
           };
           NSGlobalDomain = {
             # Add a context menu item for showing the Web Inspector in web views
             WebKitDeveloperExtras = true;
           };
+          "com.apple.appstore" = {
+            # Enable debug menu in the app store
+            ShowDebugMenu = true;
+          };
+          "com.apple.commerce" = {
+            # Turn on automatic app updates
+            AutoUpdate = true;
+          };
           "com.apple.desktopservices" = {
             # Avoid creating .DS_Store files on network or USB volumes
             DSDontWriteNetworkStores = true;
             DSDontWriteUSBStores = true;
+          };
+          "com.apple.finder" = {
+            ShowRecentTags = false; # don't show recent tags
+          };
+          "com.apple.ImageCapture" = {
+            # Prevent Photos from opening automatically when devices are plugged in
+            disableHotPlug = true;
+          };
+          "com.apple.Safari" = {
+            # Disable opening 'safe' files automatically
+            AutoOpenSafeDownloads = true;
+            # Use advanced tracking and fingerprinting protection in all browsing
+            EnableEnhancedPrivacyInPrivateBrowsing = true;
+            EnableEnhancedPrivacyInRegularBrowsing = true;
+            # Set backspace key to go to the previous page in history
+            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled" = true;
+            # Enable the 'Develop' menu and the 'Web Inspector'
+            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
+            IncludeDevelopMenu = true;
+            WebKitDeveloperExtrasEnabledPreferenceKey = true;
+            # Set search type to 'Contains' instead of 'Starts With'
+            FindOnPageMatchesWordStartsOnly = true;
+            # Enable debug menu
+            IncludeInternalDebugMenu = true;
+            # Update extensions automatically
+            InstallExtensionUpdatesAutomatically = true;
+            # Enable 'Do Not Track'
+            SendDoNotTrackHTTPHeader = true;
+            # Don’t send search queries to Apple
+            SuppressSearchSuggestions = true;
+            UniversalSearchEnabled = true;
+            # Warn about fraudulent websites
+            WarnAboutFraudulentWebsites = true;
+            # Add a context menu item for showing the 'Web Inspector' in web views
+            WebKitDeveloperExtras = true;
           };
           "com.apple.screensaver" = {
             # Require password immediately after sleep or screen saver begins
@@ -69,10 +112,18 @@ in
           };
           "com.apple.screencapture" = {
             location = "~/Desktop";
+            show-thumbnail = false;
             type = "png";
           };
-          # Prevent Photos from opening automatically when devices are plugged in
-          "com.apple.ImageCapture".disableHotPlug = true;
+          "com.apple.SoftwareUpdate" = {
+            AutomaticCheckEnabled = true; # automatic update check
+            AutomaticDownload = 1; # download new updates in the background
+            CriticalUpdateInstall = 1; # install system data files & security updates
+          };
+          "com.apple.terminal" = {
+            # Enable 'Secure Keyboard Entry'
+            SecureKeyboardEntry = true;
+          };
         };
       };
     };

@@ -16,7 +16,7 @@ in
     system = {
       defaults.NSGlobalDomain = {
         AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.
-        ApplePressAndHoldEnabled = true; # enable press and hold
+        ApplePressAndHoldEnabled = false; # disable press and hold
         InitialKeyRepeat = 12; # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
         KeyRepeat = 2; # normal minimum is 2 (30 ms), maximum is 120 (1800 ms)
       };

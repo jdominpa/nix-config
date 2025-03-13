@@ -16,23 +16,20 @@ in
     system.defaults = {
       finder = {
         AppleShowAllExtensions = true; # show file extensions
+        FXDefaultSearchScope = "SCcf";
         FXEnableExtensionChangeWarning = false; # don't warn when changing file extensions
         FXPreferredViewStyle = "Nlsv"; # set list as default view style
         _FXSortFoldersFirst = true; # keep folders on top
-        FXDefaultSearchScope = "SCcf";
+        _FXSortFoldersFirstOnDesktop = true;
+        _FXShowPosixPathInTitle = true;
         FXRemoveOldTrashItems = true;
+        NewWindowTarget = "Home";
         ShowExternalHardDrivesOnDesktop = true;
         ShowHardDrivesOnDesktop = true;
         ShowMountedServersOnDesktop = true;
         ShowRemovableMediaOnDesktop = true;
         ShowPathbar = true;
         ShowStatusBar = true;
-      };
-      CustomUserPreferences = {
-        "com.apple.finder" = {
-          # When performing a search, search the current folder by default
-          FXDefaultSearchScope = "SCcf";
-        };
       };
     };
   };
