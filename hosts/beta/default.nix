@@ -62,7 +62,7 @@ in
       apps = {
         bitwarden = {
           enable = true;
-          sshAgent = true;
+          sshAgent = false; # FIXME: disabled until bitwarden's ssh agent is fixed on macOS
         };
       };
       cli = {
