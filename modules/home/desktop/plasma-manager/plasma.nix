@@ -16,6 +16,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.jdp.nixos.desktop.plasma.enable;
+        message = "`jdp.nixos.desktop.plasma` needs to be enabled if `jdp.home.desktop.plasma-manager` is enabled.";
+      }
+    ];
+
     home-manager = {
       sharedModules = [ inputs.plasma-manager.homeManagerModules.plasma-manager ];
       users.${user.name} = {

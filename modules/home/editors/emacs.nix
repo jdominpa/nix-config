@@ -19,12 +19,8 @@ in
 
   config = mkIf cfg.enable {
     warnings =
-      if !config.jdp.base.system.editors.emacs.enable then
-        [
-          "`jdp.home.editors.emacs.enable` is enabled but emacs is not installed. Consider enabling `jdp.base.system.editors.emacs.enable`."
-        ]
-      else
-        [ ];
+      optional (!config.jdp.base.system.editors.emacs.enable)
+        "`jdp.home.editors.emacs` is enabled but emacs is not installed. Consider enabling `jdp.base.system.editors.emacs`.";
 
     home-manager.users.${user.name} = {
       home.file = {

@@ -20,6 +20,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    warnings =
+      optional (stdenv.isDarwin && !homebrew.enable)
+        "`jdp.home.apps.bitwarden` is enabled but `jdp.darwin.system.homebrew` is disabled. Bitwarden will not be installed.";
+
     home-manager.users.${user.name} = {
       home = {
         packages = optionals stdenv.isLinux [ pkgs.bitwarden-desktop ];
