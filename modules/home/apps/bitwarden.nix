@@ -9,7 +9,6 @@ let
   inherit (pkgs) stdenv;
   cfg = config.jdp.home.apps.bitwarden;
   user = config.jdp.base.user;
-  homebrew = config.jdp.darwin.system.homebrew;
 in
 {
   options.jdp.home = {
@@ -20,21 +19,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    warnings =
-      optional (stdenv.isDarwin && !homebrew.enable)
-        "`jdp.home.apps.bitwarden` is enabled but `jdp.darwin.system.homebrew` is disabled. Bitwarden will not be installed.";
-
     home-manager.users.${user.name} = {
       home = {
+        # On darwin we install bitwarden with homebrew
         packages = optionals stdenv.isLinux [ pkgs.bitwarden-desktop ];
         sessionVariables = mkIf cfg.sshAgent {
           SSH_AUTH_SOCK = "${user.homeDirectory}/.bitwarden-ssh-agent.sock";
         };
       };
-    };
-
-    homebrew.masApps = mkIf (stdenv.isDarwin && homebrew.enable) {
-      Bitwarden = 1352778147;
     };
   };
 }
