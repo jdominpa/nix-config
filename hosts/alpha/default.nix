@@ -13,9 +13,9 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.hardware.nixosModules.common-cpu-intel
-    inputs.hardware.nixosModules.common-gpu-nvidia
-    inputs.hardware.nixosModules.common-pc-ssd
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
     (jdp.relativeToRoot "modules/base")
     (jdp.relativeToRoot "modules/nixos")
     (jdp.relativeToRoot "modules/home")
