@@ -14,24 +14,21 @@ in
   imports = [
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     (jdp.relativeToRoot "modules/base")
     (jdp.relativeToRoot "modules/nixos")
     (jdp.relativeToRoot "modules/home")
   ];
 
-  # Nvidia settings needed for nixos-hardware
+  # Nvidia drivers settings
   hardware = {
     graphics.enable = true;
     nvidia = {
-      open = true;
-      prime = {
-        amdgpuBusId = "PCI:6:0:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
+      open = false;
+      modesetting.enable = true;
     };
   };
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   jdp = {
     base = {
