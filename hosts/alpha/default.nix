@@ -89,6 +89,9 @@ in
         brave.enable = true;
         discord.enable = true;
       };
+      dev = {
+        tex.enable = true;
+      };
       cli = {
         direnv.enable = true;
         fzf.enable = true;
