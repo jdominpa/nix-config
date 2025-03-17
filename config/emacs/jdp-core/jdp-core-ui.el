@@ -41,7 +41,8 @@
   :bind ([f8] . spacious-padding-mode)
   :custom
   (spacious-padding-widths
-   '(:right-divider-width 1))
+   '(:right-divider-width 1
+     :internal-border-width 10))
   (spacious-padding-mode t))
 
 ;;; Which-key
