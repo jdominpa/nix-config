@@ -7,7 +7,6 @@ with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
   user = config.jdp.base.user;
-  plasma = config.home-manager.users.${user.name}.programs.plasma;
 in
 {
   config = mkIf cfg.enable {
@@ -16,7 +15,6 @@ in
         appearance = {
           alwaysShowClock = true;
           showMediaControls = false;
-          inherit (plasma.workspace) wallpaperPlainColor;
         };
         autoLock = true;
         lockOnResume = true;
