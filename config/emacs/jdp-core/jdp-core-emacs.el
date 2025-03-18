@@ -5,6 +5,7 @@
          ("C-z" . nil)
          ("M-o" . other-window)
          ;; Help commands
+         ("C-h y" . describe-personal-keybindings)
          ("C-h K" . describe-keymap)
          ("C-h c" . describe-char)
          ;; Commands for lines
@@ -37,9 +38,11 @@
   (mouse-wheel-mode t))
 
 ;;; Scrolling behaviour
-(custom-set-variables '(scroll-margin 0)
-                      '(scroll-conservatively 1)
-                      '(scroll-preserve-screen-position 'always))
+(use-package emacs
+  :custom
+  (scroll-margin 0)
+  (scroll-conservatively 1)
+  (scroll-preserve-screen-position 'always))
 
 ;;; Repeat mode
 (use-package repeat
@@ -50,7 +53,8 @@
 
 ;;; Auto revert mode
 (use-package autorevert
-  :config (auto-revert-mode))
+  :custom
+  (auto-revert-mode t))
 
 ;;; Emacs server
 (use-package server

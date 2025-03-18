@@ -31,21 +31,22 @@
   :ensure t
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
   :custom
-  (vertico-mode t)
-  (vertico-reverse-mode t))
+  (vertico-reverse-mode t)
+  (vertico-mode t))
 
 ;;; Completion annotations
 (use-package marginalia
   :ensure t
-  :custom (marginalia-mode t))
+  :custom
+  (marginalia-mode t))
 
 ;;; Orderless completion style
 (use-package orderless
   :ensure t
   :demand t
   :bind (:map minibuffer-local-completion-map
-              ("?" . nil)
-              ("SPC" . nil))
+         ("?" . nil)
+         ("SPC" . nil))
   :custom
   (orderless-matching-styles '(orderless-prefixes
                                orderless-regexp)))
@@ -53,36 +54,69 @@
 ;;; Enhanced minibuffer commands
 (use-package consult
   :ensure t
-  :bind (;; C-x bindings
-         ("C-x M-:" . consult-complex-command)
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :bind (;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command) ; orig. `repeat-complex-command'
+         ("C-x t b" . consult-buffer-other-tab) ; orig. `switch-to-buffer-other-tab'
+         ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
-         ([remap switch-to-buffer] . consult-buffer)
-         ;; M-g bindings
-         ([remap goto-line] . consult-goto-line)
-         ;; M-s bindings
-         ("M-s M-f" . consult-find)
-         ("M-s M-g" . consult-grep)
-         ("M-s M-i" . consult-imenu)
-         ("M-s M-l" . consult-line)
-         ("M-s M-m" . consult-mark)
-         ("M-s M-s" . consult-outline)
-         ("M-s M-y" . consult-yank-pop)
+         ;; C-c bindings in `mode-specific-map'
+         ("C-c b" . consult-buffer)
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)
+         ("M-g g" . consult-goto-line)   ; orig. `goto-line'
+         ("M-g M-g" . consult-goto-line) ; orig. `goto-line'
+         ("M-g o" . consult-outline)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s f" . consult-find)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s i" . consult-info)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-s e" . consult-isearch-history) ; orig. `isearch-edit-string'
+         ("M-s l" . consult-line)     ; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi) ; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history) ; orig. `next-matching-history-element'
+         ("M-r" . consult-history) ; orig. `previous-matching-history-element'
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop) ; orig. `yank-pop'
+         ("M-X" . consult-mode-command)
          :map consult-narrow-map
          ("?" . consult-narrow-help))
   :custom
+  (completion-in-region-function #'consult-completion-in-region)
+  (register-preview-function #'consult-register-format)
   (register-preview-delay 0.8)
-  (consult-preview-key 'any)
-  (consult-narrow-key ">")
-  :config
-  (setq register-preview-function #'consult-register-format))
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+  (consult-narrow-key "<"))
 
 ;;; Switch to directories
 (use-package consult-dir
   :ensure t
-  :bind ("C-x C-d" . consult-dir)
-  :custom
-  (consult-dir-shadow-filenames nil))
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
 
 ;;; In-buffer completion
 (use-package corfu
@@ -103,7 +137,7 @@
   :after corfu
   :bind ("C-c c" . cape-prefix-map)
   :init
-  (dolist (backend '(cape-dabbrev cape-elisp-symbol cape-file))
+  (dolist (backend '(cape-elisp-symbol cape-history cape-file))
     (add-hook 'completion-at-point-functions backend)))
 
 ;;; Completion popup icons
@@ -116,6 +150,7 @@
 ;;; Snippets
 (use-package yasnippet
   :ensure t
-  :custom (yas-global-mode t))
+  :custom
+  (yas-global-mode t))
 
 (provide 'jdp-core-completion)

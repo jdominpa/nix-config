@@ -34,8 +34,8 @@
 ;; Eldoc
 (use-package eldoc
   :custom
-  (global-eldoc-mode t)
-  (eldoc-echo-area-use-multiline-p nil))
+  (eldoc-echo-area-use-multiline-p nil)
+  (global-eldoc-mode t))
 
 ;; Handle performance for long lines
 (use-package so-long
@@ -51,8 +51,8 @@
 
 ;; Emacs native LSP client
 (use-package eglot
-  :functions (eglot-ensure)
-  :commands (eglot)
+  :functions eglot-ensure
+  :commands eglot
   :hook ((c-mode c-ts-mode nix-mode) . eglot-ensure)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
@@ -74,8 +74,7 @@
   :ensure t
   :after (consult eglot)
   :bind (:map eglot-mode-map
-              ("M-g s" . consult-eglot-symbols)
-              ("M-g M-s" . consult-eglot-symbols)))
+         ("M-g s" . consult-eglot-symbols)))
 
 ;; Flymake
 (use-package flymake
@@ -112,7 +111,8 @@
 ;; Direnv integration
 (use-package envrc
   :ensure t
-  :hook (after-init . envrc-global-mode))
+  :custom
+  (envrc-global-mode t))
 
 ;;; Programming language modes configurations
 
@@ -135,7 +135,8 @@
 ;; Markdown
 (use-package markdown-mode
   :ensure t
-  :mode "\\.md\\'")
+  :custom
+  (markdown-hide-markup t))
 
 ;; Nix
 (use-package nix-mode

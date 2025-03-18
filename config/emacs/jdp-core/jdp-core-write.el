@@ -7,9 +7,20 @@
 
 ;;; Org mode
 (use-package org
-  :hook ((org-mode . org-indent-mode)
-         (org-mode . auto-fill-mode))
+  :hook ((org-mode . turn-on-auto-fill)
+         (org-mode . turn-on-org-cdlatex))
+  :bind (:map org-mode-map
+              ("$" . math-delimiters-insert)
+              ("M-g o" . consult-org-heading))
+  :custom
+  (org-startup-indented t)
+  (org-highlight-latex-and-related '(latex script entities))
+  (org-special-ctrl-a/e t)
+  (org-hide-emphasis-markers t)
+  (org-hide-leading-stars t)
+  (org-pretty-entities t)
   :config
+  (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
 ;;; Improved PDF viewing
@@ -70,6 +81,13 @@
   (cdlatex-math-symbol-prefix ?\;)
   (cdlatex-takeover-parenthesis nil)
   (cdlatex-sub-super-scripts-outside-math-mode nil)
+  (cdlatex-math-modify-alist '((?B "\\mathbb" nil t nil nil)
+                               (?k "\\mathfrak" nil t nil nil)))
+  (cdlatex-math-symbol-alist '((?+ "\\cup" "\\oplus" "\\bigoplus")
+                               (?& "\\cap" "\\wedge")
+                               (?* "\\times" "\\otimes" "\\bigotimes")
+                               (?o "\\omega" "\\circ")
+                               (?x "\\chi" "\\xrightarrow")))
   :config
   (defun jdp-cdlatex-in-yas-field ()
     ;; Check if we're at the end of the Yas field
