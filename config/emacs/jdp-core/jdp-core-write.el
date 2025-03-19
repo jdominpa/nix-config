@@ -5,75 +5,32 @@
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
 
-;;; Org mode
-(use-package org
-  :hook ((org-mode . turn-on-auto-fill)
-         (org-mode . turn-on-org-cdlatex))
-  :bind (:map org-mode-map
-              ("$" . math-delimiters-insert)
-              ("M-g o" . consult-org-heading))
-  :custom
-  (org-startup-indented t)
-  (org-highlight-latex-and-related '(latex script entities))
-  (org-special-ctrl-a/e t)
-  (org-hide-emphasis-markers t)
-  (org-hide-leading-stars t)
-  (org-pretty-entities t)
-  :config
-  (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+;;; Spellchecking
+(use-package jinx
+  :ensure t
+  :hook (text-mode . jinx-mode)
+  :bind (:map jinx-mode-map
+              ("M-$" . jinx-correct)
+              ("C-M-$" . jinx-languages)))
 
 ;;; Improved PDF viewing
 (use-package pdf-tools
   :ensure t
-  :defer 2
-  :bind (:map pdf-view-mode-map
-              ("d" . pdf-view-midnight-minor-mode))
+  :hook (pdf-view-mode . pdf-view-themed-minor-mode)
   :custom
   (pdf-view-display-size 'fit-page)
   (pdf-view-midnight-colors '("#ffffff" . "#000000"))
-  :config
+  :init
   (pdf-loader-install))
 
-;;; LaTeX tools
+;;; `LaTeX-mode'
 (use-package math-delimiters
   :commands (math-delimiters-no-dollars math-delimiters-insert))
 
-(use-package latex
-  :ensure auctex
-  :hook ((LaTeX-mode . turn-on-auto-fill)
-         (LaTeX-mode . prettify-symbols-mode))
-  :bind (:map LaTeX-mode-map
-              ("$" . math-delimiters-insert)
-              ("M-n" . TeX-next-error)
-              ("M-p" . TeX-previous-error))
-  :custom
-  (TeX-source-correlate-mode t)
-  (TeX-source-correlate-start-server t)
-  (TeX-newline-function 'reindent-then-newline-and-indent)
-  :config
-  (setcdr (assq 'output-pdf TeX-view-program-selection)
-          '("PDF Tools"))
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer))
-
-(use-package reftex
-  :hook (LaTeX-mode . turn-on-reftex)
-  :custom
-  (reftex-plug-into-AUCTeX t)
-  (reftex-label-alist
-   '(("theorem"     ?T "thm:"  "~\\ref{%s}" t ("theorem")     -3)
-     ("proposition" ?P "prop:" "~\\ref{%s}" t ("proposition") -3)
-     ("lemma"       ?L "lem:"  "~\\ref{%s}" t ("lemma")       -3)
-     ("corollary"   ?C "cor:"  "~\\ref{%s}" t ("corollary")   -3)
-     ("remark"      ?R "rem:"  "~\\ref{%s}" t ("remark")      -3)
-     ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
-     AMSTeX)))
-
 (use-package cdlatex
   :ensure t
-  :hook ((LaTeX-mode . turn-on-cdlatex)
-         (cdlatex-tab . yas-expand)
+  :after yasnippet
+  :hook ((cdlatex-tab . yas-expand)
          (cdlatex-tab . jdp-cdlatex-in-yas-field))
   :bind (:map cdlatex-mode-map
               ("$" . nil))
@@ -120,13 +77,63 @@
           (cdlatex-tab)
         (yas-next-field-or-maybe-expand)))))
 
-;;; Spellchecking
-(use-package jinx
-  :ensure t
-  :hook ((text-mode . jinx-mode)
-         (LaTeX-mode . jinx-mode))
-  :bind (:map jinx-mode-map
-              ("M-$" . jinx-correct)
-              ("C-M-$" . jinx-languages)))
+;; NOTE: This package declaration must be after the math-delimiters declaration.
+;;  Otherwise `math-delimiters-insert' won't be autoloaded properly and it won't
+;;  be available in `LaTeX-mode'.  The same can be said about the `org' package
+;;  further below.
+(use-package latex
+  :ensure auctex
+  :hook ((LaTeX-mode . turn-on-cdlatex)
+         (LaTeX-mode . turn-on-auto-fill)
+         (LaTeX-mode . prettify-symbols-mode))
+  :bind (:map LaTeX-mode-map
+              ("$" . math-delimiters-insert)
+              ("M-n" . TeX-next-error)
+              ("M-p" . TeX-previous-error))
+  :custom
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server t)
+  (TeX-newline-function 'reindent-then-newline-and-indent)
+  :config
+  (setcdr (assq 'output-pdf TeX-view-program-selection)
+          '("PDF Tools"))
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer))
+
+(use-package reftex
+  :after auctex
+  :hook (LaTeX-mode . turn-on-reftex)
+  :custom
+  (reftex-plug-into-AUCTeX t)
+  (reftex-label-alist
+   '(("theorem"     ?T "thm:"  "~\\ref{%s}" t ("theorem")     -3)
+     ("proposition" ?P "prop:" "~\\ref{%s}" t ("proposition") -3)
+     ("lemma"       ?L "lem:"  "~\\ref{%s}" t ("lemma")       -3)
+     ("corollary"   ?C "cor:"  "~\\ref{%s}" t ("corollary")   -3)
+     ("remark"      ?R "rem:"  "~\\ref{%s}" t ("remark")      -3)
+     ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
+     AMSTeX)))
+
+;;; `org-mode'
+(use-package org
+  :hook ((org-mode . turn-on-auto-fill)
+         (org-mode . turn-on-org-cdlatex))
+  :bind (:map org-mode-map
+              ("$" . math-delimiters-insert)
+              ("M-g o" . consult-org-heading)
+         :map org-cdlatex-mode-map
+              ("`" . nil)
+              (";" . cdlatex-math-symbol))
+  :custom
+  (org-startup-indented t)
+  (org-highlight-latex-and-related '(latex script entities))
+  (org-special-ctrl-a/e t)
+  (org-hide-emphasis-markers t)
+  (org-hide-leading-stars t)
+  (org-pretty-entities t)
+  (org-pretty-entities-include-sub-superscripts nil)
+  :config
+  (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
 (provide 'jdp-core-write)

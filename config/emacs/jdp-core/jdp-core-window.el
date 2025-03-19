@@ -1,14 +1,13 @@
 ;;; Unique buffer names
 (use-package emacs
+  :bind (;; Whitespace and line numbers modes
+         ([f6] . whitespace-mode)
+         ([f7] . display-line-numbers-mode)
+         ("C-c z" . delete-trailing-whitespace))
   :custom
   (uniquify-buffer-name-style 'forward)
   (uniquify-strip-common-suffix t)
   (uniquify-after-kill-buffer-p t))
-
-;;; Whitespace and line numbers modes
-(bind-keys ([f6] . whitespace-mode)
-           ([f7] . display-line-numbers-mode)
-           ("C-c z" . delete-trailing-whitespace))
 
 ;;; Window rules and other tweaks
 (use-package window
