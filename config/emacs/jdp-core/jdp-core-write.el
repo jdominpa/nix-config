@@ -38,8 +38,8 @@
   (cdlatex-math-symbol-prefix ?\;)
   (cdlatex-takeover-parenthesis nil)
   (cdlatex-sub-super-scripts-outside-math-mode nil)
-  (cdlatex-math-modify-alist '((?B "\\mathbb" nil t nil nil)
-                               (?k "\\mathfrak" nil t nil nil)))
+  (cdlatex-math-modify-alist '((?B "\\mathbb" "\\textbf" t nil nil)
+                               (?k "\\mathfrak" "\\textfrak" t nil nil)))
   (cdlatex-math-symbol-alist '((?+ "\\cup" "\\oplus" "\\bigoplus")
                                (?& "\\cap" "\\wedge")
                                (?* "\\times" "\\otimes" "\\bigotimes")
@@ -84,6 +84,7 @@
 (use-package latex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-cdlatex)
+         (LaTeX-mode . turn-on-cdlatex-electricindex)
          (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . prettify-symbols-mode))
   :bind (:map LaTeX-mode-map
