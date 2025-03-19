@@ -6,13 +6,13 @@
 with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
 in
 {
   options.jdp.home = {
     desktop.plasma-manager.input = {
       mice = mkOption {
-        type = types.listOf types.attrs; # TODO: improve the type of this option
+        type = types.listOf types.attrs;
         default = [ ];
         description = ''
           Mice configurations for plasma-manager. See the documentation of
@@ -41,7 +41,7 @@ in
               }
             ];
           };
-          mice = cfg.input.mice;
+          inherit (cfg.input) mice;
         };
       };
     };

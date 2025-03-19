@@ -6,7 +6,7 @@
 with lib;
 let
   cfg = config.jdp.home.cli.starship;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
 in
 {
   options.jdp.home = {

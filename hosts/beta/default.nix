@@ -7,7 +7,7 @@
 with lib;
 let
   hostName = "beta";
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
 in
 {
   imports = [

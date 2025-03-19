@@ -6,7 +6,7 @@
 with lib;
 let
   cfg = config.jdp.darwin.system.shell.zsh;
-  homebrew = config.jdp.darwin.system.homebrew;
+  inherit (config.jdp.darwin.system) homebrew;
 in
 {
   options.jdp.darwin = {

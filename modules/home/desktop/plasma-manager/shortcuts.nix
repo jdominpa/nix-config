@@ -6,7 +6,7 @@
 with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
   home-manager = config.home-manager.users.${user.name};
   virtualDesktopMax = builtins.length home-manager.programs.plasma.kwin.virtualDesktops.names;
   shiftedNumbersMap = {

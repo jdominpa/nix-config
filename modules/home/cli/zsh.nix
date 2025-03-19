@@ -6,8 +6,8 @@
 with lib;
 let
   cfg = config.jdp.home.cli.zsh;
-  user = config.jdp.base.user;
-  dataHome = config.home-manager.users.${user.name}.xdg.dataHome;
+  inherit (config.jdp.base) user;
+  inherit (config.home-manager.users.${user.name}.xdg) dataHome;
 in
 {
   options.jdp.home = {

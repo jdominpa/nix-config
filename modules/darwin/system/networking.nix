@@ -22,7 +22,7 @@ in
 
   config = mkIf cfg.enable {
     networking = {
-      hostName = cfg.hostName;
+      inherit (cfg) hostName;
       computerName = cfg.hostName;
     };
     system.defaults.smb.NetBIOSName = cfg.hostName;

@@ -49,7 +49,7 @@ in
   config = mkIf cfg.enable {
     users.users.${cfg.name} = {
       home = cfg.homeDirectory;
-      shell = cfg.shell;
+      inherit (cfg) shell;
     };
   };
 }

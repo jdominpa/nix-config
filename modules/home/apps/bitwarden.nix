@@ -8,7 +8,7 @@ with lib;
 let
   inherit (pkgs) stdenv;
   cfg = config.jdp.home.apps.bitwarden;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
 in
 {
   options.jdp.home = {

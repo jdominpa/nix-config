@@ -5,9 +5,9 @@
 }:
 with lib;
 let
-  networking = config.jdp.nixos.system.networking;
   cfg = networking.networkmanager;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
+  inherit (config.jdp.nixos.system) networking;
 in
 {
   options.jdp.nixos = {
@@ -24,7 +24,7 @@ in
 
   config = mkIf cfg.enable {
     networking = {
-      hostName = networking.hostName;
+      inherit (networking) hostName;
       networkmanager.enable = true;
     };
     users.users.${user.name}.extraGroups = [ "networkmanager" ];

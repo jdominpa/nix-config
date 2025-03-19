@@ -6,7 +6,7 @@
 with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
-  user = config.jdp.base.user;
+  inherit (config.jdp.base) user;
 in
 {
   config = mkIf cfg.enable {
