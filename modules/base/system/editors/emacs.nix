@@ -6,13 +6,7 @@
 }:
 let
   cfg = config.jdp.base.system.editors.emacs;
-  emacsPkg = pkgs.emacs;
 in
-# TODO: update this when emacs-macport is in version 30.1
-# if pkgs.stdenv.isDarwin then
-#   pkgs.emacs-macport
-# else
-#   pkgs.emacs;
 {
   options.jdp.base = {
     system.editors.emacs.enable = lib.mkEnableOption "Whether to install emacs in this system.";
@@ -20,7 +14,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      (emacsPkg.pkgs.withPackages (
+      (emacs.pkgs.withPackages (
         epkgs: with epkgs; [
           ace-window
           auctex
@@ -57,6 +51,10 @@ in
           yasnippet
         ]
       ))
+      # Spellchecking backend for jinx
+      hunspell
+      hunspellDicts.en-us-large
+      hunspellDicts.es-es
     ];
   };
 }
