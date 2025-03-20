@@ -72,6 +72,7 @@ in
           };
           "com.apple.finder" = {
             ShowRecentTags = false; # don't show recent tags
+            WarnOnEmptyTrash = false; # disable the warning before emptying the trash
           };
           "com.apple.ImageCapture" = {
             # Prevent Photos from opening automatically when devices are plugged in

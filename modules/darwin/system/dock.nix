@@ -26,6 +26,9 @@ in
       mru-spaces = false;
       persistent-apps = [
         {
+          app = "/System/Applications/Launchpad.app";
+        }
+        {
           app = "/System/Cryptexes/App/System/Applications/Safari.app";
         }
         {
