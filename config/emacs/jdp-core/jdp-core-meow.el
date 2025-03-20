@@ -7,6 +7,7 @@
     (meow-motion-define-key
      '("k" . meow-next)
      '("l" . meow-prev)
+     '("{" . meow-pop-to-global-mark)
      '("<escape>" . ignore))
     (meow-leader-define-key
      ;; Use SPC (0-9) for digit arguments.
@@ -74,7 +75,8 @@
      '("V" . meow-yank-pop)
      ;; Replace
      '("b" . meow-replace)
-     '("B" . meow-query-replace-regexp)
+     '("%" . meow-query-replace)
+     '("&" . meow-query-replace-regexp)
      ;; Selection
      '("h" . meow-reverse)
      '("J" . meow-left-expand)
@@ -97,12 +99,17 @@
      '("/" . meow-visit)
      '("a" . meow-mark-word)
      '("A" . meow-mark-symbol)
+     '("[" . meow-pop-to-mark)
+     '("]" . meow-unpop-to-mark)
+     '("{" . meow-pop-to-global-mark)
      ;; Thing
      '("," . meow-beginning-of-thing)
      '("." . meow-end-of-thing)
      '("<" . meow-inner-of-thing)
      '(">" . meow-bounds-of-thing)
      ;; Actions
+     '("=" . meow-universal-argument)
+     '("\\" . meow-indent)
      '("q" . meow-quit)
      '("Q" . kill-current-buffer)
      '("'" . repeat)

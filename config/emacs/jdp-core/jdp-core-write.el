@@ -16,7 +16,8 @@
 ;;; Improved PDF viewing
 (use-package pdf-tools
   :ensure t
-  :hook (pdf-view-mode . pdf-view-themed-minor-mode)
+  :bind (:map pdf-view-mode-map
+              ("d" . pdf-view-midnight-minor-mode))
   :custom
   (pdf-view-display-size 'fit-page)
   (pdf-view-midnight-colors '("#ffffff" . "#000000"))
