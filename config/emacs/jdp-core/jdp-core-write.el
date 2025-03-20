@@ -132,9 +132,36 @@
   (org-hide-emphasis-markers t)
   (org-hide-leading-stars t)
   (org-pretty-entities t)
-  (org-pretty-entities-include-sub-superscripts nil)
   :config
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+
+(use-package org-appear
+  :ensure t
+  :after org
+  :hook ((org-mode . org-appear-mode)
+         (org-mode . (lambda ()
+                      (add-hook 'meow-insert-enter-hook
+                                #'org-appear-manual-start
+                                nil
+                                t)
+                      (add-hook 'meow-insert-exit-hook
+                                #'org-appear-manual-stop
+                                nil
+                                t))))
+  :custom
+  (org-appear-trigger 'manual)
+  (org-appear-autoemphasis t)
+  (org-appear-autolinks t)
+  (org-appear-autosubmarkers t)
+  (org-appear-autoentities t)
+  (org-appear-autokeywords nil)
+  (org-appear-inside-latex t))
+
+(use-package org-modern
+  :ensure t
+  :after org
+  :custom
+  (global-org-modern-mode t))
 
 (provide 'jdp-core-write)

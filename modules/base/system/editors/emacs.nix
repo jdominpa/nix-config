@@ -42,6 +42,8 @@ in
           modus-themes
           nix-mode
           orderless
+          org-appear
+          org-modern
           pdf-tools
           rainbow-delimiters
           spacious-padding

@@ -64,6 +64,7 @@
          ;; C-c bindings in `mode-specific-map'
          ("C-c b" . consult-buffer)
          ;; M-g bindings in `goto-map'
+         ("M-g a" . consult-org-agenda)
          ("M-g e" . consult-compile-error)
          ("M-g f" . consult-flymake)
          ("M-g g" . consult-goto-line)   ; orig. `goto-line'
