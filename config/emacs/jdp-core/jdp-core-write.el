@@ -33,14 +33,14 @@
   :after yasnippet
   :hook ((cdlatex-tab . yas-expand)
          (cdlatex-tab . jdp-cdlatex-in-yas-field))
-  :bind (:map cdlatex-mode-map
-              ("$" . nil))
   :custom
   (cdlatex-math-symbol-prefix ?\;)
+  (cdlatex-takeover-dollar nil)
   (cdlatex-takeover-parenthesis nil)
+  (cdlatex-use-dollar-to-ensure-math nil)
   (cdlatex-sub-super-scripts-outside-math-mode nil)
   (cdlatex-math-modify-alist '((?B "\\mathbb" "\\textbf" t nil nil)
-                               (?k "\\mathfrak" "\\textfrak" t nil nil)))
+                               (?F "\\mathfrak" "\\textfrak" t nil nil)))
   (cdlatex-math-symbol-alist '((?+ "\\cup" "\\oplus" "\\bigoplus")
                                (?& "\\cap" "\\wedge")
                                (?* "\\times" "\\otimes" "\\bigotimes")
