@@ -8,6 +8,7 @@
   (frame-title-format '("%b"))     ; Frame title
   ;; GUI elements
   (tool-bar-mode nil)
+  (menu-bar-mode nil)
   (scroll-bar-mode nil)
   (use-dialog-box t)
   (use-file-dialog nil)
