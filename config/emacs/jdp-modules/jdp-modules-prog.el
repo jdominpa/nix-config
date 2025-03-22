@@ -145,4 +145,4 @@
   :custom
   (nix-prettify-global-mode t))
 
-(provide 'jdp-core-prog)
+(provide 'jdp-modules-prog)

@@ -165,4 +165,4 @@
   :custom
   (global-org-modern-mode t))
 
-(provide 'jdp-core-write)
+(provide 'jdp-modules-write)

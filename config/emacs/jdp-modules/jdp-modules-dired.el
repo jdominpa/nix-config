@@ -41,4 +41,4 @@
   (ibuffer-default-sorting-mode 'filename/process)
   (ibuffer-old-time 48))
 
-(provide 'jdp-core-dired)
+(provide 'jdp-modules-dired)

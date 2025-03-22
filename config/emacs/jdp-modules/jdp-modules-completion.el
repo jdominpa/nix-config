@@ -154,4 +154,4 @@
   :custom
   (yas-global-mode t))
 
-(provide 'jdp-core-completion)
+(provide 'jdp-modules-completion)

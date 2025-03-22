@@ -149,4 +149,4 @@
   (meow-setup)
   (meow-global-mode t))
 
-(provide 'jdp-core-meow)
+(provide 'jdp-modules-meow)

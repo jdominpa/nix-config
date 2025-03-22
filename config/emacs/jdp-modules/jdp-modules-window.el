@@ -28,4 +28,4 @@
   :ensure t
   :bind ([remap other-window] . ace-window))
 
-(provide 'jdp-core-window)
+(provide 'jdp-modules-window)

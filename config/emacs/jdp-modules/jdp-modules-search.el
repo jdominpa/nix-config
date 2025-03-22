@@ -28,4 +28,4 @@
          :map isearch-mode-map
          ("M-j" . avy-isearch)))
 
-(provide 'jdp-core-search)
+(provide 'jdp-modules-search)

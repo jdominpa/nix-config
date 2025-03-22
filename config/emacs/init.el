@@ -12,12 +12,12 @@
   :config
   (setq disabled-command-function nil))
 
-;; "jdp-core" is for emacs configuration modules
+;; "jdp-modules" is for emacs configuration modules
 ;; "jdp-lisp" is used for custom elisp files
 (mapc
  (lambda (string)
    (add-to-list 'load-path (locate-user-emacs-file string)))
- '("jdp-core" "jdp-lisp"))
+ '("jdp-modules" "jdp-lisp"))
 
 ;; Don't automatically show native compilation warning messages
 (when (native-comp-available-p)
@@ -44,17 +44,17 @@
               (daemonp)))
     (exec-path-from-shell-initialize)))
 
-(require 'jdp-core-meow)
-(require 'jdp-core-emacs)
-(require 'jdp-core-ui)
-(require 'jdp-core-completion)
-(require 'jdp-core-search)
-(require 'jdp-core-dired)
-(require 'jdp-core-window)
-(require 'jdp-core-git)
-(require 'jdp-core-shell)
-(require 'jdp-core-write)
-(require 'jdp-core-prog)
+(require 'jdp-modules-meow)
+(require 'jdp-modules-emacs)
+(require 'jdp-modules-ui)
+(require 'jdp-modules-completion)
+(require 'jdp-modules-search)
+(require 'jdp-modules-dired)
+(require 'jdp-modules-window)
+(require 'jdp-modules-git)
+(require 'jdp-modules-shell)
+(require 'jdp-modules-write)
+(require 'jdp-modules-prog)
 
 
 ;;; System specific settings

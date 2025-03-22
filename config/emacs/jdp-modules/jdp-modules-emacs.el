@@ -72,4 +72,4 @@
   (save-place-forget-unreadable-files t)
   (save-place-mode t))
 
-(provide 'jdp-core-emacs)
+(provide 'jdp-modules-emacs)

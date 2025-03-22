@@ -24,7 +24,7 @@ in
 
     home-manager.users.${user.name} = {
       home.file = {
-        ".emacs.d/jdp-core".source = jdp.relativeToRoot "config/emacs/jdp-core";
+        ".emacs.d/jdp-modules".source = jdp.relativeToRoot "config/emacs/jdp-modules";
         ".emacs.d/jdp-lisp".source = jdp.relativeToRoot "config/emacs/jdp-lisp";
         ".emacs.d/snippets".source = jdp.relativeToRoot "config/emacs/snippets";
         ".emacs.d/early-init.el".source = jdp.relativeToRoot "config/emacs/early-init.el";

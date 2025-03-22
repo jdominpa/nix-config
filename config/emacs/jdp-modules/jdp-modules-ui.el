@@ -89,4 +89,4 @@
                                       :short ("meow" "buffer-name")))
         (_ nil)))))
 
-(provide 'jdp-core-ui)
+(provide 'jdp-modules-ui)

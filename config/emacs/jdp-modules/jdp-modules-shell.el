@@ -21,4 +21,4 @@
   (password-cache t)
   (password-cache-expiry 300))
 
-(provide 'jdp-core-shell)
+(provide 'jdp-modules-shell)
