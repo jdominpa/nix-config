@@ -9,6 +9,8 @@
   ;; Backups
   (make-backup-files nil)
   (create-lockfiles nil)
+  ;; Silence native compilation warning messages
+  (native-comp-async-report-warnings-errors 'silent)
   :config
   (setq disabled-command-function nil))
 
@@ -18,10 +20,6 @@
  (lambda (string)
    (add-to-list 'load-path (locate-user-emacs-file string)))
  '("jdp-modules" "jdp-lisp"))
-
-;; Don't automatically show native compilation warning messages
-(when (native-comp-available-p)
-  (customize-set-variable 'native-comp-async-report-warnings-errors 'silent))
 
 (use-package package
   :custom
