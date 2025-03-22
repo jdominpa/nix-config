@@ -44,6 +44,7 @@ in
           orderless
           org-appear
           org-modern
+          org-pdftools
           pdf-tools
           rainbow-delimiters
           spacious-padding
