@@ -1,3 +1,5 @@
+;;; jdp-modules-search.el --- Configurations for searching buffer/file contents -*- lexical-binding: t -*-
+
 ;;; Isearch and occur
 (use-package isearch
   :bind (:map minibuffer-local-isearch-map
@@ -29,3 +31,4 @@
          ("M-j" . avy-isearch)))
 
 (provide 'jdp-modules-search)
+;;; jdp-modules-search.el ends here

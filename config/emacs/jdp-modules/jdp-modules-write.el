@@ -1,3 +1,5 @@
+;;; jdp-modules-write.el --- Configurations for writing prose, `LaTeX-mode' and `org-mode' -*- lexical-binding: t -*-
+
 ;;; General settings for writing prose
 (use-package emacs
   :custom
@@ -174,3 +176,4 @@
   (global-org-modern-mode t))
 
 (provide 'jdp-modules-write)
+;;; jdp-modules-write.el ends here

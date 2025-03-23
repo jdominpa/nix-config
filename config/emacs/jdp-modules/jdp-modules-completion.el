@@ -1,3 +1,5 @@
+;;; jdp-modules-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
+
 ;;; Minibuffer configurations and Vertico
 (use-package minibuffer
   :custom
@@ -155,3 +157,4 @@
   (yas-global-mode t))
 
 (provide 'jdp-modules-completion)
+;;; jdp-modules-completion.el ends here

@@ -1,18 +1,23 @@
+;;; jdp-modules-emacs.el --- General configurations for Emacs -*- lexical-binding: t -*-
+
 ;;; General settings
 (use-package emacs
-  :bind (("C-x C-z" . nil)
-         ("C-z" . nil)
+  :bind (("C-z" . nil)
+         ("C-x C-z" . nil)
          ("M-o" . other-window)
          ;; Help commands
+         ("C-h K" . describe-keymap)    ; orig. `Info-goto-emacs-key-command-node'
+         ("C-h c" . describe-char)      ; orig. `describe-key-briefly'
          ("C-h y" . describe-personal-keybindings)
-         ("C-h K" . describe-keymap)
-         ("C-h c" . describe-char)
          ;; Commands for lines
          ("M-\\" . cycle-spacing)
          ;; Commands for text manipulation
          ("M-c" . capitalize-dwim)
          ("M-l" . downcase-dwim)
-         ("M-u" . upcase-dwim))
+         ("M-u" . upcase-dwim)
+         ;; Keymap for buffers
+         :map ctl-x-x-map
+         ("l" . visual-line-mode))
   :custom
   (help-window-select t)
   (next-error-recenter '(nil)))
@@ -69,3 +74,4 @@
   (save-place-mode t))
 
 (provide 'jdp-modules-emacs)
+;;; jdp-modules-emacs.el ends here

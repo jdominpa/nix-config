@@ -1,4 +1,4 @@
-;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
+;;; early-init.el --- Early init file -*- lexical-binding: t -*-
 
 (use-package emacs
   :custom

@@ -1,3 +1,5 @@
+;;; jdp-modules-vc.el --- Configurations for version control frameworks -*- lexical-binding: t -*-
+
 ;;; Version control framework
 (use-package vc
   :defer t
@@ -19,4 +21,5 @@
   :custom
   (magit-diff-refine-hunk t))
 
-(provide 'jdp-modules-git)
+(provide 'jdp-modules-vc)
+;;; jdp-modules-vc.el ends here

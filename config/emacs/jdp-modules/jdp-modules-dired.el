@@ -1,3 +1,5 @@
+;;; jdp-modules-dired.el --- Configurations for `dired' and `ibuffer' -*- lexical-binding: t -*-
+
 ;;; Dired file manager
 (use-package dired
   :hook (dired-mode . hl-line-mode)
@@ -44,3 +46,4 @@
   (ibuffer-old-time 48))
 
 (provide 'jdp-modules-dired)
+;;; jdp-modules-dired.el ends here

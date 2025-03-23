@@ -1,3 +1,5 @@
+;;; jdp-modules-window.el --- Configurations for managing windows -*- lexical-binding: t -*-
+
 ;;; Unique buffer names
 (use-package emacs
   :bind (;; Whitespace and line numbers modes
@@ -31,3 +33,4 @@
   (aw-keys '(?a ?s ?d ?f ?g ?h ?k ?l ?\;)))
 
 (provide 'jdp-modules-window)
+;;; jdp-modules-window.el ends here

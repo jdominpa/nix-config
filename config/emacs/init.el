@@ -1,4 +1,4 @@
-;;; init.el --- Personal init file -*- lexical-binding: t -*-
+;;; init.el --- Init file -*- lexical-binding: t -*-
 
 (use-package emacs
   :custom
@@ -49,7 +49,7 @@
 (require 'jdp-modules-search)
 (require 'jdp-modules-dired)
 (require 'jdp-modules-window)
-(require 'jdp-modules-git)
+(require 'jdp-modules-vc)
 (require 'jdp-modules-shell)
 (require 'jdp-modules-write)
 (require 'jdp-modules-prog)

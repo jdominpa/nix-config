@@ -1,3 +1,5 @@
+;;; jdp-modules-ui.el --- Configurations for Emacs' UI (theme, font, ...) -*- lexical-binding: t -*-
+
 ;;; Modus theme
 (use-package modus-themes
   :ensure t
@@ -89,3 +91,4 @@
         (_ nil)))))
 
 (provide 'jdp-modules-ui)
+;;; jdp-modules-ui.el ends here

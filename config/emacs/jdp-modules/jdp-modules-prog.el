@@ -1,3 +1,5 @@
+;;; jdp-modules-prog.el --- Configurations for `prog-mode' and programming languages -*- lexical-binding: t -*-
+
 ;;; General programming settings
 
 ;; Tabs and indentation
@@ -7,7 +9,7 @@
   (tab-width 4)
   (indent-tabs-mode nil))
 
-;; Configure 'electric' behaviour
+;; Configure `electric' behaviour
 (use-package electric
   :custom
   (electric-quote-context-sensitive t)
@@ -40,7 +42,7 @@
   :custom
   (global-so-long-mode t))
 
-;; Treesitter
+;; Tree-sitter
 (use-package treesit
   :config
   (dolist (mapping '((c-mode . c-ts-mode)
@@ -148,3 +150,4 @@
   (nix-prettify-global-mode t))
 
 (provide 'jdp-modules-prog)
+;;; jdp-modules-prog.el ends here

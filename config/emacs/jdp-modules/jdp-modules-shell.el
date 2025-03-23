@@ -1,3 +1,5 @@
+;;; jdp-modules-shell.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
+
 ;;; Shell
 (use-package shell
   :defer t
@@ -24,3 +26,4 @@
   (password-cache-expiry 300))
 
 (provide 'jdp-modules-shell)
+;;; jdp-modules-shell.el ends here
