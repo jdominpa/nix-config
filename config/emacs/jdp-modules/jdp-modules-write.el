@@ -1,9 +1,13 @@
 ;;; General settings for writing prose
 (use-package emacs
   :custom
-  (fill-column 80)
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
+
+(use-package text-mode
+  :hook (text-mode . turn-on-auto-fill)
+  :custom
+  (fill-column 80))
 
 ;;; Spellchecking
 (use-package jinx
@@ -87,7 +91,6 @@
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-cdlatex)
          (LaTeX-mode . turn-on-cdlatex-electricindex)
-         (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . prettify-symbols-mode))
   :bind (:map LaTeX-mode-map
               ("$" . math-delimiters-insert)
@@ -119,8 +122,7 @@
 
 ;;; `org-mode'
 (use-package org
-  :hook ((org-mode . turn-on-auto-fill)
-         (org-mode . turn-on-org-cdlatex))
+  :hook (org-mode . turn-on-org-cdlatex)
   :bind (:map org-mode-map
               ("$" . math-delimiters-insert)
               ("M-g o" . consult-org-heading)
@@ -140,6 +142,7 @@
 
 (use-package org-pdftools
   :ensure t
+  :after (org pdf-tools)
   :hook (org-mode . org-pdftools-setup-link))
 
 (use-package org-appear
