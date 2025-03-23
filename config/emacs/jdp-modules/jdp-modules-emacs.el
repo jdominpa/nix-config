@@ -1,6 +1,5 @@
 ;;; General settings
 (use-package emacs
-  :demand t
   :bind (("C-x C-z" . nil)
          ("C-z" . nil)
          ("M-o" . other-window)
@@ -58,12 +57,9 @@
 
 ;;; Emacs server
 (use-package server
-  :config
-  (add-hook 'emacs-startup-hook
-            (lambda ()
-              (require 'server)
-              (unless (server-running-p)
-                (server-start)))))
+  :hook (emacs-startup . (lambda ()
+                           (unless (server-running-p)
+                             (server-start)))))
 
 ;;; Save cursor position
 (use-package saveplace

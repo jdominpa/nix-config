@@ -1,5 +1,6 @@
 ;;; Shell
 (use-package shell
+  :defer t
   :custom
   (shell-command-prompt-show-cwd t)
   (shell-input-autoexpand 'input)
@@ -13,6 +14,7 @@
 
 ;;; Eshell
 (use-package eshell
+  :defer t
   :custom
   (eshell-cd-on-directory t)
   (eshell-hist-ignoredups t)

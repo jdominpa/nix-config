@@ -118,6 +118,7 @@
 
 ;; C/C++
 (use-package cc-mode
+  :defer t
   :bind (:map c-mode-base-map
               ("TAB" . nil))
   :custom
@@ -125,23 +126,26 @@
   (c-basic-offset 4))
 
 (use-package c-ts-mode
+  :defer t
   :custom
   (c-ts-mode-indent-offset 4))
 
 ;; Justfile
 (use-package just-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; Markdown
 (use-package markdown-mode
   :ensure t
+  :defer t
   :custom
   (markdown-hide-markup t))
 
 ;; Nix
 (use-package nix-mode
   :ensure t
-  :mode "\\.nix\\'"
+  :defer t
   :custom
   (nix-prettify-global-mode t))
 

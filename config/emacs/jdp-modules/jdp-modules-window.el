@@ -26,6 +26,8 @@
 
 (use-package ace-window
   :ensure t
-  :bind ([remap other-window] . ace-window))
+  :bind ([remap other-window] . ace-window)
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?k ?l ?\;)))
 
 (provide 'jdp-modules-window)

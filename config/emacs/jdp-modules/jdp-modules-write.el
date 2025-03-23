@@ -30,9 +30,7 @@
 
 (use-package cdlatex
   :ensure t
-  :after yasnippet
-  :hook ((cdlatex-tab . yas-expand)
-         (cdlatex-tab . jdp-cdlatex-in-yas-field))
+  :defer t
   :custom
   (cdlatex-math-symbol-prefix ?\;)
   (cdlatex-takeover-dollar nil)
@@ -47,36 +45,39 @@
                                (?o "\\omega" "\\circ")
                                (?x "\\chi" "\\xrightarrow")))
   :config
-  (defun jdp-cdlatex-in-yas-field ()
-    ;; Check if we're at the end of the Yas field
-    (when-let* ((_ (overlayp yas--active-field-overlay))
-                (end (overlay-end yas--active-field-overlay)))
-      (if (>= (point) end)
-          ;; Call yas-next-field if cdlatex can't expand here
-          (let ((s (thing-at-point 'sexp)))
-            (unless (and s (assoc (substring-no-properties s)
-                                  cdlatex-command-alist-comb))
-              (yas-next-field-or-maybe-expand)
-              t))
-        ;; otherwise expand and jump to the correct location
-        (let (cdlatex-tab-hook minp)
-          (setq minp
-                (min (save-excursion (cdlatex-tab)
-                                     (point))
-                     (overlay-end yas--active-field-overlay)))
-          (goto-char minp) t))))
-  (use-package yasnippet
-    :ensure t
-    :bind (:map yas-keymap
-                ("TAB" . jdp-yas-next-field-or-cdlatex))
-    :config
-    (defun jdp-yas-next-field-or-cdlatex nil
-      "Jump to the next Yas field correctly with cdlatex active."
-      (interactive)
-      (if (or (bound-and-true-p cdlatex-mode)
-              (bound-and-true-p org-cdlatex-mode))
-          (cdlatex-tab)
-        (yas-next-field-or-maybe-expand)))))
+  ;; Integrate yasnippet with cdlatex if it is installed
+  (with-eval-after-load 'yasnippet
+    (use-package yasnippet
+      :hook ((cdlatex-tab . yas-expand)
+             (cdlatex-tab . jdp-cdlatex-in-yas-field))
+      :bind (:map yas-keymap
+                  ("TAB" . jdp-yas-next-field-or-cdlatex))
+      :config
+      (defun jdp-cdlatex-in-yas-field ()
+        ;; Check if we're at the end of the Yas field
+        (when-let* ((_ (overlayp yas--active-field-overlay))
+                    (end (overlay-end yas--active-field-overlay)))
+          (if (>= (point) end)
+              ;; Call yas-next-field if cdlatex can't expand here
+              (let ((s (thing-at-point 'sexp)))
+                (unless (and s (assoc (substring-no-properties s)
+                                      cdlatex-command-alist-comb))
+                  (yas-next-field-or-maybe-expand)
+                  t))
+            ;; otherwise expand and jump to the correct location
+            (let (cdlatex-tab-hook minp)
+              (setq minp
+                    (min (save-excursion (cdlatex-tab)
+                                         (point))
+                         (overlay-end yas--active-field-overlay)))
+              (goto-char minp) t))))
+      (defun jdp-yas-next-field-or-cdlatex nil
+        "Jump to the next Yas field correctly with cdlatex active."
+        (interactive)
+        (if (or (bound-and-true-p cdlatex-mode)
+                (bound-and-true-p org-cdlatex-mode))
+            (cdlatex-tab)
+          (yas-next-field-or-maybe-expand))))))
 
 ;; NOTE: This package declaration must be after the math-delimiters declaration.
 ;;  Otherwise `math-delimiters-insert' won't be autoloaded properly and it won't

@@ -1,5 +1,6 @@
 ;;; Version control framework
 (use-package vc
+  :defer t
   :custom
   (vc-follow-symlinks t))
 

@@ -11,6 +11,7 @@
   (dired-mouse-drag-files t))
 
 (use-package dired-aux
+  :after dired
   :custom
   (dired-isearch-filenames 'dwim)
   (dired-create-destination-dirs 'ask)
@@ -26,6 +27,7 @@
   (dired-clean-confirm-killing-deleted-buffers t))
 
 (use-package wdired
+  :after dired
   :custom
   (wdired-allow-to-change-permissions t))
 
