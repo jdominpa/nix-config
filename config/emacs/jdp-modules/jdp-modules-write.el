@@ -132,12 +132,22 @@
               ("`" . nil)
               (";" . cdlatex-math-symbol))
   :custom
+  ;; Appearance
   (org-startup-indented t)
   (org-highlight-latex-and-related '(latex script entities))
-  (org-special-ctrl-a/e t)
   (org-hide-emphasis-markers t)
   (org-hide-leading-stars t)
   (org-pretty-entities t)
+  ;; Keybinding behavior
+  (org-special-ctrl-a/e t)
+  (org-M-RET-may-split-line '((default . nil)))
+  (org-insert-heading-respect-content t)
+  ;; Agenda
+  (org-directory "~/Documents/org")
+  (org-agenda-files (list (file-name-concat org-directory "agenda.org")))
+  (org-log-done 'time)
+  (org-log-into-drawer t)
+  (org-todo-keywords '((sequence "TODO(t)" "HOLD(h!)" "|" "CANCEL(c!)" "DONE(d!)")))
   :config
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
