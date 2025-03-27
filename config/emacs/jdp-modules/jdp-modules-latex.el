@@ -1,23 +1,11 @@
-;;; jdp-modules-write.el --- Configurations for writing prose, `LaTeX-mode' and `org-mode' -*- lexical-binding: t -*-
+;;; jdp-modules-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
 
-;;; General settings for writing prose
+;;; Input method settings
 (use-package emacs
   :custom
+  (fill-column 80)
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
-
-(use-package text-mode
-  :hook (text-mode . turn-on-auto-fill)
-  :custom
-  (fill-column 80))
-
-;;; Spellchecking
-(use-package jinx
-  :ensure t
-  :hook (text-mode . jinx-mode)
-  :bind (:map jinx-mode-map
-              ("M-$" . jinx-correct)
-              ("C-M-$" . jinx-languages)))
 
 ;;; Improved PDF viewing
 (use-package pdf-tools
@@ -87,12 +75,12 @@
 
 ;; NOTE: This package declaration must be after the math-delimiters declaration.
 ;;  Otherwise `math-delimiters-insert' won't be autoloaded properly and it won't
-;;  be available in `LaTeX-mode'.  The same can be said about the `org' package
-;;  further below.
+;;  be available in `LaTeX-mode'.  The same can be said for the `org' package.
 (use-package latex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-cdlatex)
          (LaTeX-mode . turn-on-cdlatex-electricindex)
+         (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . prettify-symbols-mode))
   :bind (:map LaTeX-mode-map
               ("$" . math-delimiters-insert)
@@ -122,68 +110,14 @@
      ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
      AMSTeX)))
 
-;;; `org-mode'
-(use-package org
-  :hook (org-mode . turn-on-org-cdlatex)
-  :bind (:map org-mode-map
-              ("$" . math-delimiters-insert)
-              ("M-g o" . consult-org-heading)
-         :map org-cdlatex-mode-map
-              ("`" . nil)
-              (";" . cdlatex-math-symbol))
-  :custom
-  ;; Appearance
-  (org-startup-indented t)
-  (org-highlight-latex-and-related '(latex script entities))
-  (org-hide-emphasis-markers t)
-  (org-hide-leading-stars t)
-  (org-pretty-entities t)
-  ;; Keybinding behavior
-  (org-special-ctrl-a/e t)
-  (org-M-RET-may-split-line '((default . nil)))
-  (org-insert-heading-respect-content t)
-  ;; Agenda
-  (org-directory "~/Documents/org")
-  (org-agenda-files (list (file-name-concat org-directory "agenda.org")))
-  (org-log-done 'time)
-  (org-log-into-drawer t)
-  (org-todo-keywords '((sequence "TODO(t)" "HOLD(h!)" "|" "CANCEL(c!)" "DONE(d!)")))
-  :config
-  (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
-
-(use-package org-pdftools
+;;; Spellchecking
+(use-package jinx
   :ensure t
-  :after (org pdf-tools)
-  :hook (org-mode . org-pdftools-setup-link))
+  :after auctex
+  :hook (LaTeX-mode . jinx-mode)
+  :bind (:map jinx-mode-map
+              ("M-$" . jinx-correct)
+              ("C-M-$" . jinx-languages)))
 
-(use-package org-appear
-  :ensure t
-  :after org
-  :hook ((org-mode . org-appear-mode)
-         (org-mode . (lambda ()
-                      (add-hook 'meow-insert-enter-hook
-                                #'org-appear-manual-start
-                                nil
-                                t)
-                      (add-hook 'meow-insert-exit-hook
-                                #'org-appear-manual-stop
-                                nil
-                                t))))
-  :custom
-  (org-appear-trigger 'manual)
-  (org-appear-autoemphasis t)
-  (org-appear-autolinks t)
-  (org-appear-autosubmarkers t)
-  (org-appear-autoentities t)
-  (org-appear-autokeywords nil)
-  (org-appear-inside-latex t))
-
-(use-package org-modern
-  :ensure t
-  :after org
-  :custom
-  (global-org-modern-mode t))
-
-(provide 'jdp-modules-write)
-;;; jdp-modules-write.el ends here
+(provide 'jdp-modules-latex)
+;;; jdp-modules-latex.el ends here

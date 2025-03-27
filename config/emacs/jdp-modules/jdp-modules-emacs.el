@@ -48,14 +48,14 @@
   (scroll-conservatively 1)
   (scroll-preserve-screen-position 'always))
 
-;;; Repeat mode
+;;; `repeat-mode'
 (use-package repeat
   :custom
   (repeat-exit-timeout 5)
   (set-mark-command-repeat-pop t)
   (repeat-mode t))
 
-;;; Auto revert mode
+;;; `auto-revert-mode'
 (use-package autorevert
   :custom
   (auto-revert-mode t))

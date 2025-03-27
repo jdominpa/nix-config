@@ -51,7 +51,8 @@
 (require 'jdp-modules-window)
 (require 'jdp-modules-vc)
 (require 'jdp-modules-shell)
-(require 'jdp-modules-write)
+(require 'jdp-modules-latex)
+(require 'jdp-modules-org)
 (require 'jdp-modules-prog)
 
 
