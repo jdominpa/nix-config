@@ -9,6 +9,7 @@
     (meow-motion-define-key
      '("k" . meow-next)
      '("l" . meow-prev)
+     '("Q" . kill-current-buffer)
      '("{" . meow-pop-to-global-mark)
      '("<escape>" . ignore))
     (meow-leader-define-key
