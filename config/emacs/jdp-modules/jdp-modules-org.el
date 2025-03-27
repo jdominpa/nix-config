@@ -5,6 +5,7 @@
          (org-mode . turn-on-org-cdlatex))
   :bind (("C-c o a" . org-agenda)
          ("C-c o c" . org-capture)
+         ("C-c o l" . org-store-link)
          ("C-c i" . jdp-org-capture-inbox)
          :map org-mode-map
          ("$" . math-delimiters-insert)
