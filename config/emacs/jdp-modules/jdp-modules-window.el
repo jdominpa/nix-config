@@ -1,15 +1,20 @@
 ;;; jdp-modules-window.el --- Configurations for managing windows -*- lexical-binding: t -*-
 
 ;;; Unique buffer names
-(use-package emacs
-  :bind (;; Whitespace and line numbers modes
-         ([f6] . whitespace-mode)
-         ([f7] . display-line-numbers-mode)
-         ("C-c z" . delete-trailing-whitespace))
+(use-package uniquify
   :custom
   (uniquify-buffer-name-style 'forward)
   (uniquify-strip-common-suffix t)
   (uniquify-after-kill-buffer-p t))
+
+;;; `whitespace-mode'
+(use-package whitespace
+  :bind (([f6] . whitespace-mode)
+         ("C-c z" . delete-trailing-whitespace)))
+
+;;; Line numbers
+(use-package display-line-numbers
+  :bind ([f7] . display-line-numbers-mode))
 
 ;;; Window rules and other tweaks
 (use-package window
@@ -24,7 +29,42 @@
          ("<" . shrink-window-horizontally))
   :custom
   (window-combination-resize t)
-  (switch-to-buffer-in-dedicated-window 'pop))
+  (switch-to-buffer-in-dedicated-window 'pop)
+  (display-buffer-alist
+   '(;; Bottom side window
+     ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*"
+      (display-buffer-in-side-window)
+      (dedicated . t)
+      (side . bottom)
+      (slot . 0)
+      (window-parameters . ((mode-line-format . none))))
+     ;; Bottom buffer (NOT side window)
+     ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+             (derived-mode . flymake-project-diagnostics-mode)
+             (derived-mode . messages-buffer-mode)
+             (derived-mode . backtrace-mode)))
+      (display-buffer-reuse-mode-window display-buffer-at-bottom)
+      (window-height . 0.33)
+      (dedicated . t)
+      (preserve-size . (t . t)))
+     ("\\*Embark Actions\\*"
+      (display-buffer-reuse-mode-window display-buffer-below-selected)
+      (window-height . fit-window-to-buffer)
+      (window-parameters . ((no-other-window . t)
+                            (mode-line-format . none))))
+     ;; Below current window
+     ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
+      (display-buffer-reuse-mode-window display-buffer-below-selected)
+      (window-height . 0.33))
+     ((derived-mode . reb-mode)         ; M-x re-builder
+      (display-buffer-reuse-mode-window display-buffer-below-selected)
+      (window-height . 4)             ; note this is literal lines, not relative
+      (dedicated . t)
+      (preserve-size . (t . t)))
+     ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
+      (display-buffer-reuse-mode-window display-buffer-below-selected)
+      (dedicated . t)
+      (window-height . fit-window-to-buffer)))))
 
 (use-package ace-window
   :ensure t

@@ -4,10 +4,14 @@
 (use-package minibuffer
   :custom
   (completion-styles '(basic substring initials flex orderless))
-  (completion-category-overrides '((file (styles . (basic partial-completion orderless)))
-                                   (project-file (styles . (basic substring partial-completion orderless)))
-                                   (kill-ring (styles . (emacs22 orderless)))
-                                   (eglot . (styles . (emacs22 substring orderless)))))
+  (completion-category-overrides
+   '((file (styles . (basic partial-completion orderless)))
+     (library (styles . (basic substring)))
+     (embark-keybinding (styles . (basic substring)))
+     (imenu (styles . (basic substring orderless)))
+     (consult-location (styles . (basic substring orderless)))
+     (kill-ring (styles . (emacs22 orderless)))
+     (eglot . (styles . (emacs22 substring orderless)))))
   (read-buffer-completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
   (enable-recursive-minibuffers t)
@@ -120,6 +124,19 @@
          :map minibuffer-local-completion-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
+
+;;; Embark
+(use-package embark
+  :ensure t
+  :bind (("C-." . embark-act)
+         ("M-." . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :custom
+  (prefix-command-update #'embark-prefix-help-command))
+
+(use-package embark-consult
+  :ensure t
+  :defer t)
 
 ;;; In-buffer completion
 (use-package corfu

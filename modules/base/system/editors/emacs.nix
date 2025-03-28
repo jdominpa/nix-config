@@ -26,6 +26,8 @@ in
           consult-eglot
           corfu
           diff-hl
+          embark
+          embark-consult
           envrc
           exec-path-from-shell
           fontaine

@@ -28,8 +28,8 @@
                        :default-height 150)
                       (t
                        :default-family "Iosevka Comfy"
-                       :fixed-pitch-family "Iosevka Comfy"
-                       :variable-pitch-family "Iosevka Comfy Motion Duo")))
+                       :fixed-pitch-family nil
+                       :variable-pitch-family "Iosevka Comfy Duo")))
   :custom
   (fontaine-mode t)
   :config
