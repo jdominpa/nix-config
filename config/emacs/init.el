@@ -59,8 +59,8 @@
 ;;; System specific settings
 
 (when (eq system-type 'darwin)
-  (setq mac-command-modifier 'meta
-        mac-option-modifier 'control))
+  (setq ns-command-modifier 'meta
+        ns-option-modifier 'control))
 
 (provide 'init)
 ;;; init.el ends here
