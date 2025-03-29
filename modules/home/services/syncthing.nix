@@ -23,7 +23,9 @@ in
         overrideFolders = true;
         settings = {
           devices = {
-            # alpha = { id = ""; };
+            alpha = {
+              id = "HTFOJLK-MWZSXXP-FVIXWQT-ESTPX5T-IWS2FLK-SHRXJDE-TAOFYAD-5XYJGQS";
+            };
             beta = {
               id = "L7XZTU5-7OKWFMG-WCPA6A7-BK6GBGD-AQWIPPH-SM4CCQF-NQ4FS3J-QAEL5AL";
             };
