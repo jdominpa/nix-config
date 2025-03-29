@@ -65,9 +65,6 @@ in
           sshAgent = false; # FIXME: disabled until bitwarden's ssh agent is fixed on macOS
         };
       };
-      dev = {
-        tex.enable = true;
-      };
       cli = {
         direnv.enable = true;
         fzf.enable = true;
@@ -75,9 +72,15 @@ in
         starship.enable = true;
         zsh.enable = true;
       };
+      dev = {
+        tex.enable = true;
+      };
       editors.emacs = {
         enable = true;
         withLsp = true;
+      };
+      services = {
+        syncthing.enable = true;
       };
     };
   };

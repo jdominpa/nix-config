@@ -106,9 +106,6 @@ in
         brave.enable = true;
         discord.enable = true;
       };
-      dev = {
-        tex.enable = true;
-      };
       cli = {
         direnv.enable = true;
         fzf.enable = true;
@@ -128,9 +125,15 @@ in
           }
         ];
       };
+      dev = {
+        tex.enable = true;
+      };
       editors.emacs = {
         enable = true;
         withLsp = true;
+      };
+      services = {
+        syncthing.enable = true;
       };
     };
   };
