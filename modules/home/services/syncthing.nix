@@ -31,10 +31,13 @@ in
             };
           };
           folders = {
-            "documents" = {
+            documents = {
               label = "Documents";
               path = "${user.homeDirectory}/Documents";
-              devices = [ "beta" ];
+              devices = [
+                "alpha"
+                "beta"
+              ];
             };
           };
         };
