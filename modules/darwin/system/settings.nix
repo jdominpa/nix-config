@@ -43,6 +43,7 @@ in
           NSNavPanelExpandedStateForSaveMode2 = true;
           PMPrintingExpandedStateForPrint = true; # expand print panel by default
           PMPrintingExpandedStateForPrint2 = true;
+          NSDocumentSaveNewDocumentsToCloud = false; # save to disk, not iCloud
         };
 
         # Customize settings that aren't supported by nix-darwin directly
