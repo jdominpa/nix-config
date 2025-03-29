@@ -132,7 +132,7 @@
          ("M-." . embark-dwim)
          ("C-h B" . embark-bindings))
   :custom
-  (prefix-command-update #'embark-prefix-help-command))
+  (prefix-help-command #'embark-prefix-help-command))
 
 (use-package embark-consult
   :ensure t

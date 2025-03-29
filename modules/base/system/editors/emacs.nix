@@ -52,7 +52,6 @@ in
           spacious-padding
           treesit-grammars.with-all-grammars
           vertico
-          which-key
           yasnippet
         ]
       ))

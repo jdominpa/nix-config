@@ -48,7 +48,6 @@
 
 ;;; Which-key
 (use-package which-key
-  :ensure t
   :custom
   (which-key-show-prefix 'bottom)
   (which-key-popup-type 'minibuffer)
