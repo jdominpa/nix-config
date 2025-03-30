@@ -62,7 +62,8 @@ in
         hunspellDicts.es-es
       ];
       variables = {
-        EDITOR = "emacsclient -a 'emacs' -c";
+        EDITOR = "emacsclient --alternate-editor='emacs' -t";
+        VISUAL = "emacsclient --alternate-editor='emacs' -c";
       };
     };
   };
