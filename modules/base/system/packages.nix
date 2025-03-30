@@ -13,34 +13,28 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment = {
-      systemPackages = with pkgs; [
-        coreutils
-        curl
-        findutils
-        fzf
-        gawk
-        git
-        gnugrep
-        gnumake
-        gnupg
-        gnused
-        gnutar
-        just
-        neovim
-        nix-melt # Ranger-like `flake.lock` file viewer
-        nix-tree # Nix dependency tree
-        ripgrep
-        tree
-        unrar
-        wget
-        which
-        zip
-      ];
-      variables = {
-        EDITOR = "emacsclient -r";
-        VISUAL = "emacsclient -r";
-      };
-    };
+    environment.systemPackages = with pkgs; [
+      coreutils
+      curl
+      findutils
+      fzf
+      gawk
+      git
+      gnugrep
+      gnumake
+      gnupg
+      gnused
+      gnutar
+      just
+      neovim
+      nix-melt # Ranger-like `flake.lock` file viewer
+      nix-tree # Nix dependency tree
+      ripgrep
+      tree
+      unrar
+      wget
+      which
+      zip
+    ];
   };
 }
