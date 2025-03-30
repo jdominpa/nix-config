@@ -12,14 +12,23 @@
   (calendar-date-style 'iso)
   (calendar-time-zone-style 'numeric)) ; Emacs 28.1
 
+;;; Appt
+(use-package appt
+  :commands appt-activate
+  :custom
+  (appt-display-diary nil)
+  (appt-audible nil)
+  (appt-message-warning-time 15)
+  :config
+  (with-eval-after-load 'org-agenda
+    (appt-activate 1)
+    (org-agenda-to-appt)))
+
 ;;; Org
 (use-package org
   :hook ((org-mode . turn-on-auto-fill)
          (org-mode . turn-on-org-cdlatex))
-  :bind (("C-c o a" . org-agenda)
-         ("C-c o c" . org-capture)
-         ("C-c o l" . org-store-link)
-         ("C-c i" . jdp-org-capture-inbox)
+  :bind (("C-c o l" . org-store-link)
          :map org-mode-map
          ("$" . math-delimiters-insert)
          ("M-g o" . consult-org-heading)
@@ -47,27 +56,47 @@
   (org-special-ctrl-a/e t)
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
-  ;; Capture templates
-  (org-capture-templates `(("i" "Inbox" entry (file "inbox.org")
-                            ,(concat "* TODO %?\n"
-                                     "/Created on/ %U"))
-                           ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
-                            ,(concat "* %? :meeting:\n"
-                                     "SCHEDULED: %^{Meeting date}t"))))
-  ;; Agenda
-  (org-agenda-files (list (file-name-concat org-directory "inbox.org")
-                          (file-name-concat org-directory "agenda.org")))
-  (org-agenda-window-setup 'current-window)
-  (org-deadline-past-days 365)
-  (org-scheduled-past-days 365)
+  ;; Refile settings
+  (org-refile-targets '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-allow-creating-parent-nodes 'confirm)
   :config
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+
+(use-package org-capture
+  :bind (("C-c o c" . org-capture)
+         ("C-c i" . jdp-org-capture-inbox))
+  :custom
+  (org-capture-templates `(("i" "Inbox" entry (file "inbox.org")
+                            ,(concat "* TODO %?\n"
+                                     ":PROPERTIES:\n"
+                                     ":CAPTURED: %U\n"
+                                     ":END:")
+                            :empty-lines-after 1)
+                           ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
+                            ,(concat "* %? :meeting:\n"
+                                     "SCHEDULED: %^{Meeting date}t\n"
+                                     ":PROPERTIES:\n"
+                                     ":CAPTURED: %U\n"
+                                     ":END:")
+                            :empty-lines-after 1)))
+  :config
   (defun jdp-org-capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
     (interactive)
     (call-interactively 'org-store-link)
     (org-capture nil "i")))
+
+(use-package org-agenda
+  :bind ("C-c o a" . org-agenda)
+  :custom
+  (org-agenda-files (list (file-name-concat org-directory "inbox.org")
+                          (file-name-concat org-directory "agenda.org")))
+  (org-agenda-window-setup 'current-window)
+  (org-deadline-past-days 365)
+  (org-scheduled-past-days 365))
 
 (use-package org-pdftools
   :ensure t
