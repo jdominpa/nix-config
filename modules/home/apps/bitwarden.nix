@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  inherit (pkgs) stdenv;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
   cfg = config.jdp.home.apps.bitwarden;
   inherit (config.jdp.base) user;
 in
@@ -22,7 +22,7 @@ in
     home-manager.users.${user.name} = {
       home = {
         # On darwin we install bitwarden with homebrew
-        packages = optionals stdenv.isLinux [ pkgs.bitwarden-desktop ];
+        packages = optionals isLinux [ pkgs.bitwarden-desktop ];
         sessionVariables = mkIf cfg.sshAgent {
           SSH_AUTH_SOCK = "${user.homeDirectory}/.bitwarden-ssh-agent.sock";
         };

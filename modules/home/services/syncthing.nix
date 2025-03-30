@@ -6,6 +6,7 @@
 }:
 with lib;
 let
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
   cfg = config.jdp.home.services.syncthing;
   inherit (config.jdp.base) user;
 in
@@ -18,7 +19,7 @@ in
     home-manager.users.${user.name} = {
       services.syncthing = {
         enable = true;
-        tray.enable = pkgs.stdenv.isLinux; # tray is only available for Linux
+        tray.enable = isLinux; # tray is only available for Linux
         overrideDevices = true;
         overrideFolders = true;
         settings = {

@@ -80,6 +80,9 @@ in
         withLsp = true;
       };
       services = {
+        launchd = {
+          backupToiCloud.enable = true;
+        };
         syncthing.enable = true;
       };
     };
