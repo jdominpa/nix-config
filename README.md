@@ -1,6 +1,4 @@
-Modular NixOS/macOS configuration using [nix](https://nixos.org),
-[flakes](https://nixos.wiki/wiki/Flakes) and
-[home-manager](https://nixos.wiki/wiki/Home_Manager).
+Modular NixOS/macOS configuration using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes) and [home-manager](https://nixos.wiki/wiki/Home_Manager).
 
 ## Structure
 
@@ -47,9 +45,8 @@ sudo nixos-rebuild switch --flake .#<hostname>
 
 ### macOS
 
-For first time deployment, install
-[nix](https://nixos.org/download/#nix-install-macos) and
-[homebrew](https://brew.sh) manually. Then proceed as follows:
+For first time deployment, install [nix](https://nixos.org/download/#nix-install-macos) and [homebrew](https://brew.sh) manually. Then proceed as
+follows:
 
 ```bash
 # Prepare the deployment environment
