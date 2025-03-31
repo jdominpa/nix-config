@@ -57,7 +57,8 @@
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
   ;; Refile settings
-  (org-refile-targets '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+  (org-refile-targets '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")
+                        ("agenda.org" :maxlevel . 1)))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-refile-allow-creating-parent-nodes 'confirm)
@@ -75,9 +76,9 @@
                                      ":CAPTURED: %U\n"
                                      ":END:")
                             :empty-lines-after 1)
-                           ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
+                           ("a" "Appointment" entry  (file+headline "agenda.org" "Future")
                             ,(concat "* %? :meeting:\n"
-                                     "SCHEDULED: %^{Meeting date}t\n"
+                                     "SCHEDULED: %^{Appointment}T\n"
                                      ":PROPERTIES:\n"
                                      ":CAPTURED: %U\n"
                                      ":END:")
@@ -93,10 +94,13 @@
   :bind ("C-c o a" . org-agenda)
   :custom
   (org-agenda-files (list (file-name-concat org-directory "inbox.org")
-                          (file-name-concat org-directory "agenda.org")))
+                          (file-name-concat org-directory "agenda.org")
+                          (file-name-concat org-directory "projects.org")))
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
-  (org-scheduled-past-days 365))
+  (org-scheduled-past-days 365)
+  (org-agenda-skip-deadline-if-done t)
+  (org-agenda-skip-scheduled-if-done t))
 
 (use-package org-pdftools
   :ensure t
