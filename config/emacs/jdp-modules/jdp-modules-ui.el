@@ -63,9 +63,9 @@
   (ring-bell-function 'ignore)
   (mode-line-position-column-line-format '("%l:%c,%p"))
   (mini-echo-persistent-rule
-   '(:long ("meow" "major-mode" "shrink-path" "buffer-position"
-            "vcs" "eglot" "flymake" "mise" "envrc")
-           :short ("meow" "buffer-name" "buffer-position" "flymake")))
+   '(:long ("meow" "shrink-path" "major-mode" "vcs"
+            "buffer-position" "eglot" "flymake" "mise" "envrc")
+     :short ("meow" "major-mode" "buffer-name" "buffer-position")))
   (mini-echo-persistent-function #'jdp-mini-echo-persistent-detect)
   (mini-echo-separator " | ")
   (mini-echo-mode t)
@@ -73,8 +73,6 @@
   (defun jdp-mini-echo-persistent-detect ()
     (with-current-buffer (current-buffer)
       (pcase major-mode
-        ((guard (bound-and-true-p atomic-chrome-edit-mode))
-         '(:both ("meow" "atomic-chrome" "buffer-name" "buffer-position" "flymake")))
         ((guard (or (memq major-mode '(git-commit-elisp-text-mode git-rebase-mode))
                     (string-match-p "\\`magit-.*-mode\\'" (symbol-name major-mode))))
          '(:both ("meow" "major-mode" "project")))
@@ -84,7 +82,7 @@
         ('diff-mode '(:both ("meow" "major-mode")))
         ('ibuffer-mode '(:both ("meow" "major-mode")))
         ('dired-mode '(:both ("meow" "major-mode" "dired")))
-        ('helpful-mode '(:both ("meow" "major-mode" "helpful")))
+        ('treesit--explorer-tree-mode '(:both ("meow" "major-mode" "treesit-explorer")))
         ('xwidget-webkit-mode '(:long ("meow" "shrink-path")
                                       :short ("meow" "buffer-name")))
         (_ nil)))))

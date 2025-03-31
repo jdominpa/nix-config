@@ -67,7 +67,7 @@
 
 (use-package org-capture
   :bind (("C-c o c" . org-capture)
-         ("C-c i" . jdp-org-capture-inbox))
+         ("C-c o i" . jdp-org-capture-inbox))
   :custom
   (org-capture-templates `(("i" "Inbox" entry (file "inbox.org")
                             ,(concat "* TODO %?\n"
