@@ -74,14 +74,21 @@
                             ,(concat "* TODO %?\n"
                                      ":PROPERTIES:\n"
                                      ":CAPTURED: %U\n"
-                                     ":END:")
+                                     ":END:\n")
                             :empty-lines-after 1)
-                           ("a" "Appointment" entry  (file+headline "agenda.org" "Future")
+                           ("m" "Meeting" entry  (file+olp "agenda.org" "Future" "Meetings")
                             ,(concat "* %? :meeting:\n"
-                                     "SCHEDULED: %^{Appointment}T\n"
+                                     "SCHEDULED: %^{Meeting}T\n"
                                      ":PROPERTIES:\n"
                                      ":CAPTURED: %U\n"
-                                     ":END:")
+                                     ":END:\n")
+                            :empty-lines-after 1)
+                           ("e" "Event" entry (file+olp "agenda.org" "Future" "Events")
+                            ,(concat "* %? :event:\n"
+                                     "%^{Type of timestamp|SCHEDULED|DEADLINE}: %^{Event}T\n"
+                                     ":PROPERTIES:\n"
+                                     ":CAPTURED: %U\n"
+                                     ":END:\n")
                             :empty-lines-after 1)))
   :config
   (defun jdp-org-capture-inbox ()
