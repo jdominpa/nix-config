@@ -34,8 +34,9 @@ in
             ProgramArguments = [
               "/usr/bin/rsync"
               "-vhaP"
-              "--exclude={'.DS_Store','.localized','.stfolder'}"
+              "--exclude={'.stfolder','.stignore'}"
               "--delete-during"
+              "--delete-excluded"
               "${user.homeDirectory}/Documents/"
               "${user.homeDirectory}/Library/Mobile Documents/com~apple~CloudDocs/Documents"
             ];
