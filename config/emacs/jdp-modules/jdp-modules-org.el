@@ -58,7 +58,7 @@
   (org-insert-heading-respect-content t)
   ;; Refile settings
   (org-refile-targets '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")
-                        ("agenda.org" :maxlevel . 1)))
+                        ("agenda.org" :regexp . "\\(?:\\(?:Event\\|Meeting\\)s\\)")))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-refile-allow-creating-parent-nodes 'confirm)
@@ -72,24 +72,15 @@
   :custom
   (org-capture-templates `(("i" "Inbox" entry (file "inbox.org")
                             ,(concat "* TODO %?\n"
-                                     ":PROPERTIES:\n"
-                                     ":CAPTURED: %U\n"
-                                     ":END:\n")
-                            :empty-lines-after 1)
+                                     "/Created on/ %U\n"))
                            ("m" "Meeting" entry  (file+olp "agenda.org" "Future" "Meetings")
                             ,(concat "* %? :meeting:\n"
                                      "SCHEDULED: %^{Meeting}T\n"
-                                     ":PROPERTIES:\n"
-                                     ":CAPTURED: %U\n"
-                                     ":END:\n")
-                            :empty-lines-after 1)
+                                     "/Created on/ %U\n"))
                            ("e" "Event" entry (file+olp "agenda.org" "Future" "Events")
                             ,(concat "* %? :event:\n"
                                      "%^{Type of timestamp|SCHEDULED|DEADLINE}: %^{Event}T\n"
-                                     ":PROPERTIES:\n"
-                                     ":CAPTURED: %U\n"
-                                     ":END:\n")
-                            :empty-lines-after 1)))
+                                     "/Created on/ %U\n"))))
   :config
   (defun jdp-org-capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
@@ -141,6 +132,7 @@
   :ensure t
   :after org
   :custom
+  (org-modern-hide-stars nil) ; org-indent-mode doesn't behave well with other values
   (global-org-modern-mode t))
 
 (provide 'jdp-modules-org)
