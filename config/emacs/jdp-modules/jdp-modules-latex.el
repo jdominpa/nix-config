@@ -4,6 +4,7 @@
 (use-package emacs
   :custom
   (fill-column 80)
+  (sentence-end-doube-space nil) ; use a single space after a sentence
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
 
