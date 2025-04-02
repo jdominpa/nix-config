@@ -4,7 +4,7 @@
 (use-package emacs
   :custom
   (fill-column 80)
-  (sentence-end-doube-space nil) ; use a single space after a sentence
+  (sentence-end-double-space nil) ; use a single space after a sentence
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
 
@@ -21,7 +21,9 @@
 
 ;;; `LaTeX-mode'
 (use-package math-delimiters
-  :commands (math-delimiters-no-dollars math-delimiters-insert))
+  :commands (math-delimiters-no-dollars math-delimiters-insert)
+  :custom
+  (math-delimiters-compressed-display-math nil))
 
 (use-package cdlatex
   :ensure t
