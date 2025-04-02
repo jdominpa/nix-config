@@ -100,10 +100,17 @@
   (org-agenda-skip-deadline-if-done t)
   (org-agenda-skip-scheduled-if-done t))
 
+(use-package org-noter
+  :ensure t
+  :bind ("C-c o n" . org-noter)
+  :custom
+  (org-noter-always-create-frame nil)
+  (org-noter-default-notes-file-names '("projects.org"))
+  (org-noter-notes-search-path (list org-directory)))
+
 (use-package org-pdftools
   :ensure t
   :if (package-installed-p 'pdf-tools)
-  :after org
   :hook (org-mode . org-pdftools-setup-link))
 
 (use-package org-appear
