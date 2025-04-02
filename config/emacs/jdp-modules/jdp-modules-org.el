@@ -102,8 +102,23 @@
 
 (use-package org-noter
   :ensure t
-  :bind ("C-c o n" . org-noter)
+  :bind (("C-c o n" . org-noter)
+         :map org-noter-doc-mode-map
+         ("M-p" . org-noter-sync-prev-note)
+         ("M-." . org-noter-sync-current-note)
+         ("M-n" . org-noter-sync-next-note)
+         ("C-M-p" . org-noter-sync-prev-page-or-chapter)
+         ("C-M-." . org-noter-sync-current-page-or-chapter)
+         ("C-M-n" . org-noter-sync-next-page-or-chapter)
+         :map org-noter-notes-mode-map
+         ("M-p" . org-noter-sync-prev-note)
+         ("M-." . org-noter-sync-current-note)
+         ("M-n" . org-noter-sync-next-note)
+         ("C-M-p" . org-noter-sync-prev-page-or-chapter)
+         ("C-M-." . org-noter-sync-current-page-or-chapter)
+         ("C-M-n" . org-noter-sync-next-page-or-chapter))
   :custom
+  (org-noter-swap-window t)
   (org-noter-always-create-frame nil)
   (org-noter-default-notes-file-names '("projects.org"))
   (org-noter-notes-search-path (list org-directory)))
