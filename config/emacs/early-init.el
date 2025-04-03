@@ -16,13 +16,14 @@
   (inhibit-startup-screen t))
 
 ;; Speed up startup
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 1024 1024 20)
-                  gc-cons-percentage 0.2)
-            (garbage-collect)))
+(use-package emacs
+  :hook (emacs-startup . (lambda ()
+                           (setq gc-cons-threshold (* 1024 1024 20)
+                                 gc-cons-percentage 0.2)
+                           (garbage-collect)))
+  :custom
+  (gc-cons-threshold most-positive-fixnum)
+  (gc-cons-percentage 0.6))
 
 (provide 'early-init)
 ;;; early-init.el ends here

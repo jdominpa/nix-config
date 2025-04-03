@@ -58,9 +58,11 @@
 
 ;;; System specific settings
 
-(when (eq system-type 'darwin)
-  (setq ns-command-modifier 'meta
-        ns-option-modifier 'control))
+(use-package emacs
+  :if (eq system-type 'darwin)
+  :custom
+  (ns-command-modifier 'meta)
+  (ns-option-modifier 'control))
 
 (provide 'init)
 ;;; init.el ends here
