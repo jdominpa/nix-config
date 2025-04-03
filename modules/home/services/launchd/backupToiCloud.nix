@@ -34,7 +34,8 @@ in
             ProgramArguments = [
               "/usr/bin/rsync"
               "-vhaP"
-              "--exclude={'.stfolder','.stignore'}"
+              "--exclude=.stfolder"
+              "--exclude=.stignore"
               "--delete-during"
               "--delete-excluded"
               "${user.homeDirectory}/Documents/"
