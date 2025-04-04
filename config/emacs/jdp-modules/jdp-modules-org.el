@@ -57,8 +57,8 @@
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
   ;; Refile settings
-  (org-refile-targets '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")
-                        ("agenda.org" :regexp . "\\(?:\\(?:Event\\|Meeting\\)s\\)")))
+  (org-refile-targets'(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
+                        ("agenda.org" . (:level . 2))))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-refile-allow-creating-parent-nodes 'confirm)
@@ -70,17 +70,27 @@
   :bind (("C-c o c" . org-capture)
          ("C-c o i" . jdp-org-capture-inbox))
   :custom
-  (org-capture-templates `(("i" "Inbox" entry (file "inbox.org")
-                            ,(concat "* TODO %?\n"
-                                     "/Created on/ %U\n"))
-                           ("m" "Meeting" entry  (file+olp "agenda.org" "Future" "Meetings")
-                            ,(concat "* %? :meeting:\n"
-                                     "SCHEDULED: %^{Meeting}T\n"
-                                     "/Created on/ %U\n"))
-                           ("e" "Event" entry (file+olp "agenda.org" "Future" "Events")
-                            ,(concat "* %? :event:\n"
-                                     "%^{Type of timestamp|SCHEDULED|DEADLINE}: %^{Event}T\n"
-                                     "/Created on/ %U\n"))))
+  (org-capture-templates
+   `(("i" "Inbox" entry (file "inbox.org")
+      ,(concat "* TODO %?\n"
+               "/Created on/ %U\n"))
+     ("m" "Meeting" entry  (file+olp "agenda.org" "Future" "Meetings")
+      ,(concat "* %? :meeting:\n"
+               "SCHEDULED: %^{Meeting}T\n"
+               "/Created on/ %U\n"))
+     ("a" "Appointment" entry (file+olp "agenda.org" "Future" "Appointments")
+      ,(concat "* %? :appointment:\n"
+               "SCHEDULED: %^{Appointment}T\n"
+               "/Created on/ %U\n"))
+     ("e" "Event")
+     ("es" "Scheduled" entry (file+olp "agenda.org" "Future" "Events")
+      ,(concat "* %? :event:%^g\n"
+               "SCHEDULED: %^{Event}T\n"
+               "/Created on/ %U\n"))
+     ("ed" "Deadline" entry (file+olp "agenda.org" "Future" "Events")
+      ,(concat "* %? :event:%^g\n"
+               "DEADLINE: %^{Event}T\n"
+               "/Created on/ %U\n"))))
   :config
   (defun jdp-org-capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
