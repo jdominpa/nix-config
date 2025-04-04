@@ -12,18 +12,6 @@
   (calendar-date-style 'iso)
   (calendar-time-zone-style 'numeric)) ; Emacs 28.1
 
-;;; Appt
-(use-package appt
-  :commands appt-activate
-  :custom
-  (appt-display-diary nil)
-  (appt-audible nil)
-  (appt-message-warning-time 15)
-  :config
-  (with-eval-after-load 'org-agenda
-    (appt-activate 1)
-    (org-agenda-to-appt)))
-
 ;;; Org
 (use-package org
   :hook ((org-mode . turn-on-auto-fill)
