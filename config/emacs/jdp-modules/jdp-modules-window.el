@@ -31,7 +31,11 @@
   (window-combination-resize t)
   (switch-to-buffer-in-dedicated-window 'pop)
   (display-buffer-alist
-   '(;; Bottom side window
+   '(;; No window
+     ("\\`\\*\\(Warnings\\|Org Links\\)\\*\\'"
+      (display-buffer-no-window)
+      (allow-no-window . t))
+     ;; Bottom side window
      ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*"
       (display-buffer-in-side-window)
       (dedicated . t)
