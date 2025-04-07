@@ -89,14 +89,39 @@
 (use-package org-agenda
   :bind ("C-c o a" . org-agenda)
   :custom
-  (org-agenda-files (list (file-name-concat org-directory "inbox.org")
-                          (file-name-concat org-directory "agenda.org")
-                          (file-name-concat org-directory "projects.org")))
+  (org-agenda-files `(,org-directory))
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
   (org-scheduled-past-days 365)
   (org-agenda-skip-deadline-if-done t)
   (org-agenda-skip-scheduled-if-done t))
+
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :bind (("C-c n n" . denote)
+         ("C-c n N" . denote-type)
+         ("C-c n r" . denote-rename-file)
+         ("C-c n R" . denote-rename-file-using-front-matter)
+         ("C-c n l" . denote-link)
+         ("C-c n L" . denote-add-links)
+         ("C-c n b" . denote-backlinks)
+         ("C-c n d" . denote-sort-dired)
+         :map dired-mode-map
+         ("C-c C-d C-i" . denote-dired-link-marked-notes)
+         ("C-c C-d C-r" . denote-dired-rename-files)
+         ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+  :custom
+  (denote-directory (expand-file-name "~/Documents/notes"))
+  (denote-rename-buffer-mode t))
+
+(use-package consult-denote
+  :ensure t
+  :bind (("C-c n f" . consult-denote-find)
+         ("C-c n g" . consult-denote-grep))
+  :custom
+  (consult-denote-mode t))
 
 (use-package org-noter
   :ensure t

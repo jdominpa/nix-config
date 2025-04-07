@@ -23,9 +23,11 @@ in
             cape
             cdlatex
             consult
+            consult-denote
             consult-dir
             consult-eglot
             corfu
+            denote
             diff-hl
             embark
             embark-consult

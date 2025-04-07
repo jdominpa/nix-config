@@ -61,8 +61,7 @@
 (use-package emacs
   :if (eq system-type 'darwin)
   :custom
-  (ns-command-modifier 'meta)
-  (ns-option-modifier 'control))
+  (ns-command-modifier 'meta))
 
 (provide 'init)
 ;;; init.el ends here
