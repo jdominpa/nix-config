@@ -16,7 +16,8 @@ in
   config = mkIf cfg.enable {
     fonts.packages = with pkgs; [
       font-awesome
-      stable.iosevka-comfy.comfy
+      iosevka-comfy.comfy
+      iosevka-comfy.comfy-duo
     ];
   };
 }

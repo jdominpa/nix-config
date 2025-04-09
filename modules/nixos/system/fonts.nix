@@ -19,7 +19,8 @@ in
       fontDir.enable = true;
       packages = with pkgs; [
         font-awesome
-        stable.iosevka-comfy.comfy
+        iosevka-comfy.comfy
+        iosevka-comfy.comfy-duo
         noto-fonts
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif
