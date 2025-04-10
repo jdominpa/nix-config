@@ -42,8 +42,10 @@
   :bind ([f8] . spacious-padding-mode)
   :custom
   (spacious-padding-widths
-   '(:right-divider-width 1
+   '(:mode-line-width 3
+     :right-divider-width 1
      :internal-border-width 10))
+  (spacious-padding-subtle-mode-line t)
   (spacious-padding-mode t))
 
 ;;; Which-key
@@ -57,35 +59,53 @@
   (which-key-mode t))
 
 ;;; Modeline
-(use-package mini-echo
-  :ensure t
+(use-package jdp-modeline
   :custom
   (ring-bell-function 'ignore)
-  (mode-line-position-column-line-format '("%l:%c,%p"))
-  (mini-echo-persistent-rule
-   '(:long ("meow" "shrink-path" "major-mode" "vcs"
-            "buffer-position" "eglot" "flymake" "mise" "envrc")
-     :short ("meow" "major-mode" "buffer-name" "buffer-position")))
-  (mini-echo-persistent-function #'jdp-mini-echo-persistent-detect)
-  (mini-echo-separator " | ")
-  (mini-echo-mode t)
+  (mode-line-right-align-edge 'right-margin)
   :config
-  (defun jdp-mini-echo-persistent-detect ()
-    (with-current-buffer (current-buffer)
-      (pcase major-mode
-        ((guard (or (memq major-mode '(git-commit-elisp-text-mode git-rebase-mode))
-                    (string-match-p "\\`magit-.*-mode\\'" (symbol-name major-mode))))
-         '(:both ("meow" "major-mode" "project")))
-        ((guard (and (fboundp 'popper-display-control-p)
-                     (popper-display-control-p (current-buffer))))
-         '(:both ("meow" "popper")))
-        ('diff-mode '(:both ("meow" "major-mode")))
-        ('ibuffer-mode '(:both ("meow" "major-mode")))
-        ('dired-mode '(:both ("meow" "major-mode" "dired")))
-        ('treesit--explorer-tree-mode '(:both ("meow" "major-mode" "treesit-explorer")))
-        ('xwidget-webkit-mode '(:long ("meow" "shrink-path")
-                                      :short ("meow" "buffer-name")))
-        (_ nil)))))
+  (setq-default mode-line-format
+                '("%e"
+                  jdp-modeline-kbd-macro
+                  jdp-modeline-narrow
+                  jdp-modeline-buffer-status
+                  jdp-modeline-window-dedicated-status
+                  jdp-modeline-input-method
+                  jdp-modeline-meow-mode
+                  jdp-modeline-buffer-identification
+                  jdp-modeline-major-mode
+                  jdp-modeline-process
+                  jdp-modeline-vc-branch
+                  jdp-modeline-eglot
+                  jdp-modeline-flymake
+                  jdp-modeline-envrc-status
+                  mode-line-format-right-align ; Emacs 30
+                  jdp-modeline-misc-info))
+  
+  (with-eval-after-load 'spacious-padding
+    (defun jdp-modeline-spacious-indicators ()
+      "Set box attribute to `'jdp-modeline-indicator-button' if spacious-padding is enabled."
+      (if (bound-and-true-p spacious-padding-mode)
+          (set-face-attribute 'jdp-modeline-indicator-button nil :box t)
+        (set-face-attribute 'jdp-modeline-indicator-button nil :box 'unspecified)))
+
+    ;; Run it at startup and then afterwards whenever
+    ;; `spacious-padding-mode' is toggled on/off.
+    (jdp-modeline-spacious-indicators)
+    (add-hook 'spacious-padding-mode-hook #'jdp-modeline-spacious-indicators)))
+
+;;; Battery display
+(use-package battery
+  :custom
+  (display-battery-mode t))
+
+;;; Date and time display
+(use-package time
+  :custom
+  (display-time-format " %a %e %b, %H:%M ")
+  (display-time-interval 60)
+  (display-time-default-load-average nil)
+  (display-time-mode t))
 
 (provide 'jdp-modules-ui)
 ;;; jdp-modules-ui.el ends here

@@ -50,7 +50,6 @@ in
             marginalia
             markdown-mode
             meow
-            mini-echo
             modus-themes
             nix-mode
             orderless
