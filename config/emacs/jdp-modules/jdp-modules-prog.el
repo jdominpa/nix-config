@@ -130,6 +130,11 @@
   :custom
   (c-ts-mode-indent-offset 4))
 
+;; Elisp
+(use-package elisp-mode
+  :hook (emacs-lisp-mode . (lambda ()
+                             (setq-local sentence-end-double-space t))))
+
 ;; Justfile
 (use-package just-mode
   :ensure t

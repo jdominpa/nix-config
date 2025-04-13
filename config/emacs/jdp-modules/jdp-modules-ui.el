@@ -7,7 +7,6 @@
   :bind ([f5] . modus-themes-toggle)
   :custom
   (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui t)
   (modus-themes-bold-constructs t)
   (modus-themes-italic-constructs t)
   (modus-themes-slanted-constructs t)
@@ -42,7 +41,7 @@
   :bind ([f8] . spacious-padding-mode)
   :custom
   (spacious-padding-widths
-   '(:mode-line-width 3
+   '(:mode-line-width 1
      :right-divider-width 1
      :internal-border-width 10))
   (spacious-padding-subtle-mode-line t)
@@ -51,61 +50,51 @@
 ;;; Which-key
 (use-package which-key
   :custom
-  (which-key-show-prefix 'bottom)
-  (which-key-popup-type 'minibuffer)
   (which-key-preserve-window-configuration t)
   (which-key-idle-delay 0.6)
   (which-key-idle-secondary-delay 0.2)
   (which-key-mode t))
 
 ;;; Modeline
-(use-package jdp-modeline
+(use-package jdp-mode-line
   :custom
   (ring-bell-function 'ignore)
   (mode-line-right-align-edge 'right-margin)
+  (project-mode-line t)
   :config
   (setq-default mode-line-format
-                '("%e"
-                  jdp-modeline-kbd-macro
-                  jdp-modeline-narrow
-                  jdp-modeline-buffer-status
-                  jdp-modeline-window-dedicated-status
-                  jdp-modeline-input-method
-                  jdp-modeline-meow-mode
-                  jdp-modeline-buffer-identification
-                  jdp-modeline-major-mode
-                  jdp-modeline-process
-                  jdp-modeline-vc-branch
-                  jdp-modeline-eglot
-                  jdp-modeline-flymake
-                  jdp-modeline-envrc-status
-                  mode-line-format-right-align ; Emacs 30
-                  jdp-modeline-misc-info))
+                '("%e" mode-line-front-space
+                  jdp-mode-line-kbd-macro
+                  (:propertize "%n" face jdp-mode-line-indicator-cyan)
+                  (meow-mode (:eval (meow-indicator)))
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote
+                  mode-line-window-dedicated
+                  mode-line-frame-identification
+                  (project-mode-line jdp-mode-line-project-format)
+                  jdp-mode-line-buffer-identification
+                  jdp-mode-line-major-mode
+                  (vc-mode (:eval (concat " " (format-mode-line vc-mode))))
+                  jdp-mode-line-envrc-status
+                  jdp-mode-line-flymake
+                  " "
+                  mode-line-misc-info
+                  " " mode-line-end-spaces))
   
   (with-eval-after-load 'spacious-padding
-    (defun jdp-modeline-spacious-indicators ()
-      "Set box attribute to `'jdp-modeline-indicator-button' if spacious-padding is enabled."
+    (defun jdp-mode-line-spacious-indicators ()
+      "Set box attribute to `jdp-mode-line-indicator-button' if
+spacious-padding is enabled."
       (if (bound-and-true-p spacious-padding-mode)
-          (set-face-attribute 'jdp-modeline-indicator-button nil :box t)
-        (set-face-attribute 'jdp-modeline-indicator-button nil :box 'unspecified)))
+          (set-face-attribute 'jdp-mode-line-indicator-button nil :box t)
+        (set-face-attribute 'jdp-mode-line-indicator-button nil :box 'unspecified)))
 
-    ;; Run it at startup and then afterwards whenever
-    ;; `spacious-padding-mode' is toggled on/off.
-    (jdp-modeline-spacious-indicators)
-    (add-hook 'spacious-padding-mode-hook #'jdp-modeline-spacious-indicators)))
-
-;;; Battery display
-(use-package battery
-  :custom
-  (display-battery-mode t))
-
-;;; Date and time display
-(use-package time
-  :custom
-  (display-time-format " %a %e %b, %H:%M ")
-  (display-time-interval 60)
-  (display-time-default-load-average nil)
-  (display-time-mode t))
+    ;; Run it at startup and then afterwards whenever `spacious-padding-mode' is
+    ;; toggled on/off.
+    (jdp-mode-line-spacious-indicators)
+    (add-hook 'spacious-padding-mode-hook #'jdp-mode-line-spacious-indicators)))
 
 (provide 'jdp-modules-ui)
 ;;; jdp-modules-ui.el ends here
