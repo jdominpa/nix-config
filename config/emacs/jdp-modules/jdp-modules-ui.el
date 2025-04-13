@@ -26,9 +26,9 @@
                       (large
                        :default-height 150)
                       (t
-                       :default-family "Iosevka Comfy"
+                       :default-family "Aporetic Sans Mono"
                        :fixed-pitch-family nil
-                       :variable-pitch-family "Iosevka Comfy Duo")))
+                       :variable-pitch-family "Aporetic Serif")))
   :custom
   (fontaine-mode t)
   :config

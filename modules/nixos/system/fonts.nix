@@ -18,9 +18,8 @@ in
       enableDefaultPackages = false;
       fontDir.enable = true;
       packages = with pkgs; [
+        aporetic
         font-awesome
-        iosevka-comfy.comfy
-        iosevka-comfy.comfy-duo
         noto-fonts
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif
