@@ -13,14 +13,17 @@ in
     home-manager.users.${user.name} = {
       programs.konsole = {
         enable = true;
-        defaultProfile = "default";
+        defaultProfile = "modus-vivendi";
         customColorSchemes = {
           modus-vivendi = jdp.relativeToRoot "config/konsole/modus-vivendi.colorscheme";
         };
         profiles = {
-          default = {
+          modus-vivendi = {
             colorScheme = "modus-vivendi";
-            font.size = 13;
+            font = {
+              name = "Monospace";
+              size = 13;
+            };
           };
         };
       };

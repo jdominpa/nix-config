@@ -29,7 +29,7 @@ in
       # User defined fonts
       fontconfig.defaultFonts = {
         monospace = [
-          "Iosevka Comfy"
+          "Aporetic Sans Mono"
           "Noto Color Emoji"
         ];
         emoji = [ "Noto Color Emoji" ];
