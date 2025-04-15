@@ -55,7 +55,7 @@
   (which-key-idle-secondary-delay 0.2)
   (which-key-mode t))
 
-;;; Modeline
+;;; Mode line
 (use-package jdp-mode-line
   :custom
   (ring-bell-function 'ignore)
@@ -64,8 +64,6 @@
   :config
   (setq-default mode-line-format
                 '("%e" mode-line-front-space
-                  jdp-mode-line-kbd-macro
-                  (:propertize "%n" face jdp-mode-line-indicator-cyan)
                   (meow-mode (:eval (meow-indicator)))
                   mode-line-mule-info
                   mode-line-client
@@ -75,13 +73,11 @@
                   mode-line-frame-identification
                   (project-mode-line jdp-mode-line-project-format)
                   jdp-mode-line-buffer-identification
-                  jdp-mode-line-major-mode
-                  (vc-mode (:eval (concat " " (format-mode-line vc-mode))))
-                  jdp-mode-line-envrc-status
-                  jdp-mode-line-flymake
-                  " "
+                  (vc-mode (" " vc-mode))
+                  "  "
+                  mode-line-modes
                   mode-line-misc-info
-                  " " mode-line-end-spaces))
+                  mode-line-end-spaces))
   
   (with-eval-after-load 'spacious-padding
     (defun jdp-mode-line-spacious-indicators ()
@@ -95,6 +91,16 @@ spacious-padding is enabled."
     ;; toggled on/off.
     (jdp-mode-line-spacious-indicators)
     (add-hook 'spacious-padding-mode-hook #'jdp-mode-line-spacious-indicators)))
+
+;; Minions (hide mode line minor modes)
+(use-package minions
+  :ensure t
+  :custom
+  (minions-prominent-modes '(defining-kbd-macro
+                             envrc-mode
+                             flymake-mode))
+  (minions-mode-line-lighter "...")
+  (minions-mode t))
 
 (provide 'jdp-modules-ui)
 ;;; jdp-modules-ui.el ends here

@@ -151,8 +151,7 @@
 (use-package nix-mode
   :ensure t
   :defer t
-  :custom
-  (nix-prettify-global-mode t))
+  :hook (nix-mode . nix-prettify-mode))
 
 (provide 'jdp-modules-prog)
 ;;; jdp-modules-prog.el ends here
