@@ -10,7 +10,6 @@
      '("k" . meow-next)
      '("l" . meow-prev)
      '("Q" . kill-current-buffer)
-     '("{" . meow-pop-to-global-mark)
      '("<escape>" . ignore))
     (meow-leader-define-key
      ;; Use SPC (0-9) for digit arguments.
@@ -47,6 +46,7 @@
      '("2" . meow-expand-2)
      '("1" . meow-expand-1)
      '("-" . negative-argument)
+     '("=" . meow-universal-argument)
      ;; Movement
      '("j" . meow-left)
      '("k" . meow-next)
@@ -104,14 +104,12 @@
      '("A" . meow-mark-symbol)
      '("[" . meow-pop-to-mark)
      '("]" . meow-unpop-to-mark)
-     '("{" . meow-pop-to-global-mark)
      ;; Thing
      '("," . meow-beginning-of-thing)
      '("." . meow-end-of-thing)
      '("<" . meow-inner-of-thing)
      '(">" . meow-bounds-of-thing)
      ;; Actions
-     '("=" . meow-universal-argument)
      '("\\" . meow-indent)
      '("q" . meow-quit)
      '("Q" . kill-current-buffer)
@@ -119,12 +117,12 @@
      '("<escape>" . ignore)))
 
   ;; Modeline state indicators
-  (customize-set-variable 'meow-replace-state-name-list
-                          '((normal . "<N>")
-                            (motion . "<M>")
-                            (keypad . "<K>")
-                            (insert . "<I>")
-                            (beacon . "<B>")))
+  (setopt meow-replace-state-name-list
+          '((normal . "<N>")
+            (motion . "<M>")
+            (keypad . "<K>")
+            (insert . "<I>")
+            (beacon . "<B>")))
 
   ;; Meow extra `thing' definitions
   (meow-thing-register 'angle
@@ -133,24 +131,24 @@
   (meow-thing-register 'inline-math
                        '(pair ("\\(") ("\\)"))
                        '(pair ("\\(") ("\\)")))
-  (customize-set-variable 'meow-char-thing-table
-                          '((?f . round)
-                            (?d . square)
-                            (?s . curly)
-                            (?a . angle)
-                            (?v . paragraph)
-                            (?c . line)
-                            (?x . buffer)
-                            (?z . visual-line)
-                            (?r . string)
-                            (?e . symbol)
-                            (?w . defun)
-                            (?q . window)
-                            (?g . sentence)
-                            (?m . inline-math)))
+  (setopt meow-char-thing-table
+          '((?f . round)
+            (?d . square)
+            (?s . curly)
+            (?a . angle)
+            (?v . paragraph)
+            (?c . line)
+            (?x . buffer)
+            (?z . visual-line)
+            (?r . string)
+            (?e . symbol)
+            (?w . defun)
+            (?q . window)
+            (?g . sentence)
+            (?m . inline-math)))
 
   (meow-setup)
-  (meow-global-mode t))
+  (meow-global-mode))
 
 (provide 'jdp-modules-meow)
 ;;; jdp-modules-meow.el ends here
