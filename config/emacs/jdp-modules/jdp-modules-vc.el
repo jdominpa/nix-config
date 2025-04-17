@@ -6,6 +6,13 @@
   :custom
   (vc-follow-symlinks t))
 
+;;; `ediff'
+(use-package ediff
+  :commands (ediff-buffers ediff-files)
+  :custom
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
 ;;; `diff-hl-mode'
 (use-package diff-hl
   :ensure t
