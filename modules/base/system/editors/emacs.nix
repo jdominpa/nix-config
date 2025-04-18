@@ -10,9 +10,9 @@ let
     # FIXME: native compilation currently doesn't work with macOS Sequoia 15.4
     # https://github.com/NixOS/nixpkgs/issues/395169
     if pkgs.stdenv.hostPlatform.isDarwin then
-      pkgs.emacs.override { withNativeCompilation = false; }
+      pkgs.emacs-git.override { withNativeCompilation = false; }
     else
-      pkgs.emacs;
+      pkgs.emacs-git;
 in
 {
   options.jdp.base = {

@@ -1,6 +1,17 @@
 {
   description = "My NixOS/macOS configuration";
 
+  nixConfig = {
+    extra-substituters = [
+      # Nix community's cache server
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      # Nix community's cache server public key
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -20,10 +31,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Add git hooks to format nix code before commits
+    # Git hooks to format nix code before commits
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Emacs overlay
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
 
     # Plasma manager
@@ -49,13 +67,7 @@
         "aarch64-darwin"
       ];
       forAllSystems = lib.genAttrs systems;
-      pkgsFor = forAllSystems (
-        system:
-        import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        }
-      );
+      pkgsFor = forAllSystems (system: inputs.nixpkgs.legacyPackages.${system});
     in
     {
       overlays = import ./overlays { inherit inputs; };

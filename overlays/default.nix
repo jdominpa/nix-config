@@ -1,5 +1,8 @@
 { inputs, ... }:
 {
+  # Emacs community overlay
+  emacs-overlay = inputs.emacs-overlay.overlays.default;
+
   # Bring our custom packages from the 'pkgs' directory
   additions = final: _prev: import ../pkgs final.pkgs;
 
@@ -15,9 +18,6 @@
   # When applied, the stable nixpkgs set (declared in the flake inputs) will
   # be accessible through 'pkgs.stable'
   stable-packages = final: _prev: {
-    stable = import inputs.nixpkgs-stable {
-      system = final.system;
-      config.allowUnfree = true;
-    };
+    stable = inputs.nixpkgs-stable.legacyPackages.${final.system};
   };
 }
