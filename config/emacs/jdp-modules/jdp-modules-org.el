@@ -44,12 +44,6 @@
   (org-special-ctrl-a/e t)
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
-  ;; Refile settings
-  (org-refile-targets'(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
-                        ("agenda.org" . (:level . 2))))
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-allow-creating-parent-nodes 'confirm)
   :config
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
@@ -85,6 +79,15 @@
     (interactive)
     (call-interactively 'org-store-link)
     (org-capture nil "i")))
+
+(use-package org-refile
+  :after org
+  :custom
+  (org-refile-targets'(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
+                        ("agenda.org" . (:level . 2))))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-allow-creating-parent-nodes 'confirm))
 
 (use-package org-agenda
   :bind ("C-c o a" . org-agenda)
@@ -143,13 +146,62 @@
   :custom
   (org-noter-swap-window t)
   (org-noter-always-create-frame nil)
+  (org-noter-separate-notes-from-heading t)
   (org-noter-default-notes-file-names '("projects.org"))
-  (org-noter-notes-search-path (list org-directory)))
+  (org-noter-notes-search-path
+   (list org-directory
+         denote-directory
+         (expand-file-name "references" denote-directory)))
+  :config
+  (require 'pdf-macs)
+  (defun org-noter-pdf--show-arrow ()
+    ;; From `pdf-util-tooltip-arrow'.
+    (pdf-util-assert-pdf-window)
+    (let* (x-gtk-use-system-tooltips
+           (arrow-top  (aref org-noter--arrow-location 2)) ; % of page
+           (arrow-left (aref org-noter--arrow-location 3))
+           (image-top  (if (floatp arrow-top)
+                           (round (* arrow-top  (cdr (pdf-view-image-size)))))) ; pixel location on page (magnification-dependent)
+           (image-left (if (floatp arrow-left)
+                           (floor (* arrow-left (car (pdf-view-image-size))))))
+           (dx (or image-left
+                   (+ (or (car (window-margins)) 0)
+                      (car (window-fringes)))))
+           (dy (or image-top 0))
+           (pos (list dx dy dx (+ dy (* 2 (frame-char-height)))))
 
-(use-package org-pdftools
-  :ensure t
-  :if (package-installed-p 'pdf-tools)
-  :hook (org-mode . org-pdftools-setup-link))
+           (tooltip-frame-parameters
+            `((border-width . 0)
+              (internal-border-width . 0)
+              ,@tooltip-frame-parameters))
+           (tooltip-hide-delay 3))
+      (setq dy (max 0 (- dy
+                         (cdr (pdf-view-image-offset))
+                         (window-vscroll nil t)
+                         (frame-char-height))))
+      (when (overlay-get (pdf-view-current-overlay) 'before-string)
+        (let* ((e (window-inside-pixel-edges))
+               (xw (pdf-util-with-edges (e) e-width))
+               (display-left-margin (/ (- xw (car (pdf-view-image-size t))) 2)))
+          (cl-incf dx display-left-margin)))
+      (setq dx (max 0 (+ dx org-noter-arrow-horizontal-offset)))
+      (pdf-util-tooltip-in-window
+       (propertize
+        " " 'display (propertize
+                      "\u2192" ;; right arrow
+                      'display '(height 2)
+                      'face `(:foreground
+                              ,org-noter-arrow-foreground-color
+                              :background
+                              ,(if (bound-and-true-p pdf-view-midnight-minor-mode)
+                                   (cdr pdf-view-midnight-colors)
+                                 org-noter-arrow-background-color))))
+       dx dy))))
+
+(when (package-installed-p 'pdf-tools)
+  (use-package org-pdftools
+    :ensure t
+    :hook (org-mode . org-pdftools-setup-link)))
 
 (use-package org-appear
   :ensure t

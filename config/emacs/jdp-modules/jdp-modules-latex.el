@@ -3,7 +3,7 @@
 ;;; Input method settings
 (use-package emacs
   :custom
-  (fill-column 80)
+  (fill-column 78)
   (sentence-end-double-space nil) ; use a single space after a sentence
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
@@ -11,6 +11,7 @@
 ;;; Improved PDF viewing
 (use-package pdf-tools
   :ensure t
+  :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
               ("d" . pdf-view-midnight-minor-mode))
   :custom
