@@ -47,6 +47,7 @@ in
             kind-icon
             macrostep
             magit
+            magit-todos
             marginalia
             markdown-mode
             meow

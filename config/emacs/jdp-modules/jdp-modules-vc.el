@@ -28,5 +28,11 @@
   :custom
   (magit-diff-refine-hunk t))
 
+(use-package magit-todos
+  :ensure t
+  :after magit
+  :custom
+  (magit-todos-mode t))
+
 (provide 'jdp-modules-vc)
 ;;; jdp-modules-vc.el ends here
