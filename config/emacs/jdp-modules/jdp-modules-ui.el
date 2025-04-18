@@ -65,6 +65,7 @@
   (setq-default mode-line-format
                 '("%e" mode-line-front-space
                   (meow-mode (:eval (meow-indicator)))
+                  " "
                   mode-line-mule-info
                   mode-line-client
                   mode-line-modified
