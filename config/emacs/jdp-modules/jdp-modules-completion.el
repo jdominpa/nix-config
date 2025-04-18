@@ -157,7 +157,7 @@
   :after corfu
   :bind ("C-c c" . cape-prefix-map)
   :init
-  (dolist (backend '(cape-elisp-symbol cape-history cape-file))
+  (dolist (backend '(cape-dabbrev cape-elisp-symbol cape-history cape-file cape-abbrev))
     (add-hook 'completion-at-point-functions backend)))
 
 ;;; Completion popup icons

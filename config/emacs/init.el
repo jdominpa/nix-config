@@ -1,12 +1,45 @@
 ;;; init.el --- Init file -*- lexical-binding: t -*-
 
-(use-package emacs
+;; Load and configure `use-package'
+(eval-when-compile
+  (require 'use-package))
+(require 'bind-key)
+
+(use-package use-package
   :custom
-  (custom-file (make-temp-file "emacs-custom-")) ; Send custom.el file to oblivion
-  ;; Some basic settings
-  (initial-buffer-choice t)             ; Always start with *scratch* buffer
+  (use-package-verbose init-file-debug)
+  (use-package-expand-minimally (not init-file-debug))
+  (use-package-compute-statistics init-file-debug)
+  (debug-on-error init-file-debug)
+  (debug-on-quit init-file-debug))
+
+;; Basic settings
+(use-package emacs
+  :hook (emacs-startup . (lambda ()
+                           (setq gc-cons-threshold (* 128 1024 1024)
+                                 gc-cons-percentage 0.5)
+                           (garbage-collect)))
+  :custom
+  ;; Speed up startup
+  (gc-cons-threshold most-positive-fixnum)
+  (gc-cons-percentage 0.6)
+  ;; Frame settings
+  (frame-resize-pixelwise t)       ; Resize the frame pixelwise
+  (frame-inhibit-implied-resize t) ; Do not resize the frame at this early stage.
+  (frame-title-format "%b")        ; Frame title
+  ;; GUI elements
+  (tool-bar-mode nil)
+  (menu-bar-mode nil)
+  (scroll-bar-mode nil)
+  (use-dialog-box t)
+  (use-file-dialog nil)
+  (use-short-answers t)
+  (inhibit-startup-screen t)
+  (initial-buffer-choice t) ; Always start with *scratch* buffer
   (blink-cursor-mode nil)
-  ;; Backups
+  ;; Send custom.el file to oblivion
+  (custom-file (make-temp-file "emacs-custom-"))
+  ;; Backup settings
   (make-backup-files nil)
   (create-lockfiles nil)
   ;; Silence native compilation warning messages
