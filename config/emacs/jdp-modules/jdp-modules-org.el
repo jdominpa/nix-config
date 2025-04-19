@@ -35,7 +35,7 @@
   (org-enforce-todo-dependencies t)
   (org-enforce-todo-checkbox-dependencies t)
   ;; Appearance
-  (org-highlight-latex-and-related '(latex script entities))
+  (org-highlight-latex-and-related '(latex entities))
   (org-hide-emphasis-markers t)
   (org-hide-leading-stars t)
   (org-pretty-entities t)
@@ -83,7 +83,7 @@
 (use-package org-refile
   :after org
   :custom
-  (org-refile-targets'(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
+  (org-refile-targets '(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
                         ("agenda.org" . (:level . 2))))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
@@ -96,6 +96,7 @@
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
   (org-scheduled-past-days 365)
+  (org-agenda-skip-timestamp-if-done t)
   (org-agenda-skip-deadline-if-done t)
   (org-agenda-skip-scheduled-if-done t))
 
@@ -109,7 +110,7 @@
          ("C-c n l" . denote-link)
          ("C-c n L" . denote-add-links)
          ("C-c n b" . denote-backlinks)
-         ("C-c n d" . denote-sort-dired)
+         ("C-c n d" . denote-dired)
          :map dired-mode-map
          ("C-c C-d C-i" . denote-dired-link-marked-notes)
          ("C-c C-d C-r" . denote-dired-rename-files)
