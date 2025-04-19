@@ -2,4 +2,4 @@
 # name: malloc
 # key: mal
 # --
-malloc(${1:n} * sizeof($2))
+malloc(sizeof($1)${2: * ${3:n}})$0

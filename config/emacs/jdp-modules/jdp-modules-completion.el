@@ -12,6 +12,7 @@
      (consult-location (styles . (basic substring orderless)))
      (kill-ring (styles . (emacs22 orderless)))
      (eglot . (styles . (emacs22 substring orderless)))))
+  (completion-pcm-leading-wildcard t)
   (read-buffer-completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
   (enable-recursive-minibuffers t)
@@ -157,7 +158,7 @@
   :after corfu
   :bind ("C-c c" . cape-prefix-map)
   :init
-  (dolist (backend '(cape-dabbrev cape-elisp-symbol cape-history cape-file cape-abbrev))
+  (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
     (add-hook 'completion-at-point-functions backend)))
 
 ;;; Completion popup icons
