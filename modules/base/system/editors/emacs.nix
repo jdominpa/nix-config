@@ -64,6 +64,7 @@ in
             treesit-grammars.with-all-grammars
             vertico
             yasnippet
+            yasnippet-capf
           ]
         ))
         # Spellchecking backend for jinx
