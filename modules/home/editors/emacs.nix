@@ -27,6 +27,7 @@ in
         ".emacs.d/jdp-modules".source = jdp.relativeToRoot "config/emacs/jdp-modules";
         ".emacs.d/jdp-lisp".source = jdp.relativeToRoot "config/emacs/jdp-lisp";
         ".emacs.d/snippets".source = jdp.relativeToRoot "config/emacs/snippets";
+        ".emacs.d/abbrev_defs".source = jdp.relativeToRoot "config/emacs/abbrev_defs";
         ".emacs.d/init.el".source = jdp.relativeToRoot "config/emacs/init.el";
       };
 

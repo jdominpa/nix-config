@@ -170,15 +170,14 @@
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-;;; Snippets
+;;; Snippets and abbreviations
 (use-package yasnippet
   :ensure t
   :custom
   (yas-global-mode t))
 
-(use-package yasnippet-capf
-  :ensure t
-  :after (yasnippet cape))
+(use-package abbrev
+  :hook ((text-mode prog-mode) . abbrev-mode))
 
 (provide 'jdp-modules-completion)
 ;;; jdp-modules-completion.el ends here
