@@ -68,7 +68,17 @@
   (eglot-autoshutdown t)
   (eglot-events-buffer-size '(:size 20000 :format short))
   (eglot-ignored-server-capabilities
-   '(:documentHighlightProvider)))
+   '(:documentHighlightProvider))
+  :config
+  (with-eval-after-load 'cape
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+    (defun jdp-eglot-capf ()
+      (setq-local completion-at-point-functions
+                  (list (cape-capf-super
+                         #'eglot-completion-at-point
+                         #'yasnippet-capf
+                         #'cape-file))))
+    (add-hook 'eglot-managed-mode-hook #'jdp-eglot-capf)))
 
 (use-package consult-eglot
   :ensure t

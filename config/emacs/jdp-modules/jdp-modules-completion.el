@@ -11,7 +11,8 @@
      (imenu (styles . (basic substring orderless)))
      (consult-location (styles . (basic substring orderless)))
      (kill-ring (styles . (emacs22 orderless)))
-     (eglot . (styles . (emacs22 substring orderless)))))
+     (eglot . (styles . (emacs22 substring orderless)))
+     (eglot-capf . (styles . (emacs22 substring orderless)))))
   (completion-pcm-leading-wildcard t)
   (read-buffer-completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
@@ -156,7 +157,8 @@
 (use-package cape
   :ensure t
   :after corfu
-  :bind ("C-c c" . cape-prefix-map)
+  :demand t
+  :bind ("M-+" . cape-prefix-map)
   :init
   (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
     (add-hook 'completion-at-point-functions backend)))
@@ -173,6 +175,10 @@
   :ensure t
   :custom
   (yas-global-mode t))
+
+(use-package yasnippet-capf
+  :ensure t
+  :after (yasnippet cape))
 
 (provide 'jdp-modules-completion)
 ;;; jdp-modules-completion.el ends here
