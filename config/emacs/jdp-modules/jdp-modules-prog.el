@@ -114,8 +114,7 @@
 ;; Direnv integration
 (use-package envrc
   :ensure t
-  :custom
-  (envrc-global-mode t))
+  :hook (prog-mode . envrc-mode))
 
 ;;; Programming language modes configurations
 
