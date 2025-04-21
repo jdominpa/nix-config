@@ -22,7 +22,7 @@ in
   config = lib.mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
-        (emacs.pkgs.withPackages (
+        ((emacsPackagesFor emacs).emacsWithPackages (
           epkgs: with epkgs; [
             ace-window
             auctex
