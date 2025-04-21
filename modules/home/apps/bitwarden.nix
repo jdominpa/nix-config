@@ -24,7 +24,14 @@ in
         # On darwin we install bitwarden with homebrew
         packages = optionals isLinux [ pkgs.bitwarden-desktop ];
         sessionVariables = mkIf cfg.sshAgent {
-          SSH_AUTH_SOCK = "${user.homeDirectory}/.bitwarden-ssh-agent.sock";
+          SSH_AUTH_SOCK =
+            "${user.homeDirectory}/"
+            + (
+              if isLinux then
+                ".bitwarden-ssh-agent.sock"
+              else
+                "Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
+            );
         };
       };
     };

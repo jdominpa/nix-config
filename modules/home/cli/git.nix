@@ -23,7 +23,7 @@ in
           init.defaultBranch = "main";
           user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGebTck6crA64QvOnpPVBHgB7nzIX18+FU9nANAaE2W4";
           gpg.format = "ssh";
-          commit.gpgSign = false; # FIXME: disabled until bitwarden's ssh agent is fixed on macOS
+          commit.gpgSign = true;
           commit.verbose = true;
           # Automatically track remote branch
           push.autoSetupRemote = true;
