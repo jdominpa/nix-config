@@ -39,6 +39,7 @@
   (org-hide-emphasis-markers t)
   (org-hide-leading-stars t)
   (org-pretty-entities t)
+  (org-auto-align-tags nil)
   (org-tags-column 0)
   ;; Keybinding behavior
   (org-special-ctrl-a/e t)
@@ -229,9 +230,11 @@
 (use-package org-modern
   :ensure t
   :after org
+  :hook ((org-mode . org-modern-mode)
+         (org-agenda-finalize . org-modern-agenda))
   :custom
   (org-modern-hide-stars nil) ; org-indent-mode doesn't behave well with other values
-  (global-org-modern-mode t))
+  (org-modern-block-indent t))
 
 (provide 'jdp-modules-org)
 ;;; jdp-modules-org.el ends here
