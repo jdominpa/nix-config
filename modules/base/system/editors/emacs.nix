@@ -4,10 +4,11 @@
   pkgs,
   ...
 }:
+with lib;
 let
   cfg = config.jdp.base.system.editors.emacs;
   emacs =
-    # FIXME: native compilation currently doesn't work with macOS Sequoia 15.4
+    # FIXME: native compilation doesn't work with macOS Sequoia 15.4
     # https://github.com/NixOS/nixpkgs/issues/395169
     if pkgs.stdenv.hostPlatform.isDarwin then
       pkgs.emacs-git.override { withNativeCompilation = false; }
@@ -16,10 +17,10 @@ let
 in
 {
   options.jdp.base = {
-    system.editors.emacs.enable = lib.mkEnableOption "Whether to install emacs in this system.";
+    system.editors.emacs.enable = mkEnableOption "Whether to install emacs in this system.";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
         ((emacsPackagesFor emacs).emacsWithPackages (
@@ -36,6 +37,7 @@ in
             corfu
             denote
             diff-hl
+            # emacs-lsp-booster
             embark
             embark-consult
             envrc

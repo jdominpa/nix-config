@@ -22,6 +22,7 @@
 
 ;;; `LaTeX-mode'
 (use-package math-delimiters
+  :vc (:url "https://github.com/oantolin/math-delimiters")
   :commands (math-delimiters-no-dollars math-delimiters-insert)
   :custom
   (math-delimiters-compressed-display-math nil))

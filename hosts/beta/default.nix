@@ -69,6 +69,7 @@ in
         direnv.enable = true;
         fzf.enable = true;
         git.enable = true;
+        kanata.enable = true;
         starship.enable = true;
         zsh.enable = true;
       };

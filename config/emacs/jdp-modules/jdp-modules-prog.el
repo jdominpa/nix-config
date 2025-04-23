@@ -73,6 +73,13 @@
   (with-eval-after-load 'cape
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
+(use-package eglot-booster
+  :disabled t ; FIXME: native compilation doesn't work on macOS Sequoia 15.4
+  :vc (:url "https://github.com/jdtsmith/eglot-booster")
+  :after eglot
+  :config
+  (eglot-booster-mode))
+
 (use-package consult-eglot
   :ensure t
   :after (consult eglot)
