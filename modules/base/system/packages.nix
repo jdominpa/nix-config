@@ -4,15 +4,16 @@
   pkgs,
   ...
 }:
+with lib;
 let
   cfg = config.jdp.base.system.packages;
 in
 {
   options.jdp.base = {
-    system.packages.enable = lib.mkEnableOption "Install useful base packages suitable for any system.";
+    system.packages.enable = mkEnableOption "Install useful base packages suitable for any system.";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       coreutils
       curl
