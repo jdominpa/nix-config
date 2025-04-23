@@ -12,7 +12,7 @@ let
     if pkgs.stdenv.hostPlatform.isDarwin then
       pkgs.emacs-git.override { withNativeCompilation = false; }
     else
-      pkgs.emacs-git;
+      pkgs.emacs-git-pgtk;
 in
 {
   options.jdp.base = {
