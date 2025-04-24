@@ -1,8 +1,7 @@
 ;; -*- coding: utf-8 -*-
 
 (define-abbrev-table 'LaTeX-mode-abbrev-table
-  '(("st" "such that")
-    ("arccos" "\\arccos")
+  '(("arccos" "\\arccos")
     ("arccot" "\\arccot")
     ("arccsc" "\\arccsc")
     ("arcsec" "\\arcsec")
@@ -25,7 +24,10 @@
     ("subseteq" "\\subseteq")
     ("supset" "\\supset")
     ("supseteq" "\\supseteq")
-    ("tan" "\\tan")))
+    ("st" "such that")
+    ("tan" "\\tan")
+    ("wlog" "without loss of generality")
+    ("Wlog" "Without loss of generality")))
 
 ;; Local Variables:
 ;; mode: emacs-lisp

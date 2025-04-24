@@ -91,6 +91,9 @@
               ("M-n" . TeX-next-error)
               ("M-p" . TeX-previous-error))
   :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-auto-untabify t)
   (TeX-source-correlate-mode t)
   (TeX-source-correlate-start-server t)
   (TeX-newline-function 'reindent-then-newline-and-indent)
