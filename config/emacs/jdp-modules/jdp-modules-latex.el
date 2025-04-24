@@ -11,7 +11,6 @@
 ;;; Improved PDF viewing
 (use-package pdf-tools
   :ensure t
-  :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
               ("d" . pdf-view-midnight-minor-mode))
   :custom
