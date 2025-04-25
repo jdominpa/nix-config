@@ -75,7 +75,8 @@
 
 (use-package eglot-booster
   :disabled t ; FIXME: native compilation doesn't work on macOS Sequoia 15.4
-  :vc (:url "https://github.com/jdtsmith/eglot-booster")
+  :vc (:url "https://github.com/jdtsmith/eglot-booster"
+       :rev :newest)
   :after eglot
   :config
   (eglot-booster-mode))
