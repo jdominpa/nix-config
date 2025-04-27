@@ -145,15 +145,14 @@
   :ensure t
   :custom
   (corfu-min-width 20)
-  (global-corfu-mode t)
-  (corfu-popupinfo-delay '(1.25 . 0.5))
+  (corfu-popupinfo-delay '(nil . 1))
   (corfu-popupinfo-mode t)
   (corfu-history-mode t)
+  (global-corfu-mode t)
   :config
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
-;;; Completion backends
 (use-package cape
   :ensure t
   :after corfu
@@ -163,7 +162,13 @@
   (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
     (add-hook 'completion-at-point-functions backend)))
 
-;;; Completion popup icons
+(use-package corfu-candidate-overlay
+  :ensure t
+  :after corfu
+  :bind ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
+  :custom
+  (corfu-candidate-overlay-mode t))
+
 (use-package kind-icon
   :ensure t
   :after corfu

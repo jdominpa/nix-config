@@ -35,9 +35,9 @@ in
             consult-dir
             consult-eglot
             corfu
+            corfu-candidate-overlay
             denote
             diff-hl
-            # emacs-lsp-booster
             embark
             embark-consult
             envrc
@@ -68,6 +68,16 @@ in
             yasnippet
           ]
         ))
+        # Emacs LSP performance booster
+        (
+          if pkgs.stdenv.hostPlatform.isDarwin then
+            emacs-lsp-booster.overrideAttrs (old: {
+              doCheck = false;
+              nativeCheckInputs = [ ];
+            })
+          else
+            emacs-lsp-booster
+        )
         # Spellchecking backend for jinx
         hunspell
         hunspellDicts.en-us-large

@@ -26,10 +26,7 @@
 
 ;; Enable automatic completion in `prog-mode' buffers
 (use-package prog-mode
-  :hook ((prog-mode . goto-address-prog-mode)
-         (prog-mode . (lambda ()
-                        (with-eval-after-load 'corfu
-                          (setq-local corfu-auto t))))))
+  :hook (prog-mode . goto-address-prog-mode))
 
 ;; Eldoc
 (use-package eldoc
@@ -74,12 +71,11 @@
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
 (use-package eglot-booster
-  :disabled t ; FIXME: native compilation doesn't work on macOS Sequoia 15.4
   :vc (:url "https://github.com/jdtsmith/eglot-booster"
        :rev :newest)
   :after eglot
-  :config
-  (eglot-booster-mode))
+  :custom
+  (eglot-booster-mode t))
 
 (use-package consult-eglot
   :ensure t
