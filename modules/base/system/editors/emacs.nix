@@ -35,7 +35,6 @@ in
             consult-dir
             consult-eglot
             corfu
-            corfu-candidate-overlay
             denote
             diff-hl
             embark

@@ -3,16 +3,7 @@
 ;;; Minibuffer configurations and Vertico
 (use-package minibuffer
   :custom
-  (completion-styles '(basic substring initials flex orderless))
-  (completion-category-overrides
-   '((file (styles . (basic partial-completion orderless)))
-     (library (styles . (basic substring)))
-     (embark-keybinding (styles . (basic substring)))
-     (imenu (styles . (basic substring orderless)))
-     (consult-location (styles . (basic substring orderless)))
-     (kill-ring (styles . (emacs22 orderless)))
-     (eglot . (styles . (emacs22 substring orderless)))
-     (eglot-capf . (styles . (emacs22 substring orderless)))))
+  (completion-ignore-case t)
   (completion-pcm-leading-wildcard t)
   (read-buffer-completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
@@ -22,10 +13,7 @@
   (minibuffer-eldef-shorten-default t)
   (file-name-shadow-mode t)
   (minibuffer-depth-indicate-mode t)
-  (minibuffer-electric-default-mode t)
-  :config
-  (setq completion-category-defaults nil
-        completion-ignore-case t))
+  (minibuffer-electric-default-mode t))
 
 (use-package savehist
   :custom
@@ -51,13 +39,11 @@
 ;;; Orderless completion style
 (use-package orderless
   :ensure t
-  :demand t
-  :bind (:map minibuffer-local-completion-map
-         ("?" . nil)
-         ("SPC" . nil))
   :custom
-  (orderless-matching-styles '(orderless-prefixes
-                               orderless-regexp)))
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file (styles . (basic partial-completion orderless))))))
 
 ;;; Enhanced minibuffer commands
 (use-package consult
@@ -161,14 +147,6 @@
   :init
   (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
     (add-hook 'completion-at-point-functions backend)))
-
-(use-package corfu-candidate-overlay
-  :ensure t
-  :disabled t
-  :after corfu
-  :bind ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
-  :custom
-  (corfu-candidate-overlay-mode t))
 
 (use-package kind-icon
   :ensure t
