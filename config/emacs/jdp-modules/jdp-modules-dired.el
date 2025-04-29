@@ -41,6 +41,7 @@
   (ibuffer-expert t)
   (ibuffer-display-summary nil)
   (ibuffer-show-empty-filter-groups nil)
+  (ibuffer-human-readable-size t)
   (ibuffer-movement-cycle nil)
   (ibuffer-default-sorting-mode 'filename/process)
   (ibuffer-old-time 48))

@@ -164,6 +164,7 @@
 
 (use-package corfu-candidate-overlay
   :ensure t
+  :disabled t
   :after corfu
   :bind ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
   :custom
