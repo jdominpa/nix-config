@@ -156,11 +156,14 @@
   :defer t
   :config
   (use-package lsp-mode
-    :hook (lsp-completion-mode . jdp-lsp-mode-setup-completion)
+    :hook (
+           ;; (lsp-mode . #'(lambda ()
+           ;;                 (setq-local read-process-output-max (* 1024 1024))))
+           (lsp-completion-mode . jdp-lsp-mode-setup-completion))
     :init
     (defun jdp-lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-            '(emacs22 substring orderless)))
+            '(orderless basic)))
     (defun lsp-booster--advice-json-parse (old-fn &rest args)
       "Try to parse bytecode instead of json."
       (or
@@ -178,13 +181,13 @@
     (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
       "Prepend emacs-lsp-booster command to lsp CMD."
       (let ((orig-result (funcall old-fn cmd test?)))
-        (if (and (not test?)                             ;; for check lsp-server-present?
-                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+        (if (and (not test?)
+                 (not (file-remote-p default-directory))
                  lsp-use-plists
-                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
+                 (not (functionp 'json-rpc-connection))
                  (executable-find "emacs-lsp-booster"))
             (progn
-              (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+              (when-let ((command-from-exec-path (executable-find (car orig-result))))
                 (setcar orig-result command-from-exec-path))
               (message "Using emacs-lsp-booster for %s!" orig-result)
               (cons "emacs-lsp-booster" orig-result))
@@ -199,7 +202,8 @@
     (lsp-enable-symbol-highlighting nil)
     (lsp-headerline-breadcrumb-enable nil)
     :config
-    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)))
+    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+    (fset #'jsonrpc--log-event #'ignore)))
 
 ;; Markdown
 (use-package markdown-mode
