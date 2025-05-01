@@ -70,6 +70,7 @@
   (eglot-ignored-server-capabilities
    '(:documentHighlightProvider))
   :config
+  (fset #'jsonrpc--log-event #'ignore)
   (with-eval-after-load 'cape
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
@@ -94,10 +95,7 @@
               ("C-c ! d" . flymake-show-buffer-diagnostics)
               ("C-c ! D" . flymake-show-project-diagnostics))
   :custom
-  (flymake-no-changes-timeout nil)
   (flymake-proc-compilation-prevents-syntax-check t)
-  (flymake-start-on-flymake-mode t)
-  (flymake-start-on-save-buffer t)
   (flymake-show-diagnostics-at-end-of-line 'short)
   (flymake-mode-line-format
    '("" flymake-mode-line-exception flymake-mode-line-counters)))
@@ -154,16 +152,18 @@
   :vc (:url "https://github.com/leanprover-community/lean4-mode"
             :rev :newest)
   :defer t
+  :custom
+  (lsp-keymap-prefix "C-c l")
   :config
   (use-package lsp-mode
-    :hook (
-           ;; (lsp-mode . #'(lambda ()
-           ;;                 (setq-local read-process-output-max (* 1024 1024))))
-           (lsp-completion-mode . jdp-lsp-mode-setup-completion))
+    :hook (lsp-completion-mode . jdp-lsp-mode-setup-completion)
     :init
+    ;; Setup corfu and orderless for completion
     (defun jdp-lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-            '(orderless basic)))
+            '(orderless))
+      (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
+    ;; emacs-lsp-booster configuration
     (defun lsp-booster--advice-json-parse (old-fn &rest args)
       "Try to parse bytecode instead of json."
       (or
@@ -193,16 +193,18 @@
               (cons "emacs-lsp-booster" orig-result))
           orig-result)))
     :custom
-    (lsp-keymap-prefix "C-c l")
     (lsp-diagnostics-provider :flymake)
     (lsp-completion-provider :none)
     (lsp-log-io nil)
     (lsp-keep-workspace-alive nil)
-    (lsp-enable-xref t)
     (lsp-enable-symbol-highlighting nil)
     (lsp-headerline-breadcrumb-enable nil)
+    (lsp-inlay-hint-enable t)
     :config
-    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+    (advice-add #'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+    (with-eval-after-load 'cape
+      ;; fix lsp-capf: see https://github.com/minad/corfu/issues/188
+      (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible))
     (fset #'jsonrpc--log-event #'ignore)))
 
 ;; Markdown

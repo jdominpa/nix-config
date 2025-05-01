@@ -16,7 +16,7 @@
 ;; Basic settings
 (use-package emacs
   :hook (emacs-startup . (lambda ()
-                           (setq gc-cons-threshold (* 800000 4)
+                           (setq gc-cons-threshold (* 800000 2)
                                  gc-cons-percentage 0.1)
                            (garbage-collect)))
   :custom
