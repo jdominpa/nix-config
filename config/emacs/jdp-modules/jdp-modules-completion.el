@@ -117,7 +117,6 @@
 (use-package embark
   :ensure t
   :bind (("C-." . embark-act)
-         ("M-." . embark-dwim)
          ("C-h B" . embark-bindings))
   :custom
   (prefix-help-command #'embark-prefix-help-command))

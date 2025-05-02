@@ -61,6 +61,11 @@
   (ring-bell-function 'ignore)
   (mode-line-right-align-edge 'right-margin)
   (project-mode-line t)
+  (mode-line-collapse-minor-modes
+   '(not
+     defining-kbd-macro
+     envrc-mode
+     flymake-mode))
   :config
   (setq-default mode-line-format
                 '("%e" mode-line-front-space
@@ -92,16 +97,6 @@ spacious-padding is enabled."
     ;; toggled on/off.
     (jdp-mode-line-spacious-indicators)
     (add-hook 'spacious-padding-mode-hook #'jdp-mode-line-spacious-indicators)))
-
-;; Minions (hide mode line minor modes)
-(use-package minions
-  :ensure t
-  :custom
-  (minions-prominent-modes '(defining-kbd-macro
-                             envrc-mode
-                             flymake-mode))
-  (minions-mode-line-lighter "...")
-  (minions-mode t))
 
 (provide 'jdp-modules-ui)
 ;;; jdp-modules-ui.el ends here

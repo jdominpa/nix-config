@@ -52,7 +52,6 @@ in
             marginalia
             markdown-mode
             meow
-            minions
             modus-themes
             nix-mode
             orderless
