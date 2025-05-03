@@ -24,14 +24,15 @@
    '("0" . meow-digit-argument)
    '("/" . meow-keypad-describe-key)
    '("?" . meow-cheatsheet)
-   ;; Window management
-   '("s" . split-window-right)
-   '("w" . split-window-below)
+   ;; High frequency commands
    '("q" . delete-window)
-   '("a" . delete-other-windows)
-   ;; Buffer management
-   '("b" . switch-to-buffer)
-   `("p" . ,project-prefix-map))
+   '("w" . delete-other-windows)
+   '("e" . split-window-below)
+   '("r" . split-window-right)
+   '("a" . execute-extended-command)
+   `("s" . ,project-prefix-map)
+   '("d" . switch-to-buffer)
+   '("f" . find-file))
   (meow-normal-define-key
    ;; Numeric arguments
    '("0" . meow-expand-0)
@@ -101,13 +102,13 @@
    '("/" . meow-visit)
    '("a" . meow-mark-word)
    '("A" . meow-mark-symbol)
-   '("[" . meow-pop-to-mark)
-   '("]" . meow-unpop-to-mark)
+   '("{" . meow-pop-to-mark)
+   '("}" . meow-unpop-to-mark)
    ;; Thing
-   '("," . meow-beginning-of-thing)
-   '("." . meow-end-of-thing)
-   '("<" . meow-inner-of-thing)
-   '(">" . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
    ;; Actions
    '("\\" . meow-indent)
    '("q" . meow-quit)
@@ -117,34 +118,36 @@
 
   ;; Modeline state indicators
   (setopt meow-replace-state-name-list
-          '((normal . "<N>")
-            (motion . "<M>")
-            (keypad . "<K>")
-            (insert . "<I>")
-            (beacon . "<B>")))
+          '((normal . "[N]")
+            (motion . "[M]")
+            (keypad . "[K]")
+            (insert . "[I]")
+            (beacon . "[B]")))
 
-  ;; Meow extra `thing' definitions
+  ;; Meow `thing' definitions and meow-tree-sitter
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
-  (meow-thing-register 'inline-math
-                       '(pair ("\\(") ("\\)"))
-                       '(pair ("\\(") ("\\)")))
+  (meow-thing-register 'latex
+                       '(regexp "\\\\begin{.*?}\\(.*?\\)\n\\|\\\\(\\|\\\\\\[\n"
+                                "\\\\end{.*?}\\|\\\\)\\|\\\\]")
+                       '(regexp "\\\\begin{.*?}\\(.*?\\)\n\\|\\\\(\\|\\\\\\[\n"
+                                "\\\\end{.*?}\\|\\\\)\\|\\\\]"))
   (setopt meow-char-thing-table
-          '((?f . round)
-            (?d . square)
-            (?s . curly)
-            (?a . angle)
-            (?v . paragraph)
-            (?c . line)
-            (?x . buffer)
-            (?z . visual-line)
-            (?r . string)
-            (?e . symbol)
+          '((?q . window)
             (?w . defun)
-            (?q . window)
+            (?e . symbol)
+            (?r . string)
+            (?t . latex)
+            (?a . angle)
+            (?s . curly)
+            (?d . square)
+            (?f . round)
             (?g . sentence)
-            (?m . inline-math)))
+            (?z . visual-line)
+            (?x . buffer)
+            (?c . line)
+            (?v . paragraph)))
 
   (meow-global-mode))
 

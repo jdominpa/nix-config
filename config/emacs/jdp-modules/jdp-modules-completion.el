@@ -55,14 +55,12 @@
          ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
-         ;; C-c bindings in `mode-specific-map'
-         ("C-c b" . consult-buffer)
+         ([remap switch-to-buffer] . consult-buffer)
          ;; M-g bindings in `goto-map'
          ("M-g a" . consult-org-agenda)
          ("M-g e" . consult-compile-error)
          ("M-g f" . consult-flymake)
-         ("M-g g" . consult-goto-line)   ; orig. `goto-line'
-         ("M-g M-g" . consult-goto-line) ; orig. `goto-line'
+         ([remap goto-line] . consult-goto-line) ; orig. `goto-line'
          ("M-g o" . consult-outline)
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
@@ -93,7 +91,7 @@
          ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
          ("C-M-#" . consult-register)
          ;; Other custom bindings
-         ("M-y" . consult-yank-pop) ; orig. `yank-pop'
+         ([remap yank-pop] . consult-yank-pop) ; orig. `yank-pop'
          ("M-X" . consult-mode-command)
          :map consult-narrow-map
          ("?" . consult-narrow-help))
