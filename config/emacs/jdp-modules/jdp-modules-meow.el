@@ -31,8 +31,8 @@
    '("r" . split-window-right)
    '("a" . execute-extended-command)
    `("s" . ,project-prefix-map)
-   '("d" . switch-to-buffer)
-   '("f" . find-file))
+   '("d" . find-file)
+   '("f" . switch-to-buffer))
   (meow-normal-define-key
    ;; Numeric arguments
    '("0" . meow-expand-0)

@@ -55,7 +55,8 @@
          ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
-         ([remap switch-to-buffer] . consult-buffer)
+         ;; C-c bindings in `mode-specific-map'
+         ("C-c f" . consult-buffer)     ; see jdp-modules-meow.el
          ;; M-g bindings in `goto-map'
          ("M-g a" . consult-org-agenda)
          ("M-g e" . consult-compile-error)

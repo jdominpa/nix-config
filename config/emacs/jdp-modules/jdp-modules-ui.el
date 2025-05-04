@@ -19,7 +19,9 @@
 (use-package fontaine
   :ensure t
   :if (display-graphic-p)
-  :bind ("C-c f" . fontaine-set-preset)
+  :hook (after-init . (lambda ()
+                        (fontaine-set-preset (or (fontaine-restore-latest-preset)
+                                                 'regular))))
   :custom
   (fontaine-presets '((regular
                        :default-height 130)
@@ -30,9 +32,7 @@
                        :fixed-pitch-family nil
                        :variable-pitch-family "Aporetic Serif")))
   :custom
-  (fontaine-mode t)
-  :config
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
+  (fontaine-mode t))
 
 ;;; Spacious padding
 (use-package spacious-padding
