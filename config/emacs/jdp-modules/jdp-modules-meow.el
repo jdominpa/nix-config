@@ -29,9 +29,8 @@
    '("w" . delete-other-windows)
    '("e" . split-window-below)
    '("r" . split-window-right)
+   `("p" . ,project-prefix-map)
    '("a" . execute-extended-command)
-   `("s" . ,project-prefix-map)
-   '("d" . find-file)
    '("f" . switch-to-buffer))
   (meow-normal-define-key
    ;; Numeric arguments
