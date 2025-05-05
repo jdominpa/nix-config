@@ -115,6 +115,12 @@
    '("'" . repeat)
    '("<escape>" . ignore))
 
+  ;; Homerow prefix locations
+  (setopt meow-keypad-start-keys
+          '((?s . ?c)
+            (?j . ?h)
+            (?d . ?x)))
+
   ;; Modeline state indicators
   (setopt meow-replace-state-name-list
           '((normal . "[N]")
