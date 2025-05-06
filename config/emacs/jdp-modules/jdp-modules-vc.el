@@ -24,7 +24,7 @@
 (use-package magit
   :ensure t
   :hook (git-commit-mode . goto-address-mode)
-  :bind ("C-c g" . magit-status)
+  :bind ("C-x g" . magit-status)
   :custom
   (magit-diff-refine-hunk t))
 

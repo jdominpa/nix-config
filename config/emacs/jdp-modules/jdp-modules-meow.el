@@ -116,10 +116,10 @@
    '("<escape>" . ignore))
 
   ;; Homerow prefix locations
-  (setopt meow-keypad-start-keys
-          '((?s . ?c)
-            (?j . ?h)
-            (?d . ?x)))
+  (setopt meow-keypad-start-keys '((?s . ?c)
+                                   (?j . ?h)
+                                   (?d . ?x))
+          meow-keypad-meta-prefix ?\;)
 
   ;; Modeline state indicators
   (setopt meow-replace-state-name-list
