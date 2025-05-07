@@ -58,7 +58,7 @@
 ;;; `auto-revert-mode'
 (use-package autorevert
   :custom
-  (auto-revert-mode t))
+  (global-auto-revert-mode t))
 
 ;;; Emacs server
 (use-package server

@@ -43,7 +43,7 @@
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides
-   '((file (styles . (basic partial-completion orderless))))))
+   '((file (styles . (basic partial-completion))))))
 
 ;;; Enhanced minibuffer commands
 (use-package consult
@@ -55,8 +55,16 @@
          ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
+         ; FIXME: meow leader map doesn't work with this
+         ("C-x p b" . consult-project-buffer) ; orig. `project-switch-to-buffer'
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
+         ("C-M-#" . consult-register)
          ;; C-c bindings in `mode-specific-map'
          ("C-c f" . consult-buffer)     ; see jdp-modules-meow.el
+         ;; Other custom bindings
+         ([remap yank-pop] . consult-yank-pop) ; orig. `yank-pop'
          ;; M-g bindings in `goto-map'
          ("M-g a" . consult-org-agenda)
          ("M-g e" . consult-compile-error)
@@ -87,22 +95,15 @@
          :map minibuffer-local-map
          ("M-s" . consult-history) ; orig. `next-matching-history-element'
          ("M-r" . consult-history) ; orig. `previous-matching-history-element'
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ([remap yank-pop] . consult-yank-pop) ; orig. `yank-pop'
-         ("M-X" . consult-mode-command)
          :map consult-narrow-map
          ("?" . consult-narrow-help))
   :custom
-  (completion-in-region-function #'consult-completion-in-region)
   (register-preview-function #'consult-register-format)
-  (register-preview-delay 0.8)
   (xref-show-xrefs-function #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
-  (consult-narrow-key "<"))
+  (consult-narrow-key "<")
+  :config
+  (advice-add #'register-preview :override #'consult-register-window))
 
 ;;; Switch to directories
 (use-package consult-dir
@@ -128,6 +129,8 @@
 (use-package corfu
   :ensure t
   :custom
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (text-mode-ispell-word-completion nil)
   (corfu-min-width 20)
   (corfu-popupinfo-delay '(nil . 1))
   (corfu-popupinfo-mode t)
