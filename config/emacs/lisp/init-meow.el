@@ -29,7 +29,7 @@
    '("w" . delete-other-windows)
    '("e" . split-window-below)
    '("r" . split-window-right)
-   `("p" . ,project-prefix-map)
+   `("p" . "C-x p")
    '("a" . execute-extended-command)
    '("f" . switch-to-buffer))
   (meow-normal-define-key
