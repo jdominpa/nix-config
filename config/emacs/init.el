@@ -47,12 +47,12 @@
   :config
   (setq disabled-command-function nil))
 
-;; "jdp-modules" is for emacs configuration modules
-;; "jdp-lisp" is used for custom elisp files
+;; `lisp' is for emacs configuration modules
+;; `site-lisp' is for custom elisp files and third party packages
 (mapc
  (lambda (string)
    (add-to-list 'load-path (locate-user-emacs-file string)))
- '("jdp-modules" "jdp-lisp"))
+ '("lisp" "site-lisp"))
 
 (use-package package
   :custom
@@ -75,18 +75,18 @@
               (daemonp)))
     (exec-path-from-shell-initialize)))
 
-(require 'jdp-modules-meow)
-(require 'jdp-modules-emacs)
-(require 'jdp-modules-ui)
-(require 'jdp-modules-completion)
-(require 'jdp-modules-search)
-(require 'jdp-modules-dired)
-(require 'jdp-modules-window)
-(require 'jdp-modules-vc)
-(require 'jdp-modules-shell)
-(require 'jdp-modules-latex)
-(require 'jdp-modules-org)
-(require 'jdp-modules-prog)
+(require 'init-meow)
+(require 'init-emacs)
+(require 'init-ui)
+(require 'init-completion)
+(require 'init-search)
+(require 'init-dired)
+(require 'init-window)
+(require 'init-vc)
+(require 'init-shell)
+(require 'init-latex)
+(require 'init-org)
+(require 'init-prog)
 
 
 ;;; System specific settings

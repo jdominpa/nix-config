@@ -1,4 +1,4 @@
-;;; jdp-modules-shell.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
+;;; init-shell.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
 
 ;;; Shell
 (use-package shell
@@ -25,5 +25,5 @@
   (password-cache t)
   (password-cache-expiry 300))
 
-(provide 'jdp-modules-shell)
-;;; jdp-modules-shell.el ends here
+(provide 'init-shell)
+;;; init-shell.el ends here

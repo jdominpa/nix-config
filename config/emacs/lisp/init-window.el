@@ -1,4 +1,4 @@
-;;; jdp-modules-window.el --- Configurations for managing windows -*- lexical-binding: t -*-
+;;; init-window.el --- Configurations for managing windows -*- lexical-binding: t -*-
 
 ;;; Unique buffer names
 (use-package uniquify
@@ -76,5 +76,5 @@
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?k ?l ?\;)))
 
-(provide 'jdp-modules-window)
-;;; jdp-modules-window.el ends here
+(provide 'init-window)
+;;; init-window.el ends here

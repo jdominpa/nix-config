@@ -1,4 +1,4 @@
-;;; jdp-modules-search.el --- Configurations for searching buffer/file contents -*- lexical-binding: t -*-
+;;; init-search.el --- Configurations for searching buffer/file contents -*- lexical-binding: t -*-
 
 ;;; Isearch and occur
 (use-package isearch
@@ -30,5 +30,5 @@
          :map isearch-mode-map
          ("M-j" . avy-isearch)))
 
-(provide 'jdp-modules-search)
-;;; jdp-modules-search.el ends here
+(provide 'init-search)
+;;; init-search.el ends here

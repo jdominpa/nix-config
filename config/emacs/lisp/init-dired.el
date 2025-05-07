@@ -1,4 +1,4 @@
-;;; jdp-modules-dired.el --- Configurations for `dired' and `ibuffer' -*- lexical-binding: t -*-
+;;; init-dired.el --- Configurations for `dired' and `ibuffer' -*- lexical-binding: t -*-
 
 ;;; Dired file manager
 (use-package dired
@@ -46,5 +46,5 @@
   (ibuffer-default-sorting-mode 'filename/process)
   (ibuffer-old-time 48))
 
-(provide 'jdp-modules-dired)
-;;; jdp-modules-dired.el ends here
+(provide 'init-dired)
+;;; init-dired.el ends here

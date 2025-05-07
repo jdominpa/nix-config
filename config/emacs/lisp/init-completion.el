@@ -1,4 +1,4 @@
-;;; jdp-modules-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
+;;; init-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
 
 ;;; Minibuffer configurations and Vertico
 (use-package minibuffer
@@ -62,7 +62,7 @@
          ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
          ("C-M-#" . consult-register)
          ;; C-c bindings in `mode-specific-map'
-         ("C-c f" . consult-buffer)     ; see jdp-modules-meow.el
+         ("C-c f" . consult-buffer)     ; see init-meow.el
          ;; Other custom bindings
          ([remap yank-pop] . consult-yank-pop) ; orig. `yank-pop'
          ;; M-g bindings in `goto-map'
@@ -164,5 +164,5 @@
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))
 
-(provide 'jdp-modules-completion)
-;;; jdp-modules-completion.el ends here
+(provide 'init-completion)
+;;; init-completion.el ends here

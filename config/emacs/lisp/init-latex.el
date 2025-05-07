@@ -1,4 +1,4 @@
-;;; jdp-modules-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
+;;; init-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
 
 ;;; Input method settings
 (use-package emacs
@@ -48,11 +48,11 @@
   (use-package yasnippet
     :if (featurep 'yasnippet)
     :hook ((cdlatex-tab . yas-expand)
-           (cdlatex-tab . jdp-cdlatex-in-yas-field))
+           (cdlatex-tab . cdlatex-in-yas-field))
     :bind (:map yas-keymap
-                ("TAB" . jdp-yas-next-field-or-cdlatex))
+                ("TAB" . yas-next-field-or-cdlatex))
     :config
-    (defun jdp-cdlatex-in-yas-field ()
+    (defun cdlatex-in-yas-field ()
       ;; Check if we're at the end of the Yas field
       (when-let* ((_ (overlayp yas--active-field-overlay))
                   (end (overlay-end yas--active-field-overlay)))
@@ -70,7 +70,7 @@
                                        (point))
                        (overlay-end yas--active-field-overlay)))
             (goto-char minp) t))))
-    (defun jdp-yas-next-field-or-cdlatex nil
+    (defun yas-next-field-or-cdlatex nil
       "Jump to the next Yas field correctly with cdlatex active."
       (interactive)
       (if (or (bound-and-true-p cdlatex-mode)
@@ -127,5 +127,5 @@
               ("M-$" . jinx-correct)
               ("C-M-$" . jinx-languages)))
 
-(provide 'jdp-modules-latex)
-;;; jdp-modules-latex.el ends here
+(provide 'init-latex)
+;;; init-latex.el ends here

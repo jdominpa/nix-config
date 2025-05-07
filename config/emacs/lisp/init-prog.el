@@ -1,4 +1,4 @@
-;;; jdp-modules-prog.el --- Configurations for `prog-mode' and programming languages -*- lexical-binding: t -*-
+;;; init-prog.el --- Configurations for `prog-mode' and programming languages -*- lexical-binding: t -*-
 
 ;;; General programming settings
 
@@ -156,10 +156,10 @@
   (lsp-keymap-prefix "C-c l")
   :config
   (use-package lsp-mode
-    :hook (lsp-completion-mode . jdp-lsp-mode-setup-completion)
+    :hook (lsp-completion-mode . lsp-mode-setup-completion)
     :init
     ;; Setup corfu and orderless for completion
-    (defun jdp-lsp-mode-setup-completion ()
+    (defun lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
             '(orderless))
       (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
@@ -220,5 +220,5 @@
   :defer t
   :hook (nix-mode . nix-prettify-mode))
 
-(provide 'jdp-modules-prog)
-;;; jdp-modules-prog.el ends here
+(provide 'init-prog)
+;;; init-prog.el ends here

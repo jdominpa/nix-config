@@ -1,4 +1,4 @@
-;;; jdp-modules-vc.el --- Configurations for version control frameworks -*- lexical-binding: t -*-
+;;; init-vc.el --- Configurations for version control frameworks -*- lexical-binding: t -*-
 
 ;;; Version control framework
 (use-package vc
@@ -34,5 +34,5 @@
   :custom
   (magit-todos-mode t))
 
-(provide 'jdp-modules-vc)
-;;; jdp-modules-vc.el ends here
+(provide 'init-vc)
+;;; init-vc.el ends here

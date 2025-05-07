@@ -1,4 +1,4 @@
-;;; jdp-modules-ui.el --- Configurations for Emacs' UI (theme, font, ...) -*- lexical-binding: t -*-
+;;; init-ui.el --- Configurations for Emacs' UI (theme, font, ...) -*- lexical-binding: t -*-
 
 ;;; Modus theme
 (use-package modus-themes
@@ -24,8 +24,8 @@
                                                  'regular))))
   :custom
   (fontaine-presets '((regular)
-                      (27-monitor
-                       :default-height 170)
+                      (27in-monitor
+                       :default-height 140)
                       (laptop
                        :default-height 150)
                       (t
@@ -89,8 +89,8 @@
                   mode-line-end-spaces))
   
   (with-eval-after-load 'spacious-padding
-    (defun jdp-mode-line-spacious-indicators ()
-      "Set box attribute to `jdp-mode-line-indicator-button' if
+    (defun jdp/mode-line-spacious-indicators ()
+      "Set box attribute to `mode-line-indicator-button' if
 spacious-padding is enabled."
       (if (bound-and-true-p spacious-padding-mode)
           (set-face-attribute 'jdp-mode-line-indicator-button nil :box t)
@@ -98,8 +98,8 @@ spacious-padding is enabled."
 
     ;; Run it at startup and then afterwards whenever `spacious-padding-mode' is
     ;; toggled on/off.
-    (jdp-mode-line-spacious-indicators)
-    (add-hook 'spacious-padding-mode-hook #'jdp-mode-line-spacious-indicators)))
+    (jdp/mode-line-spacious-indicators)
+    (add-hook 'spacious-padding-mode-hook #'jdp/mode-line-spacious-indicators)))
 
-(provide 'jdp-modules-ui)
-;;; jdp-modules-ui.el ends here
+(provide 'init-ui)
+;;; init-ui.el ends here

@@ -1,4 +1,4 @@
-;;; jdp-modules-meow.el --- Configurations for modal editing with `meow' -*- lexical-binding: t -*-
+;;; init-meow.el --- Configurations for modal editing with `meow' -*- lexical-binding: t -*-
 
 ;;; Meow setup
 (use-package meow
@@ -155,5 +155,5 @@
 
   (meow-global-mode))
 
-(provide 'jdp-modules-meow)
-;;; jdp-modules-meow.el ends here
+(provide 'init-meow)
+;;; init-meow.el ends here

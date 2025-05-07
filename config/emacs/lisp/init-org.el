@@ -1,4 +1,4 @@
-;;; jdp-modules-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
+;;; init-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
 
 ;;; Calendar
 (use-package calendar
@@ -51,7 +51,7 @@
 
 (use-package org-capture
   :bind (("C-c o c" . org-capture)
-         ("C-c o i" . jdp-org-capture-inbox))
+         ("C-c o i" . org-capture-inbox))
   :custom
   (org-capture-templates
    `(("i" "Inbox" entry (file "inbox.org")
@@ -75,7 +75,7 @@
                "DEADLINE: %^{Event}T\n"
                "/Created on/ %U\n"))))
   :config
-  (defun jdp-org-capture-inbox ()
+  (defun org-capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
     (interactive)
     (call-interactively 'org-store-link)
@@ -236,5 +236,5 @@
   (org-modern-hide-stars nil) ; org-indent-mode doesn't behave well with other values
   (org-modern-block-indent t))
 
-(provide 'jdp-modules-org)
-;;; jdp-modules-org.el ends here
+(provide 'init-org)
+;;; init-org.el ends here

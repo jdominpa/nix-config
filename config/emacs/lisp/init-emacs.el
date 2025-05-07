@@ -1,4 +1,4 @@
-;;; jdp-modules-emacs.el --- General configurations for Emacs -*- lexical-binding: t -*-
+;;; init-emacs.el --- General configurations for Emacs -*- lexical-binding: t -*-
 
 ;;; General settings
 (use-package emacs
@@ -73,5 +73,5 @@
   (save-place-forget-unreadable-files t)
   (save-place-mode t))
 
-(provide 'jdp-modules-emacs)
-;;; jdp-modules-emacs.el ends here
+(provide 'init-emacs)
+;;; init-emacs.el ends here
