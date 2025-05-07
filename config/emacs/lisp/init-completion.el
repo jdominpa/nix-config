@@ -49,22 +49,21 @@
 (use-package consult
   :ensure t
   :hook (completion-list-mode . consult-preview-at-point-mode)
-  :bind (;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command) ; orig. `repeat-complex-command'
+  :bind (;; Meow leader keybinds (see init-meow.el)
+         ("C-c f" . consult-buffer)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)  ; orig. `repeat-complex-command'
          ("C-x t b" . consult-buffer-other-tab) ; orig. `switch-to-buffer-other-tab'
          ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
-         ; FIXME: meow leader map doesn't work with this
-         ("C-x p b" . consult-project-buffer) ; orig. `project-switch-to-buffer'
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
          ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
          ("C-M-#" . consult-register)
-         ;; C-c bindings in `mode-specific-map'
-         ("C-c f" . consult-buffer)     ; see init-meow.el
          ;; Other custom bindings
-         ([remap yank-pop] . consult-yank-pop) ; orig. `yank-pop'
+         ([remap yank-pop] . consult-yank-pop)
+         ([remap project-list-buffers] . consult-project-buffer)
          ;; M-g bindings in `goto-map'
          ("M-g a" . consult-org-agenda)
          ("M-g e" . consult-compile-error)

@@ -25,7 +25,7 @@
   :custom
   (fontaine-presets '((regular)
                       (27in-monitor
-                       :default-height 140)
+                       :default-height 135)
                       (laptop
                        :default-height 150)
                       (t
