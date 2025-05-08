@@ -14,9 +14,9 @@
    ;; High frequency commands
    '("q" . "C-x 0")
    '("w" . "C-x 1")
-   '("e" . "C-x 2")
+   '("e" . "C-x o")
    '("r" . "C-x 3")
-   '("t" . "C-x o")
+   '("t" . "C-x 2")
    '("p" . "C-x p")
    '("a" . "M-x")
    '("f" . "C-x b")
