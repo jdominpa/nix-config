@@ -11,6 +11,15 @@
    '("Q" . kill-current-buffer)
    '("<escape>" . ignore))
   (meow-leader-define-key
+   ;; High frequency commands
+   '("q" . "C-x 0")
+   '("w" . "C-x 1")
+   '("e" . "C-x 2")
+   '("r" . "C-x 3")
+   '("t" . "C-x o")
+   '("p" . "C-x p")
+   '("a" . "M-x")
+   '("f" . "C-x b")
    ;; Use SPC (0-9) for digit arguments.
    '("1" . meow-digit-argument)
    '("2" . meow-digit-argument)
@@ -23,15 +32,7 @@
    '("9" . meow-digit-argument)
    '("0" . meow-digit-argument)
    '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet)
-   ;; High frequency commands
-   '("q" . delete-window)
-   '("w" . delete-other-windows)
-   '("e" . split-window-below)
-   '("r" . split-window-right)
-   `("p" . "C-x p")
-   '("a" . execute-extended-command)
-   '("f" . switch-to-buffer))
+   '("?" . meow-cheatsheet))
   (meow-normal-define-key
    ;; Numeric arguments
    '("0" . meow-expand-0)

@@ -49,14 +49,13 @@
 (use-package consult
   :ensure t
   :hook (completion-list-mode . consult-preview-at-point-mode)
-  :bind (;; Meow leader keybinds (see init-meow.el)
-         ("C-c f" . consult-buffer)
-         ;; C-x bindings in `ctl-x-map'
+  :bind (;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)  ; orig. `repeat-complex-command'
          ("C-x t b" . consult-buffer-other-tab) ; orig. `switch-to-buffer-other-tab'
          ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
          ("C-x M-m" . consult-minor-mode-menu)
          ("C-x M-k" . consult-kmacro)
+         ([remap switch-to-buffer] . consult-buffer)
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
          ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
