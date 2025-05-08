@@ -24,14 +24,14 @@
                                                  'regular))))
   :custom
   (fontaine-presets '((regular)
-                      (27in-monitor
-                       :default-height 135)
-                      (laptop
+                      (medium
                        :default-height 150)
+                      (large
+                       :default-height 165)
                       (t
                        :default-family "Aporetic Sans Mono"
                        :default-weight regular
-                       :default-height 100
+                       :default-height 135
                        :fixed-pitch-family nil
                        :variable-pitch-family "Aporetic Serif")))
   :custom
