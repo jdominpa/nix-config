@@ -24,9 +24,9 @@
   (gc-cons-threshold most-positive-fixnum)
   (gc-cons-percentage 0.6)
   ;; Frame settings
-  (frame-resize-pixelwise t)            ; Resize the frame pixelwise
-  (frame-inhibit-implied-resize t)      ; Do not resize the frame at this early stage.
-  (frame-title-format "Emacs - %b")     ; Frame title
+  (frame-resize-pixelwise t)       ; Resize the frame pixelwise
+  (frame-inhibit-implied-resize t) ; Do not resize the frame at this early stage.
+  (frame-title-format "%b")        ; Frame title
   ;; GUI elements
   (tool-bar-mode nil)
   (menu-bar-mode nil)

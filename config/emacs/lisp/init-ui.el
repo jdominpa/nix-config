@@ -23,10 +23,10 @@
                         (fontaine-set-preset (or (fontaine-restore-latest-preset)
                                                  'regular))))
   :custom
-  (fontaine-presets '((regular)
-                      (medium
+  (fontaine-presets '((default)
+                      (laptop
                        :default-height 150)
-                      (large
+                      (beta-monitor
                        :default-height 165)
                       (t
                        :default-family "Aporetic Sans Mono"
