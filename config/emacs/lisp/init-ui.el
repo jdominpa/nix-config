@@ -21,7 +21,7 @@
   :if (display-graphic-p)
   :hook (after-init . (lambda ()
                         (fontaine-set-preset (or (fontaine-restore-latest-preset)
-                                                 'regular))))
+                                                 'default))))
   :custom
   (fontaine-presets '((default)
                       (laptop
