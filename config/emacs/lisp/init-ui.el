@@ -9,9 +9,8 @@
   (modus-themes-mixed-fonts t)
   (modus-themes-bold-constructs t)
   (modus-themes-italic-constructs t)
-  (modus-themes-slanted-constructs t)
-  (modus-themes-completions '((t . (extrabold))))
-  (modus-themes-prompts '(extrabold))
+  (modus-themes-completions '((t . (bold))))
+  (modus-themes-prompts '(bold))
   :config
   (load-theme 'modus-vivendi t))
 
@@ -24,18 +23,30 @@
                                                  'default))))
   :custom
   (fontaine-presets '((default)
-                      (laptop
+                      (medium
                        :default-height 150)
-                      (beta-monitor
+                      (large
                        :default-height 165)
                       (t
                        :default-family "Aporetic Sans Mono"
                        :default-weight regular
-                       :default-height 135
-                       :fixed-pitch-family nil
+                       :default-height 130
+                       :fixed-pitch-family "Aporetic Sans Mono"
                        :variable-pitch-family "Aporetic Serif")))
   :custom
   (fontaine-mode t))
+
+(use-package face-remap
+  :bind (("C-x C-0" . global-text-scale-adjust) ; swap the default keybinds
+         ("C-x C--" . global-text-scale-adjust)
+         ("C-x C-+" . global-text-scale-adjust)
+         ("C-x C-=" . global-text-scale-adjust)
+         ("C-x C-M-0" . text-scale-adjust)
+         ("C-x C-M--" . text-scale-adjust)
+         ("C-x C-M-+" . text-scale-adjust)
+         ("C-x C-M-=" . text-scale-adjust)
+         :map ctl-x-x-map
+         ("v" . variable-pitch-mode)))
 
 ;;; Spacious padding
 (use-package spacious-padding
