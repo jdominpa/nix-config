@@ -33,9 +33,24 @@
 
 (use-package avy
   :ensure t
-  :bind (("M-j" . avy-goto-char-timer)
+  :bind (("C-;" . avy-goto-char-timer)
+         ("C-c ;" . avy-goto-char-timer) ; meow leader keybind
          :map isearch-mode-map
-         ("M-j" . avy-isearch)))
+         ("C-;" . avy-isearch))
+  :custom
+  (avy-single-candidate-jump nil)
+  :config
+  (with-eval-after-load 'embark
+    (defun avy-embark-act (pt)
+      "Use Embark to act on the item at PT."
+      (unwind-protect
+          (save-excursion
+            (goto-char pt)
+            (embark-act))
+        (select-window
+         (cdr (ring-ref avy-ring 0)))
+        t))
+    (add-to-list 'avy-dispatch-alist '(?\. . avy-embark-act))))
 
 (provide 'init-search)
 ;;; init-search.el ends here
