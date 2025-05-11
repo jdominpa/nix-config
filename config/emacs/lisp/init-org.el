@@ -1,6 +1,7 @@
 ;;; init-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
 
 ;;; Calendar
+
 (use-package calendar
   :commands calendar
   :custom
@@ -13,6 +14,7 @@
   (calendar-time-zone-style 'numeric)) ; Emacs 28.1
 
 ;;; Org
+
 (use-package org
   :hook ((org-mode . turn-on-auto-fill)
          (org-mode . turn-on-org-cdlatex))

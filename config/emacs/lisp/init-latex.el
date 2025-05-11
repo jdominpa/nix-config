@@ -1,6 +1,7 @@
 ;;; init-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
 
 ;;; Input method settings
+
 (use-package emacs
   :custom
   (fill-column 78)
@@ -8,7 +9,8 @@
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
 
-;;; Improved PDF viewing
+;;; Improved PDF viewing with `pdf-tools'
+
 (use-package pdf-tools
   :ensure t
   :bind (:map pdf-view-mode-map
@@ -20,6 +22,7 @@
   (pdf-loader-install))
 
 ;;; `LaTeX-mode'
+
 (use-package math-delimiters
   :vc (:url "https://github.com/oantolin/math-delimiters"
        :rev :newest)
@@ -119,6 +122,7 @@
      AMSTeX)))
 
 ;;; Spellchecking
+
 (use-package jinx
   :ensure t
   :after auctex

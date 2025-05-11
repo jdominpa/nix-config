@@ -1,6 +1,7 @@
 ;;; init-emacs.el --- General configurations for Emacs -*- lexical-binding: t -*-
 
 ;;; General settings
+
 (use-package emacs
   :bind (("C-z" . nil)
          ("C-x C-z" . nil)
@@ -23,6 +24,7 @@
   (next-error-recenter '(nil)))
 
 ;;; Track recently visited files and directories
+
 (use-package recentf
   :custom
   (recentf-save-file (locate-user-emacs-file "recentf"))
@@ -30,6 +32,7 @@
   (recentf-mode t))
 
 ;;; Mouse configuration
+
 (use-package mouse
   :custom
   (mouse-wheel-scroll-amount
@@ -42,6 +45,7 @@
   (mouse-wheel-mode t))
 
 ;;; Scrolling behaviour
+
 (use-package emacs
   :custom
   (scroll-margin 0)
@@ -49,6 +53,7 @@
   (scroll-preserve-screen-position 'always))
 
 ;;; `repeat-mode'
+
 (use-package repeat
   :custom
   (repeat-exit-timeout 5)
@@ -56,17 +61,20 @@
   (repeat-mode t))
 
 ;;; `auto-revert-mode'
+
 (use-package autorevert
   :custom
   (global-auto-revert-mode t))
 
 ;;; Emacs server
+
 (use-package server
   :hook (emacs-startup . (lambda ()
                            (unless (server-running-p)
                              (server-start)))))
 
 ;;; Save cursor position
+
 (use-package saveplace
   :custom
   (save-place-file (locate-user-emacs-file "saveplace"))

@@ -1,6 +1,7 @@
 ;;; init-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
 
-;;; Minibuffer configurations and Vertico
+;;; Minibuffer configuration and `vertico'
+
 (use-package minibuffer
   :custom
   (completion-ignore-case t)
@@ -30,13 +31,15 @@
   (vertico-reverse-mode t)
   (vertico-mode t))
 
-;;; Completion annotations
+;;; `marginalia' completion annotations
+
 (use-package marginalia
   :ensure t
   :custom
   (marginalia-mode t))
 
-;;; Orderless completion style
+;;; `orderless' completion style
+
 (use-package orderless
   :ensure t
   :custom
@@ -45,7 +48,8 @@
   (completion-category-overrides
    '((file (styles . (basic partial-completion))))))
 
-;;; Enhanced minibuffer commands
+;;; Enhanced minibuffer commands with `consult'
+
 (use-package consult
   :ensure t
   :hook (completion-list-mode . consult-preview-at-point-mode)
@@ -103,7 +107,6 @@
   :config
   (advice-add #'register-preview :override #'consult-register-window))
 
-;;; Switch to directories
 (use-package consult-dir
   :ensure t
   :bind (("C-x C-d" . consult-dir)
@@ -111,7 +114,8 @@
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
-;;; Embark
+;;; `embark'
+
 (use-package embark
   :ensure t
   :bind (("C-." . embark-act)
@@ -123,7 +127,8 @@
   :ensure t
   :defer t)
 
-;;; In-buffer completion
+;;; In-buffer completion with `corfu'
+
 (use-package corfu
   :ensure t
   :custom
@@ -154,6 +159,7 @@
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 ;;; Snippets and abbreviations
+
 (use-package yasnippet
   :ensure t
   :custom

@@ -1,6 +1,7 @@
 ;;; init-meow.el --- Configurations for modal editing with `meow' -*- lexical-binding: t -*-
 
 ;;; Meow setup
+
 (use-package meow
   :ensure t
   :config

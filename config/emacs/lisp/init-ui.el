@@ -1,6 +1,7 @@
 ;;; init-ui.el --- Configurations for Emacs' UI (theme, font, ...) -*- lexical-binding: t -*-
 
 ;;; Modus theme
+
 (use-package modus-themes
   :ensure t
   :demand t
@@ -15,6 +16,7 @@
   (load-theme 'modus-vivendi t))
 
 ;;; Font configuration
+
 (use-package fontaine
   :ensure t
   :if (display-graphic-p)
@@ -49,6 +51,7 @@
          ("v" . variable-pitch-mode)))
 
 ;;; Spacious padding
+
 (use-package spacious-padding
   :ensure t
   :if (display-graphic-p)
@@ -62,6 +65,7 @@
   (spacious-padding-mode t))
 
 ;;; Which-key
+
 (use-package which-key
   :custom
   (which-key-preserve-window-configuration t)
@@ -70,6 +74,7 @@
   (which-key-mode t))
 
 ;;; Mode line
+
 (use-package jdp-mode-line
   :custom
   (ring-bell-function 'ignore)

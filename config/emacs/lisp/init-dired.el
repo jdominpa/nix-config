@@ -1,6 +1,7 @@
 ;;; init-dired.el --- Configurations for `dired' and `ibuffer' -*- lexical-binding: t -*-
 
 ;;; Dired file manager
+
 (use-package dired
   :hook (dired-mode . hl-line-mode)
   :custom
@@ -33,7 +34,8 @@
   :custom
   (wdired-allow-to-change-permissions t))
 
-;;; Ibuffer (dired-like buffer list manager)
+;;; `ibuffer' (dired-like buffer list manager)
+
 (use-package ibuffer
   :hook (ibuffer . hl-line-mode)
   :bind ("C-x C-b" . ibuffer)

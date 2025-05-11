@@ -1,6 +1,7 @@
 ;;; init.el --- Init file -*- lexical-binding: t -*-
 
-;; Load and configure `use-package'
+;;; Load and configure `use-package'
+
 (eval-when-compile
   (require 'use-package))
 (require 'bind-key)
@@ -13,7 +14,8 @@
   (debug-on-error init-file-debug)
   (debug-on-quit init-file-debug))
 
-;; Basic settings
+;;; Basic settings
+
 (use-package emacs
   :hook (emacs-startup . (lambda ()
                            (setq gc-cons-threshold (* 800000 2)

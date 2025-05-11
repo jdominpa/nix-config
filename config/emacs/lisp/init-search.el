@@ -1,6 +1,7 @@
 ;;; init-search.el --- Configurations for searching buffer/file contents -*- lexical-binding: t -*-
 
 ;;; Isearch and occur
+
 (use-package isearch
   :bind (:map minibuffer-local-isearch-map
          ("M-/" . isearch-complete-edit)
@@ -22,7 +23,14 @@
 (use-package replace
   :hook (occur-mode . hl-line-mode))
 
+;;; Grep
+
+(use-package grep
+  :custom
+  (grep-use-headings t))
+
 ;;; Avy for navigation within the screen contents
+
 (use-package avy
   :ensure t
   :bind (("M-j" . avy-goto-char-timer)

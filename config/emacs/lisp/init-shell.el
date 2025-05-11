@@ -1,6 +1,7 @@
 ;;; init-shell.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
 
 ;;; Shell
+
 (use-package shell
   :defer t
   :custom
@@ -15,6 +16,7 @@
   (comint-input-ignoredups t))
 
 ;;; Eshell
+
 (use-package eshell
   :defer t
   :custom
