@@ -44,8 +44,8 @@
   (create-lockfiles nil)
   ;; Silence native compilation warning messages
   (native-comp-async-report-warnings-errors 'silent)
-  :config
-  (setq disabled-command-function nil))
+  ;; Enable all commands
+  (disabled-command-function nil))
 
 ;; `lisp' is for emacs configuration modules
 ;; `site-lisp' is for custom elisp files and third party packages

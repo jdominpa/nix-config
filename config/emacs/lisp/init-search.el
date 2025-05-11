@@ -9,6 +9,7 @@
   :custom
   (search-whitespace-regexp ".*?")
   (isearch-lax-whitespace t)
+  (isearch-regexp-lax-whitespace nil)
   (search-highlight t)
   (isearch-lazy-highlight t)
   (isearch-lazy-count t)
@@ -16,9 +17,7 @@
   (lazy-count-suffix-format nil)
   (isearch-yank-on-move 'shift)
   (isearch-allow-scroll 'unlimited)
-  (isearch-repeat-on-direction-change t)
-  :config
-  (setq isearch-regexp-lax-whitespace nil))
+  (isearch-repeat-on-direction-change t))
 
 (use-package replace
   :hook (occur-mode . hl-line-mode))
