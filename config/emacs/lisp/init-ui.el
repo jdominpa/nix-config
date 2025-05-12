@@ -26,9 +26,9 @@
   :custom
   (fontaine-presets '((default)
                       (medium
-                       :default-height 150)
+                       :default-height 140)
                       (large
-                       :default-height 165)
+                       :default-height 160)
                       (t
                        :default-family "Aporetic Sans Mono"
                        :default-weight regular
