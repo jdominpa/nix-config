@@ -1,11 +1,9 @@
 ;;; init-ui.el --- Configurations for Emacs' UI (theme, font, ...) -*- lexical-binding: t -*-
 
-;;; Modus theme
+;;; Modus themes
 
 (use-package modus-themes
   :ensure t
-  :demand t
-  :bind ([f5] . modus-themes-toggle)
   :custom
   (modus-themes-mixed-fonts t)
   (modus-themes-bold-constructs t)
@@ -46,9 +44,7 @@
          ("C-x C-M-0" . text-scale-adjust)
          ("C-x C-M--" . text-scale-adjust)
          ("C-x C-M-+" . text-scale-adjust)
-         ("C-x C-M-=" . text-scale-adjust)
-         :map ctl-x-x-map
-         ("v" . variable-pitch-mode)))
+         ("C-x C-M-=" . text-scale-adjust)))
 
 ;;; Spacious padding
 

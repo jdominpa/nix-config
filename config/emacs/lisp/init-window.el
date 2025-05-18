@@ -8,17 +8,6 @@
   (uniquify-strip-common-suffix t)
   (uniquify-after-kill-buffer-p t))
 
-;;; `whitespace-mode'
-
-(use-package whitespace
-  :bind (([f6] . whitespace-mode)
-         ("C-c z" . delete-trailing-whitespace)))
-
-;;; Line numbers
-
-(use-package display-line-numbers
-  :bind ([f7] . display-line-numbers-mode))
-
 ;;; Window rules and other tweaks
 
 (use-package window

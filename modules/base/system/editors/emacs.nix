@@ -61,6 +61,7 @@ in
             pdf-tools
             rainbow-delimiters
             spacious-padding
+            transient
             treesit-grammars.with-all-grammars
             vertico
             yasnippet

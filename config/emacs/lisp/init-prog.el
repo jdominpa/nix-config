@@ -21,7 +21,7 @@
 (use-package paren
   :custom
   (show-paren-style 'parenthesis)
-  (show-paren-context-when-offscreen 'overlay)
+  (show-paren-context-when-offscreen 'child-frame)
   (show-paren-mode t))
 
 ;; Enable automatic completion in `prog-mode' buffers
@@ -76,7 +76,8 @@
 
 (use-package eglot-booster
   :vc (:url "https://github.com/jdtsmith/eglot-booster"
-       :rev :newest)
+            :rev :newest)
+  :if (executable-find "emacs-lsp-booster")
   :after eglot
   :custom
   (eglot-booster-mode t))
