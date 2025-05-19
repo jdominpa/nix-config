@@ -117,42 +117,11 @@
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer))
 
-(use-package tex-fold
-  :after auctex
-  :hook (LaTeX-mode . TeX-fold-mode)
-  :custom
-  (TeX-fold-type-list '(macro))
-  (TeX-fold-macro-spec-list
-   '(("[f]" ("footnote" "marginpar"))
-     (TeX-fold-cite-display ("cite"))
-     ("[l]" ("label"))
-     (TeX-fold-ref-display ("ref" "pageref" "eqref" "footref"))
-     ("[i]" ("index" "glossary"))
-     ("[1]:||*" ("item"))
-     ("..." ("dots"))
-     ("(C)" ("copyright")) ("(R)" ("textregistered")) ("TM" ("texttrademark"))
-     (TeX-fold-alert-display ("alert")) (TeX-fold-textcolor-display ("textcolor"))
-     (TeX-fold-begin-display ("begin")) (TeX-fold-end-display ("end"))
-     (1
-      ("part" "chapter" "section" "subsection" "subsubsection" "paragraph"
-       "subparagraph" "part*" "chapter*" "section*" "subsection*" "subsubsection*"
-       "paragraph*" "subparagraph*" "emph" "textit" "textsl" "textmd" "textrm"
-       "textsf" "texttt" "textbf" "textsc" "textup"))))
-  :config
-  (defun TeX-fold-ref-display (text)
-    (let* ((m (string-match "^\\([^:]+:\\)\\(.*\\)" text))
-           (cat (or (match-string 1 text) ""))
-           (ref (or (match-string 2 text) text)))
-      (setq ref
-            (if (> (length ref) 13)
-                (concat (substring ref 0 6) "..." (substring ref -6))
-              ref))
-      (concat "[" (propertize cat 'face 'shadow) ref "]"))))
-
 (use-package reftex
   :after auctex
   :hook (LaTeX-mode . turn-on-reftex)
   :custom
+  (reftex-insert-label-flags '("se" "sfte"))
   (reftex-plug-into-AUCTeX t)
   (reftex-label-alist
    '(("theorem"     ?T "thm:"  "~\\ref{%s}" t ("theorem")     -3)
@@ -161,19 +130,7 @@
      ("corollary"   ?C "cor:"  "~\\ref{%s}" t ("corollary")   -3)
      ("remark"      ?R "rem:"  "~\\ref{%s}" t ("remark")      -3)
      ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
-     AMSTeX))
-  :config
-  (defun TeX-fold-macro-after-reftex ()
-    "Fold the LaTeX macro inserted by RefTeX."
-    (when (bound-and-true-p TeX-fold-mode)
-      (save-excursion
-        (while (and (not (bobp))
-                    (not (looking-at "\\\\")))
-          (backward-char))
-        (TeX-fold-macro))))
-  (dolist (fn '(reftex-citation
-                reftex-reference))
-    (advice-add fn :after #'TeX-fold-macro-after-reftex)))
+     AMSTeX)))
 
 (provide 'init-latex)
 ;;; init-latex.el ends here
