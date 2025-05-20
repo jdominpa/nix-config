@@ -163,6 +163,7 @@
 (use-package yasnippet
   :ensure t
   :custom
+  (yas-triggers-in-fields t)
   (yas-global-mode t))
 
 (use-package abbrev

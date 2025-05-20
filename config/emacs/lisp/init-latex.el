@@ -56,13 +56,40 @@
                                (?o "\\omega" "\\circ")
                                (?x "\\chi" "\\xrightarrow")))
   :config
+  ;; NOTE: order of lazytab and yasnippet matter. Otherwise the
+  ;; `cdlatex-tab-hook' won't be ordered properly.
+  ;; Use org tables with cdlatex
+  (use-package lazytab
+    :vc (:url "https://github.com/karthink/lazytab"
+              :rev :newest)
+    :demand t
+    :bind (:map orgtbl-mode-map
+                ("TAB" . lazytab-org-table-next-field-maybe)
+                ([tab] . lazytab-org-table-next-field-maybe))
+    :config
+    (add-hook 'cdlatex-tab-hook #'lazytab-cdlatex-or-orgtbl-next-field 90)
+    (dolist (cmd '(("bmat" "Insert bmat env"
+                    "\\begin{bmatrix} ? \\end{bmatrix}"
+                    lazytab-position-cursor-and-edit
+                    nil nil t)
+                   ("pmat" "Insert pmat env"
+                    "\\begin{pmatrix} ? \\end{pmatrix}"
+                    lazytab-position-cursor-and-edit
+                    nil nil t)
+                   ("tbl" "Insert table"
+                    "\\begin{table}\n\\centering ? \\caption{}\n\\end{table}\n"
+                    lazytab-position-cursor-and-edit
+                    nil t nil)))
+      (push cmd cdlatex-command-alist))
+    (cdlatex-reset-mode))
   ;; Integrate yasnippet with cdlatex if it is installed
   (use-package yasnippet
-    :if (featurep 'yasnippet)
-    :hook ((cdlatex-tab . yas-expand)
-           (cdlatex-tab . cdlatex-in-yas-field))
+    :if (package-installed-p 'yasnippet)
+    :hook ((cdlatex-tab . cdlatex-in-yas-field)
+           (cdlatex-tab . yas-expand))
     :bind (:map yas-keymap
-                ("TAB" . yas-next-field-or-cdlatex))
+                ("TAB" . yas-next-field-or-cdlatex)
+                ([tab] . yas-next-field-or-cdlatex))
     :config
     (defun cdlatex-in-yas-field ()
       ;; Check if we're at the end of the Yas field
@@ -117,8 +144,19 @@
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer))
 
+(use-package preview
+  :after latex
+  :hook (LaTeX-mode . preview-larger-previews)
+  :config
+  (defun preview-larger-previews ()
+    "Increases `LaTeX-mode' preview scale."
+    (setq preview-scale-function
+          (lambda ()
+            (* 1.25
+               (funcall (preview-scale-from-face)))))))
+
 (use-package reftex
-  :after auctex
+  :after latex
   :hook (LaTeX-mode . turn-on-reftex)
   :custom
   (reftex-insert-label-flags '("se" "sfte"))

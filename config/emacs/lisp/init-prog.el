@@ -128,7 +128,8 @@
 (use-package cc-mode
   :defer t
   :bind (:map c-mode-base-map
-              ("TAB" . nil))
+              ("TAB" . nil)
+              ([tab] . nil))
   :custom
   (c-default-style "k&r")
   (c-basic-offset 4))
