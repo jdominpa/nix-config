@@ -59,6 +59,7 @@ in
             org-modern
             org-pdftools
             pdf-tools
+            popper
             rainbow-delimiters
             spacious-padding
             transient
