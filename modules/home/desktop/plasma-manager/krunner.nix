@@ -15,6 +15,7 @@ in
         krunner = {
           position = "center";
           activateWhenTypingOnDesktop = true;
+          shortcuts.launch = "Meta+Space";
         };
       };
     };

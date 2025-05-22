@@ -81,17 +81,12 @@ in
               # Window swapping
               "Walk Through Windows" = "Alt+Tab";
               "Walk Through Windows (Reverse)" = "Alt+Shift+Tab";
+              "Walk Through Windows of Current Application" = "";
               # Screen movement
               "Switch to Previous Screen" = "Meta+I";
               "Switch to Next Screen" = "Meta+O";
               "Window to Previous Screen" = "Meta+Shift+I";
               "Window to Next Screen" = "Meta+Shift+O";
-            };
-            "services/org.kde.krunner.desktop" = {
-              _launch = builtins.concatStringsSep "\t" [
-                "Meta+Space"
-                "Search"
-              ];
             };
             "services/org.kde.dolphin.desktop" = {
               _launch = "Meta+E";
