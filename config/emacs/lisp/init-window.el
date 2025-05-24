@@ -10,6 +10,47 @@
 
 ;;; Window rules and other tweaks
 
+;;;###autoload
+(defun buffer-mode (&optional buffer-or-name)
+  "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+  (buffer-local-value 'major-mode
+                      (if buffer-or-name
+                          (get-buffer buffer-or-name)
+                        (current-buffer))))
+
+(defvar my/help-modes-list
+  '(help-mode
+    TeX-special-mode)
+  "List of major-modes used in documentation buffers.")
+
+(defvar my/man-modes-list
+  '(Man-mode
+    woman-mode)
+  "List of major-modes used in Man-type buffers.")
+
+(defvar my/message-modes-list
+  '(compilation-mode)
+  "List of major-modes used in message buffers.")
+
+(defvar my/repl-modes-list
+  '(eshell-mode
+    shell-mode
+    term-mode)
+  "List of major-modes used in REPL buffers.")
+
+(defvar my/repl-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "^\\*term.*\\*$")
+  "List of buffer names used in REPL buffers.")
+
+(defvar my/occur-grep-modes-list
+  '(occur-mode
+    grep-mode
+    flymake-diagnostics-buffer-mode
+    flymake-project-diagnostics-mode)
+  "List of major-modes used in occur-type buffers.")
+
 (use-package window
   :bind (("C-x }" . enlarge-window)
          ("C-x {" . shrink-window)
@@ -24,71 +65,163 @@
   (window-combination-resize t)
   (switch-to-buffer-in-dedicated-window 'pop)
   (display-buffer-alist
-   '(;; No window
-     ("\\`\\*\\(Warnings\\|Org Links\\)\\*\\'"
-      (display-buffer-no-window)
-      (allow-no-window . t))
-     ;; Bottom side window
-     ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*"
+   '(;; Top windows
+     ((lambda (buf act)
+        (member (buffer-mode buf) my/occur-grep-modes-list))
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (side . top)
+      (slot . 5)
+      (window-height . (lambda (win) (fit-window-to-buffer 20 10)))
+      (direction . above)
+      (body-function . select-window))
+     ;; Side windows
+     ((lambda (buf act)
+        (member (buffer-mode buf) my/man-modes-list))
+      nil
+      (body-function . select-window))
+     ("\\*Apropos\\*"
       (display-buffer-in-side-window)
+      (window-width . 65)
+      (side . right)
+      (slot . -2)
       (dedicated . t)
-      (side . bottom)
-      (slot . 0)
-      (window-parameters . ((mode-line-format . none))))
+      (body-function . select-window))
+     ((lambda (buf act)
+        (member (buffer-mode buf) my/help-modes-list))
+      (display-buffer-reuse-window
+       display-buffer-in-side-window
+       display-buffer-in-direction)
+      (body-function . select-window)
+      (window-width . 77)
+      (direction . below)
+      (side . right)
+      (slot . 2)
+      (window-parameters . ((split-window . #'ignore))))
+     ;; Bottom windows
      ("\\*Backtrace\\*"
       (display-buffer-in-side-window)
       (window-height . 0.2)
       (side . bottom)
-      (slot . -1))
+      (slot . -9))
      ("\\*RefTex"
       (display-buffer-in-side-window)
       (window-height . 0.25)
       (side . bottom)
-      (slot . -1))
+      (slot . -9))
+     ((lambda (buf act)
+        (member (buffer-mode buf) my/message-modes-list))
+      (display-buffer-at-bottom
+       display-buffer-in-side-window)
+      (window-height . 0.25)
+      (side . bottom)
+      (slot . -6))
      ("\\*Messages\\*"
-      (display-buffer-at-bottom display-buffer-in-side-window display-buffer-in-direction)
+      (display-buffer-at-bottom
+       display-buffer-in-side-window
+       display-buffer-in-direction)
       (window-height . (lambda (win)
-                         (fit-window-to-buffer win (floor (frame-height) 3))))
+                         (fit-window-to-buffer win (floor (frame-height) 5))))
       (side . bottom)
       (direction . below)
-      (slot . -1)
+      (slot . -6)
       (body-function . select-window)
       (window-parameters . ((split-window . #'ignore))))
-     ;; Bottom buffer (NOT side window)
-     ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
-             (derived-mode . flymake-project-diagnostics-mode)))
-      (display-buffer-reuse-mode-window display-buffer-at-bottom)
-      (window-height . 0.33)
-      (dedicated . t)
-      (preserve-size . (t . t)))
-     ("\\*Embark Actions\\*"
-      (display-buffer-reuse-mode-window display-buffer-below-selected)
-      (window-height . fit-window-to-buffer)
-      (window-parameters . ((no-other-window . t)
-                            (mode-line-format . none))))
-     ("\\*Embark \\(?:Export\\|Collect\\).*\\*"
-      (display-buffer-in-direction)
+     ("\\*\\(?:Warnings\\|Compile-Log\\)\\*"
+      (display-buffer-at-bottom
+       display-buffer-in-side-window
+       display-buffer-in-direction)
       (window-height . (lambda (win)
-                         (fit-window-to-buffer win (floor (frame-height) 3))))
+                         (fit-window-to-buffer win (floor (frame-height) 5))))
+      (side . bottom)
       (direction . below)
+      (slot . -5)
       (window-parameters . ((split-window . #'ignore))))
-     ((major-mode . TeX-special-mode)
-      (display-buffer-at-bottom)
+     ("\\*Async Shell Command\\*"
+      (display-buffer-in-side-window)
+      (window-height . 0.2)
+      (side . bottom)
+      (slot . -4)
+      (window-parameters . ((no-other-window . t))))
+     ("[Oo]utput\\*"
+      (display-buffer-in-side-window)
       (window-height . (lambda (win)
-                         (fit-window-to-buffer win (floor (frame-height) 3)))))
-     ;; Below current window
-     ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
-      (display-buffer-reuse-mode-window display-buffer-below-selected)
-      (window-height . 0.33))
+                         (fit-window-to-buffer win (floor (frame-height) 2.5))))
+      (side . bottom)
+      (slot . -4))
+     ("\\*Completions\\*"
+      (display-buffer-in-side-window)
+      (window-height . 0.2)
+      (side . bottom)
+      (slot . -2))
+     ("\\*\\(?:Org \\(?:Select\\|Note\\)\\|Agenda Commands\\)\\*"
+      (display-buffer-below-selected
+       display-buffer-in-side-window)
+      (body-function . select-window)
+      (window-height . (lambda (win) (fit-window-to-buffer win nil 12)))
+      (side . bottom)
+      (slot . -2)
+      (preserve-size . (nil . t))
+      (window-parameters . ((mode-line-format . none))))
+     ("\\(?:\\*Capture\\*\\|CAPTURE-.*\\)"
+      (display-buffer-reuse-mode-window
+       display-buffer-below-selected
+       display-buffer-in-side-window)
+      (window-height . 0.33)
+      (side . bottom)
+      (slot . -2)
+      (preserve-size . (nil . t)))
+     ("\\*\\(?:Calendar\\|Bookmark Annotation\\|ert\\).*"
+      (display-buffer-reuse-mode-window
+       display-buffer-in-side-window)
+      (window-height . fit-window-to-buffer)
+      (body-function . select-window)
+      (side . bottom)
+      (slot . -2)
+      (preserve-size . (nil . t)))
+     ((lambda (buf act)
+        (or (seq-some (lambda (regex)
+                        (string-match-p regex buf))
+                      my/repl-names-list)
+            (seq-some (lambda (mode)
+                        (equal (buffer-mode buf) mode))
+                      my/repl-modes-list)))
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (body-function . select-window)
+      (window-height . 0.35)
+      (window-width . 0.4)
+      (direction . below)
+      (side . bottom)
+      (slot . 1))
+     ("^\\*eldoc.*\\*$"
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (window-width . 82)
+      (direction . below)
+      (side . bottom)
+      (slot . 2)
+      (window-parameters . ((dedicated . t)
+                            (split-window . #'ignore)
+                            (no-other-window . t)
+                            (mode-line-format . none))))
+     ((lambda (buf act)
+        (member (buffer-mode buf) '(ibuffer-mode bookmark-bmenu-mode)))
+      (display-buffer-below-selected)
+      (body-function . select-window)
+      (direction . below)
+      (window-height . (lambda (win) (fit-window-to-buffer win 30 7)))
+      (side . bottom)
+      (slot . 2))
      ((derived-mode . reb-mode)         ; M-x re-builder
-      (display-buffer-reuse-mode-window display-buffer-below-selected)
-      (window-height . 4)             ; note this is literal lines, not relative
+      (display-buffer-reuse-mode-window
+       display-buffer-below-selected)
+      (window-height . 4)
       (dedicated . t)
-      (preserve-size . (t . t)))
-     ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
-      (display-buffer-reuse-mode-window display-buffer-below-selected)
-      (dedicated . t)
-      (window-height . fit-window-to-buffer)))))
+      (preserve-size . (t . t))))))
 
 ;;; ace-window
 
@@ -104,29 +237,46 @@
   :ensure t
   :bind (("C-`" . popper-toggle)
          ("M-`" . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
+         ("C-M-`" . popper-toggle-type)
+         :repeat-map popper-repeat-map
+         ("`" . popper-cycle)
+         ("~" . popper-cycle-backwards))
+  :bind-keymap
   :custom
   (popper-reference-buffers
-   '(help-mode
-     Man-mode woman-mode
-     "^\\*eshell.*\\*$" eshell-mode
-     "^\\*shell.*\\*$" shell-mode
-     "^\\*term.*\\*$" term-mode
-     occur-mode grep-mode
-     Custom-mode
-     compilation-mode
-     messsages-buffer-mode
-     ("^\\*Warnings\\*$" . hide)
-     ("^\\*Compile-log\\*$" . hide)
-     "^\\*Backtrace\\*"
-     "\\*Async Shell Command\\*"
-     "\\*TeX errors\\*"
-     "\\*TeX help\\*"
-     "\\*Completions\\*"
-     "[Oo]utput\\*"))
+   (append my/help-modes-list
+           my/message-modes-list
+           my/man-modes-list
+           my/repl-modes-list
+           my/repl-names-list
+           my/occur-grep-modes-list
+           '(Custom-mode
+             messages-buffer-mode)
+           '(("^\\*Warnings\\*$" . hide)
+             ("^\\*Compile-Log\\*$" . hide)
+             "^\\*Backtrace\\*"
+             "^\\*Apropos"
+             "^Calc:"
+             "^\\*eldoc\\*"
+             "\\*TeX errors\\*"
+             "\\*TeX Help\\*"
+             "\\*Shell Command Output\\*"
+             "\\*Async Shell Command\\*"
+             "[Oo]utput\\*"
+             "\\*Completions\\*")))
   (popper-display-control 'user)
+  (popper-echo-mode t)
   (popper-mode t)
-  (popper-echo-mode t))
+  :config
+  (defvar popper-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "`") #'popper-cycle)
+      (define-key map (kbd "~") #'popper-cycle-backwards)
+      map)
+    "Repeat map used for popper commands.")
+  (put 'popper-toggle 'repeat-map 'popper-repeat-map)
+  (put 'popper-cycle 'repeat-map 'popper-repeat-map)
+  (put 'popper-cycle-backwards 'repeat-map 'popper-repeat-map))
 
 (provide 'init-window)
 ;;; init-window.el ends here

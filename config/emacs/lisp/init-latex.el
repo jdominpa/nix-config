@@ -142,7 +142,11 @@
   (setcdr (assq 'output-pdf TeX-view-program-selection)
           '("PDF Tools"))
   (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer))
+            #'TeX-revert-document-buffer)
+  (setf (alist-get '(major-mode . TeX-special-mode)
+                   display-buffer-alist)
+        `((display-buffer-at-bottom)
+          (window-height . ,(lambda (win) (fit-window-to-buffer win (floor (frame-height) 3)))))))
 
 (use-package preview
   :after latex

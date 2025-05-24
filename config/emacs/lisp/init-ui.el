@@ -46,20 +46,6 @@
          ("C-x C-M-+" . text-scale-adjust)
          ("C-x C-M-=" . text-scale-adjust)))
 
-;;; Spacious padding
-
-(use-package spacious-padding
-  :ensure t
-  :if (display-graphic-p)
-  :bind ([f8] . spacious-padding-mode)
-  :custom
-  (spacious-padding-widths
-   '(:mode-line-width 1
-     :right-divider-width 1
-     :internal-border-width 10))
-  (spacious-padding-subtle-mode-line t)
-  (spacious-padding-mode t))
-
 ;;; Which-key
 
 (use-package which-key
@@ -98,20 +84,7 @@
                   "  "
                   mode-line-modes
                   mode-line-misc-info
-                  mode-line-end-spaces))
-  
-  (with-eval-after-load 'spacious-padding
-    (defun jdp/mode-line-spacious-indicators ()
-      "Set box attribute to `mode-line-indicator-button' if
-spacious-padding is enabled."
-      (if (bound-and-true-p spacious-padding-mode)
-          (set-face-attribute 'jdp-mode-line-indicator-button nil :box t)
-        (set-face-attribute 'jdp-mode-line-indicator-button nil :box 'unspecified)))
-
-    ;; Run it at startup and then afterwards whenever `spacious-padding-mode' is
-    ;; toggled on/off.
-    (jdp/mode-line-spacious-indicators)
-    (add-hook 'spacious-padding-mode-hook #'jdp/mode-line-spacious-indicators)))
+                  mode-line-end-spaces)))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

@@ -121,7 +121,22 @@
   :bind (("C-." . embark-act)
          ("C-h B" . embark-bindings))
   :custom
-  (prefix-help-command #'embark-prefix-help-command))
+  (prefix-help-command #'embark-prefix-help-command)
+  :config
+  (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*\\*"
+                   display-buffer-alist nil nil 'equal)
+        '((display-buffer-in-direction)
+          (window-height . (lambda (win) (fit-window-to-buffer win (floor (frame-height) 3))))
+          (direction . below)
+          (window-parameters . ((split-window . #'ignore)))))
+  (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*Variables\\*"
+                   display-buffer-alist nil nil 'equal)
+        '((display-buffer-in-side-window)
+          (body-function . (lambda (win) (select-window win)))
+          (window-width . 74)
+          (side . right)
+          (slot . 5)
+          (window-parameters . ((split-window . #'ignore))))))
 
 (use-package embark-consult
   :ensure t
