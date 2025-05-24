@@ -3,7 +3,6 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
   inherit (config.jdp.base) user;
@@ -11,8 +10,8 @@ in
 {
   options.jdp.home = {
     desktop.plasma-manager.input = {
-      mice = mkOption {
-        type = types.listOf types.attrs;
+      mice = lib.mkOption {
+        type = lib.types.listOf lib.types.attrs;
         default = [ ];
         description = ''
           Mice configurations for plasma-manager. See the documentation of
@@ -22,7 +21,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       programs.plasma = {
         input = {

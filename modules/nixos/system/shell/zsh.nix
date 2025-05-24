@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.system.shell.zsh;
 in
 {
   options.jdp.nixos = {
-    system.shell.zsh.enable = mkEnableOption "Enable Zsh shell.";
+    system.shell.zsh.enable = lib.mkEnableOption "Enable Zsh shell.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # Basic system wide settings for zsh
     programs.zsh = {
       enable = true;

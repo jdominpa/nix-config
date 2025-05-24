@@ -4,16 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
 let
   hostName = "beta";
   inherit (config.jdp.base) user;
 in
 {
   imports = [
-    (jdp.relativeToRoot "modules/base")
-    (jdp.relativeToRoot "modules/darwin")
-    (jdp.relativeToRoot "modules/home")
+    (lib.jdp.relativeToRoot "modules/base")
+    (lib.jdp.relativeToRoot "modules/darwin")
+    (lib.jdp.relativeToRoot "modules/home")
   ];
 
   jdp = {

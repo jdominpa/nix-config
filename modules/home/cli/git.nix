@@ -3,17 +3,16 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.cli.git;
   inherit (config.jdp.base) user;
 in
 {
   options.jdp.home = {
-    cli.git.enable = mkEnableOption "Configure git.";
+    cli.git.enable = lib.mkEnableOption "Configure git.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       programs.git = {
         enable = true;

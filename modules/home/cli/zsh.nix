@@ -3,7 +3,6 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.cli.zsh;
   inherit (config.jdp.base) user;
@@ -11,10 +10,10 @@ let
 in
 {
   options.jdp.home = {
-    cli.zsh.enable = mkEnableOption "Enable zsh shell.";
+    cli.zsh.enable = lib.mkEnableOption "Enable zsh shell.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       programs.zsh = {
         enable = true;

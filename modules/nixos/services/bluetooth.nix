@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.services.bluetooth;
 in
 {
   options.jdp.nixos = {
-    services.bluetooth.enable = mkEnableOption "Enable bluetooth.";
+    services.bluetooth.enable = lib.mkEnableOption "Enable bluetooth.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;

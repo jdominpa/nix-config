@@ -3,13 +3,12 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
   inherit (config.jdp.base) user;
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       programs.plasma = {
         windows.allowWindowsToRememberPositions = true;
@@ -34,7 +33,7 @@ in
               number = 5;
             in
             {
-              names = map (n: "Desktop ${toString n}") (range 1 number);
+              names = map (n: "Desktop ${toString n}") (lib.range 1 number);
               inherit number;
               rows = 1;
             };

@@ -4,16 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.apps.steam;
 in
 {
   options.jdp.nixos = {
-    apps.steam.enable = mkEnableOption "Enable Steam client.";
+    apps.steam.enable = lib.mkEnableOption "Enable Steam client.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;

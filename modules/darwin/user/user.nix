@@ -3,12 +3,11 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.base.user;
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     users.users.${cfg.name} = {
       isHidden = false;
     };

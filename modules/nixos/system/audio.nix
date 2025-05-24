@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.system.pipewire;
 in
 {
   options.jdp.nixos = {
-    system.pipewire.enable = mkEnableOption "Enable Pipewire audio.";
+    system.pipewire.enable = lib.mkEnableOption "Enable Pipewire audio.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;

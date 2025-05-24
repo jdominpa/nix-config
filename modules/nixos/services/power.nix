@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.services.power;
 in
 {
   options.jdp.nixos = {
-    services.power.enable = mkEnableOption "Enable power profiles.";
+    services.power.enable = lib.mkEnableOption "Enable power profiles.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       power-profiles-daemon.enable = true;
       upower.enable = true;

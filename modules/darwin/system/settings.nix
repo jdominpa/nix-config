@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.settings;
 in
 {
   options.jdp.darwin = {
-    system.settings.enable = mkEnableOption "Enable general macOS system settings.";
+    system.settings.enable = lib.mkEnableOption "Enable general macOS system settings.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     system = {
       # activationScripts are executed every time you boot the system or run `nixos-rebuild` / `darwin-rebuild`.
       activationScripts.postUserActivation.text = ''

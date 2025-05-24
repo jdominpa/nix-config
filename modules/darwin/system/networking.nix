@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.networking;
 in
 {
   options.jdp.darwin = {
     system.networking = {
-      enable = mkEnableOption "Enable networking settings.";
-      hostName = mkOption {
-        type = types.str;
+      enable = lib.mkEnableOption "Enable networking settings.";
+      hostName = lib.mkOption {
+        type = lib.types.str;
         default = "";
         description = "Hostname";
         example = "foo";
@@ -20,7 +19,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     networking = {
       inherit (cfg) hostName;
       computerName = cfg.hostName;

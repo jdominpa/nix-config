@@ -5,13 +5,12 @@
   outputs,
   ...
 }:
-with lib;
 let
   cfg = user.home-manager;
   inherit (config.jdp.base) user;
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;

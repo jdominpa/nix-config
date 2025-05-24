@@ -5,7 +5,6 @@
   pkgs,
   ...
 }:
-with lib;
 let
   hostName = "alpha";
   inherit (config.jdp.base) user;
@@ -15,9 +14,9 @@ in
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-pc-ssd
-    (jdp.relativeToRoot "modules/base")
-    (jdp.relativeToRoot "modules/nixos")
-    (jdp.relativeToRoot "modules/home")
+    (lib.jdp.relativeToRoot "modules/base")
+    (lib.jdp.relativeToRoot "modules/nixos")
+    (lib.jdp.relativeToRoot "modules/home")
   ];
 
   # Nvidia drivers settings

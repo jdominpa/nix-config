@@ -3,7 +3,6 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = networking.networkmanager;
   inherit (config.jdp.base) user;
@@ -12,17 +11,17 @@ in
 {
   options.jdp.nixos = {
     system.networking = {
-      hostName = mkOption {
-        type = types.str;
+      hostName = lib.mkOption {
+        type = lib.types.str;
         default = "";
         description = "Hostname";
         example = "foo";
       };
-      networkmanager.enable = mkEnableOption "Enable NetworkManager.";
+      networkmanager.enable = lib.mkEnableOption "Enable NetworkManager.";
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     networking = {
       inherit (networking) hostName;
       networkmanager.enable = true;

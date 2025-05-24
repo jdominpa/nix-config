@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.base.system.editors.emacs;
   emacs =
@@ -17,10 +16,10 @@ let
 in
 {
   options.jdp.base = {
-    system.editors.emacs.enable = mkEnableOption "Whether to install emacs in this system.";
+    system.editors.emacs.enable = lib.mkEnableOption "Whether to install emacs in this system.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
         ((emacsPackagesFor emacs).emacsWithPackages (

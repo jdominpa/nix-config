@@ -5,17 +5,16 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
   inherit (config.jdp.base) user;
 in
 {
   options.jdp.home = {
-    desktop.plasma-manager.enable = mkEnableOption "Whether to enable configurations for KDE Plasma.";
+    desktop.plasma-manager.enable = lib.mkEnableOption "Whether to enable configurations for KDE Plasma.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = config.jdp.nixos.desktop.plasma.enable;

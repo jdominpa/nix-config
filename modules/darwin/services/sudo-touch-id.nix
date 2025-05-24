@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.sudoTouchId;
 in
 {
   options.jdp.darwin = {
-    system.sudoTouchId.enable = mkEnableOption "Enable using Touch Id for sudo.";
+    system.sudoTouchId.enable = lib.mkEnableOption "Enable using Touch Id for sudo.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     security.pam.services.sudo_local.touchIdAuth = true;
   };
 }

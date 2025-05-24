@@ -4,16 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.desktop.plasma;
 in
 {
   options.jdp.nixos = {
-    desktop.plasma.enable = mkEnableOption "Enable KDE Plasma desktop environment.";
+    desktop.plasma.enable = lib.mkEnableOption "Enable KDE Plasma desktop environment.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.desktopManager = {
       plasma6.enable = true;
     };

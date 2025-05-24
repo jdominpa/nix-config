@@ -4,17 +4,16 @@
   outputs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.base.system.nix;
   inherit (config.jdp.base) user;
 in
 {
   options.jdp.base = {
-    system.nix.enable = mkEnableOption "Enable essential configurations for Nix.";
+    system.nix.enable = lib.mkEnableOption "Enable essential configurations for Nix.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     nixpkgs = {
       config.allowUnfree = true;
       overlays = builtins.attrValues outputs.overlays;

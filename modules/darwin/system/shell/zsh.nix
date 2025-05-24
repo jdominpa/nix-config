@@ -3,22 +3,21 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.shell.zsh;
   inherit (config.jdp.darwin.system) homebrew;
 in
 {
   options.jdp.darwin = {
-    system.shell.zsh.enable = mkEnableOption "Enable Zsh shell.";
+    system.shell.zsh.enable = lib.mkEnableOption "Enable Zsh shell.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.zsh = {
       enable = true;
       enableCompletion = true;
       enableSyntaxHighlighting = true;
-      shellInit = mkIf homebrew.enable ''
+      shellInit = lib.mkIf homebrew.enable ''
         eval "$(/opt/homebrew/bin/brew shellenv)"
       '';
     };

@@ -3,7 +3,6 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.home.desktop.plasma-manager;
   inherit (config.jdp.base) user;
@@ -18,10 +17,10 @@ let
   };
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       programs.plasma = {
-        shortcuts = mkMerge [
+        shortcuts = lib.mkMerge [
           {
             kwin =
               # Switch to desktop
@@ -29,7 +28,7 @@ in
                 map (number: {
                   name = "Switch to Desktop ${toString number}";
                   value = if number > 5 then "" else "Meta+${toString number}";
-                }) (range 1 virtualDesktopMax)
+                }) (lib.range 1 virtualDesktopMax)
               ))
               # Move window to desktop
               // (builtins.listToAttrs (
@@ -40,21 +39,21 @@ in
                       "Meta+${shiftedNumbersMap.${toString number}}"
                     else
                       "";
-                }) (range 1 virtualDesktopMax)
+                }) (lib.range 1 virtualDesktopMax)
               ))
               # Switch to screen
               // (builtins.listToAttrs (
                 map (number: {
                   name = "Switch to Screen ${toString (number - 1)}"; # Screens are 0th indexed
                   value = if number > 5 then "" else "Meta+Alt+${toString number}";
-                }) (range 1 7) # 7 is the maximum number of screens for KDE Plasma
+                }) (lib.range 1 7) # 7 is the maximum number of screens for KDE Plasma
               ))
               # Move window to screen
               // (builtins.listToAttrs (
                 map (number: {
                   name = "Window to Screen ${toString (number - 1)}"; # Screens are 0th indexed
                   value = if number > 5 then "" else "Meta+Ctrl+${toString number}";
-                }) (range 1 7) # 7 is the maximum number of screens for KDE Plasma
+                }) (lib.range 1 7) # 7 is the maximum number of screens for KDE Plasma
               ));
           }
           {
@@ -95,7 +94,7 @@ in
               _launch = "Meta+X";
             };
           }
-          (mkIf home-manager.programs.konsole.enable {
+          (lib.mkIf home-manager.programs.konsole.enable {
             "services/org.kde.konsole.desktop" = {
               _launch = "Meta+X";
             };

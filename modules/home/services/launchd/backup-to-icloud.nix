@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-with lib;
 let
   inherit (pkgs.stdenv.hostPlatform) isDarwin;
   cfg = config.jdp.home.services.launchd.backupToiCloud;
@@ -12,10 +11,10 @@ let
 in
 {
   options.jdp.home = {
-    services.launchd.backupToiCloud.enable = mkEnableOption "Whether to enable a launchd service that copies the contents of ~/Documents to iCloud/Documents";
+    services.launchd.backupToiCloud.enable = lib.mkEnableOption "Whether to enable a launchd service that copies the contents of ~/Documents to iCloud/Documents";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = isDarwin;

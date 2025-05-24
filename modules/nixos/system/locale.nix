@@ -3,23 +3,22 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.system.locale;
 in
 {
   options.jdp.nixos = {
     system.locale = {
-      enable = mkEnableOption "Enable locale and timezone settings.";
-      timezone = mkOption {
-        type = types.str;
+      enable = lib.mkEnableOption "Enable locale and timezone settings.";
+      timezone = lib.mkOption {
+        type = lib.types.str;
         default = "Europe/Madrid";
         description = "Timezone location";
       };
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     i18n = {
       defaultLocale = "en_US.UTF-8";
       extraLocaleSettings = {

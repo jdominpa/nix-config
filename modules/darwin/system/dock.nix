@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.dock;
 in
 {
   options.jdp.darwin = {
-    system.dock.enable = mkEnableOption "Enable dock settings.";
+    system.dock.enable = lib.mkEnableOption "Enable dock settings.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     system.defaults.dock = {
       autohide = true;
       autohide-delay = 0.1; # lower delay before showing/hidding the dock

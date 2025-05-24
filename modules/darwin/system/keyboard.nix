@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.keyboard;
 in
 {
   options.jdp.darwin = {
-    system.keyboard.enable = mkEnableOption "Enable keyboard settings.";
+    system.keyboard.enable = lib.mkEnableOption "Enable keyboard settings.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     system = {
       defaults.NSGlobalDomain = {
         AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.

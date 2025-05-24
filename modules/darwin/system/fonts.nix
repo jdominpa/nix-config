@@ -4,16 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.fonts;
 in
 {
   options.jdp.darwin = {
-    system.fonts.enable = mkEnableOption "Enable fonts configuration.";
+    system.fonts.enable = lib.mkEnableOption "Enable fonts configuration.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     fonts.packages = [ pkgs.aporetic ];
   };
 }

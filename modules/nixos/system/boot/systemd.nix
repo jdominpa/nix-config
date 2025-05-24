@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.system.boot.systemd;
 in
 {
   options.jdp.nixos = {
-    system.boot.systemd.enable = mkEnableOption "Enable systemd bootloader.";
+    system.boot.systemd.enable = lib.mkEnableOption "Enable systemd bootloader.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     boot.loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot = {

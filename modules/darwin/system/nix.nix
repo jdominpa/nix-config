@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.system.nix;
 in
 {
   options.jdp.darwin = {
-    system.nix.enable = mkEnableOption "Enable nix settings specific to macOS.";
+    system.nix.enable = lib.mkEnableOption "Enable nix settings specific to macOS.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     nix = {
       gc = {
         automatic = true;

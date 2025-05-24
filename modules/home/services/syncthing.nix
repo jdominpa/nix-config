@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-with lib;
 let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
   cfg = config.jdp.home.services.syncthing;
@@ -12,10 +11,10 @@ let
 in
 {
   options.jdp.home = {
-    services.syncthing.enable = mkEnableOption "Whether to enable Syncthing.";
+    services.syncthing.enable = lib.mkEnableOption "Whether to enable Syncthing.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
       services.syncthing = {
         enable = true;

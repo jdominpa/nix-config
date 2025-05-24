@@ -4,16 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.nixos.system.utils;
 in
 {
   options.jdp.nixos = {
-    system.utils.enable = mkEnableOption "Enable system management utility packages.";
+    system.utils.enable = lib.mkEnableOption "Enable system management utility packages.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       btop
       exfat # ExFAT drives

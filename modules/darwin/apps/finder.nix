@@ -3,16 +3,15 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.jdp.darwin.apps.finder;
 in
 {
   options.jdp.darwin = {
-    apps.finder.enable = mkEnableOption "Configure Finder app.";
+    apps.finder.enable = lib.mkEnableOption "Configure Finder app.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     system.defaults = {
       finder = {
         AppleShowAllExtensions = true; # show file extensions
