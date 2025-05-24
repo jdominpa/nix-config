@@ -14,9 +14,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    fonts.packages = with pkgs; [
-      aporetic
-      font-awesome
-    ];
+    fonts.packages = [ pkgs.aporetic ];
   };
 }

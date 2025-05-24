@@ -13,8 +13,29 @@ in
     home-manager.users.${user.name} = {
       programs.plasma = {
         fonts = {
+          general = {
+            family = "Aporetic Sans";
+            pointSize = 11;
+          };
           fixedWidth = {
-            family = "Iosevka Comfy";
+            family = "Monospace";
+            fixedPitch = true;
+            pointSize = 11;
+          };
+          menu = {
+            family = "Aporetic Sans";
+            pointSize = 10;
+          };
+          small = {
+            family = "Aporetic Sans";
+            pointSize = 8;
+          };
+          toolbar = {
+            family = "Aporetic Sans";
+            pointSize = 10;
+          };
+          windowTitle = {
+            family = "Aporetic Sans";
             pointSize = 10;
           };
         };

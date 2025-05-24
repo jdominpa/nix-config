@@ -15,19 +15,18 @@ in
 
   config = mkIf cfg.enable {
     fonts = {
-      enableDefaultPackages = false;
+      enableDefaultPackages = true;
+      enableGhostscriptFonts = true;
       fontDir.enable = true;
       packages = with pkgs; [
         aporetic
-        font-awesome
-        noto-fonts
-        noto-fonts-cjk-sans
-        noto-fonts-cjk-serif
         noto-fonts-emoji
       ];
 
       # User defined fonts
       fontconfig.defaultFonts = {
+        serif = [ "Aporetic Serif" ];
+        sansSerif = [ "Aporetic Sans" ];
         monospace = [
           "Aporetic Sans Mono"
           "Noto Color Emoji"
