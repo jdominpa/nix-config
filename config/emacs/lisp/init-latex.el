@@ -56,32 +56,6 @@
                                (?o "\\omega" "\\circ")
                                (?x "\\chi" "\\xrightarrow")))
   :config
-  ;; NOTE: order of lazytab and yasnippet matter. Otherwise the
-  ;; `cdlatex-tab-hook' won't be ordered properly.
-  ;; Use org tables with cdlatex
-  (use-package lazytab
-    :vc (:url "https://github.com/karthink/lazytab"
-              :rev :newest)
-    :demand t
-    :bind (:map orgtbl-mode-map
-                ("TAB" . lazytab-org-table-next-field-maybe)
-                ([tab] . lazytab-org-table-next-field-maybe))
-    :config
-    (add-hook 'cdlatex-tab-hook #'lazytab-cdlatex-or-orgtbl-next-field 90)
-    (dolist (cmd '(("bmat" "Insert bmat env"
-                    "\\begin{bmatrix} ? \\end{bmatrix}"
-                    lazytab-position-cursor-and-edit
-                    nil nil t)
-                   ("pmat" "Insert pmat env"
-                    "\\begin{pmatrix} ? \\end{pmatrix}"
-                    lazytab-position-cursor-and-edit
-                    nil nil t)
-                   ("tbl" "Insert table"
-                    "\\begin{table}\n\\centering ? \\caption{}\n\\end{table}\n"
-                    lazytab-position-cursor-and-edit
-                    nil t nil)))
-      (push cmd cdlatex-command-alist))
-    (cdlatex-reset-mode))
   ;; Integrate yasnippet with cdlatex if it is installed
   (use-package yasnippet
     :if (package-installed-p 'yasnippet)
@@ -115,7 +89,31 @@
       (if (or (bound-and-true-p cdlatex-mode)
               (bound-and-true-p org-cdlatex-mode))
           (cdlatex-tab)
-        (yas-next-field-or-maybe-expand)))))
+        (yas-next-field-or-maybe-expand))))
+  ;; Use org tables with cdlatex
+  (use-package lazytab
+    :vc (:url "https://github.com/karthink/lazytab"
+              :rev :newest)
+    :demand t
+    :bind (:map orgtbl-mode-map
+                ("TAB" . lazytab-org-table-next-field-maybe)
+                ([tab] . lazytab-org-table-next-field-maybe))
+    :config
+    (add-hook 'cdlatex-tab-hook #'lazytab-cdlatex-or-orgtbl-next-field 90)
+    (dolist (cmd '(("bmat" "Insert bmat env"
+                    "\\begin{bmatrix} ? \\end{bmatrix}"
+                    lazytab-position-cursor-and-edit
+                    nil nil t)
+                   ("pmat" "Insert pmat env"
+                    "\\begin{pmatrix} ? \\end{pmatrix}"
+                    lazytab-position-cursor-and-edit
+                    nil nil t)
+                   ("tbl" "Insert table"
+                    "\\begin{table}\n\\centering ? \\caption{}\n\\end{table}\n"
+                    lazytab-position-cursor-and-edit
+                    nil t nil)))
+      (push cmd cdlatex-command-alist))
+    (cdlatex-reset-mode)))
 
 ;; NOTE: This package declaration must be after the math-delimiters declaration.
 ;;  Otherwise `math-delimiters-insert' won't be autoloaded properly and it won't
