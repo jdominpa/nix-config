@@ -44,7 +44,7 @@ in
             StandardOutPath = "${user.homeDirectory}/.local/backup-documents-to-icloud/stdout.txt";
             StartCalendarInterval = [
               {
-                Hour = 10;
+                Hour = 4;
                 Minute = 0;
               }
             ];

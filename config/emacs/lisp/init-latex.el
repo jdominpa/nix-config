@@ -85,8 +85,8 @@
   ;; Integrate yasnippet with cdlatex if it is installed
   (use-package yasnippet
     :if (package-installed-p 'yasnippet)
-    :hook ((cdlatex-tab . cdlatex-in-yas-field)
-           (cdlatex-tab . yas-expand))
+    :hook ((cdlatex-tab . yas-expand)
+           (cdlatex-tab . cdlatex-in-yas-field))
     :bind (:map yas-keymap
                 ("TAB" . yas-next-field-or-cdlatex)
                 ([tab] . yas-next-field-or-cdlatex))
