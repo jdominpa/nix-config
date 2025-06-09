@@ -161,7 +161,7 @@
   :after latex
   :hook (LaTeX-mode . turn-on-reftex)
   :custom
-  (reftex-insert-label-flags '("se" "sfte"))
+  (reftex-insert-label-flags '("s" "sfte"))
   (reftex-plug-into-AUCTeX t)
   (reftex-label-alist
    '(("theorem"     ?T "thm:"  "~\\ref{%s}" t ("theorem")     -3)

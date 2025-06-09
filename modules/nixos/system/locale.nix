@@ -27,9 +27,9 @@ in
         LC_MEASUREMENT = "ca_ES.UTF-8";
         LC_MONETARY = "ca_ES.UTF-8";
         LC_NAME = "ca_ES.UTF-8";
-        LC_NUMERIC = "ca_ES.UTF-8";
         LC_PAPER = "ca_ES.UTF-8";
         LC_TELEPHONE = "ca_ES.UTF-8";
+        LC_TIME = "en_GB.UTF-8";
       };
     };
     time.timeZone = cfg.timezone;
