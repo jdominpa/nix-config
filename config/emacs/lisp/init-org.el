@@ -69,11 +69,11 @@
                "/Created on/ %U\n"))
      ("e" "Event")
      ("es" "Scheduled" entry (file+olp "agenda.org" "Future" "Events")
-      ,(concat "* %? :event:%^g\n"
+      ,(concat "* %? :event:\n"
                "SCHEDULED: %^{Event}T\n"
                "/Created on/ %U\n"))
      ("ed" "Deadline" entry (file+olp "agenda.org" "Future" "Events")
-      ,(concat "* %? :event:%^g\n"
+      ,(concat "* %? :event:\n"
                "DEADLINE: %^{Event}T\n"
                "/Created on/ %U\n"))))
   :config

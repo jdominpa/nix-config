@@ -30,7 +30,6 @@ in
         LC_NUMERIC = "ca_ES.UTF-8";
         LC_PAPER = "ca_ES.UTF-8";
         LC_TELEPHONE = "ca_ES.UTF-8";
-        LC_TIME = "ca_ES.UTF-8";
       };
     };
     time.timeZone = cfg.timezone;
