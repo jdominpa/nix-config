@@ -26,7 +26,7 @@ in
         autocd = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-        initExtra = ''
+        initContent = ''
           # Make completion:
           # - Try exact (case-sensitive) match first.
           # - Then fall back to case-insensitive.

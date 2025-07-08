@@ -8,6 +8,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
+    system.primaryUser = "${cfg.name}";
     users.users.${cfg.name} = {
       isHidden = false;
     };

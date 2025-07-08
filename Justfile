@@ -72,7 +72,7 @@ repair-store *paths:
 [linux]
 [group('NixOS')]
 switch host *FLAGS:
-    nixos-rebuild switch --use-remote-sudo --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+    sudo nixos-rebuild switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
 
 ############################################################################
 #
@@ -92,9 +92,9 @@ rollback:
 switch host *FLAGS:
     #!/usr/bin/env bash
     if ! command -v darwin-rebuild 2>&1 >/dev/null; then
-        nix run nix-darwin/master#darwin-rebuild --extra-experimental-features "nix-command flakes" -- switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+        sudo nix run nix-darwin/master#darwin-rebuild --extra-experimental-features "nix-command flakes" -- switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
     else
-        darwin-rebuild switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+        sudo darwin-rebuild switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
     fi
 
 # Reset launchpad to force it to reindex Applications
