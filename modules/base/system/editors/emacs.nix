@@ -68,15 +68,7 @@ in
           ]
         ))
         # Emacs LSP performance booster
-        (
-          if pkgs.stdenv.hostPlatform.isDarwin then
-            emacs-lsp-booster.overrideAttrs (old: {
-              doCheck = false;
-              nativeCheckInputs = [ ];
-            })
-          else
-            emacs-lsp-booster
-        )
+        emacs-lsp-booster
         # Spellchecking backend for jinx
         hunspell
         hunspellDicts.en-us-large
