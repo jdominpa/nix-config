@@ -58,7 +58,7 @@ in
         enable = true;
         name = "jdominpa";
         fullName = "Joan Domingo Pasarin";
-        gitEmail = "23298285+jdominpa@users.noreply.github.com";
+        email = "jdomingopasarin@gmail.com";
         shell = pkgs.zsh;
         homeDirectory = "/home/${user.name}";
         home-manager.enable = true;

@@ -23,10 +23,10 @@ in
         description = "User's full name.";
         example = "Foo Bar";
       };
-      gitEmail = lib.mkOption {
+      email = lib.mkOption {
         type = lib.types.str;
         default = "";
-        description = "User's git email address.";
+        description = "User's email address.";
         example = "foo@bar.com";
       };
       shell = lib.mkOption {
