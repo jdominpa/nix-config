@@ -5,6 +5,7 @@
 }:
 let
   cfg = config.jdp.darwin.system.dock;
+  inherit (config.jdp.base) user;
 in
 {
   options.jdp.darwin = {
@@ -28,7 +29,7 @@ in
           app = "/System/Applications/Launchpad.app";
         }
         {
-          app = "/System/Cryptexes/App/System/Applications/Safari.app";
+          app = "/Applications/Google Chrome.app";
         }
         {
           app = "/System/Applications/Utilities/Terminal.app";
@@ -44,18 +45,6 @@ in
         }
         {
           app = "/System/Applications/Mail.app";
-        }
-        {
-          app = "/System/Applications/Calendar.app";
-        }
-        {
-          app = "/System/Applications/Reminders.app";
-        }
-        {
-          app = "/System/Applications/Notes.app";
-        }
-        {
-          app = "/System/Applications/Music.app";
         }
         {
           app = "/System/Applications/App Store.app";

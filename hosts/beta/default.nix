@@ -37,6 +37,8 @@ in
       apps = {
         activityMonitor.enable = true;
         finder.enable = true;
+        google-chrome.enable = true;
+        google-drive.enable = true;
         whatsapp.enable = true;
       };
       system = {

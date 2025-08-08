@@ -102,8 +102,8 @@ in
           enable = true;
           sshAgent = true;
         };
-        brave.enable = true;
         discord.enable = true;
+        google-chrome.enable = true;
       };
       cli = {
         direnv.enable = true;
