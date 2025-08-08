@@ -1,18 +1,5 @@
 ;;; init-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
 
-;;; Calendar
-
-(use-package calendar
-  :commands calendar
-  :custom
-  (calendar-mark-holidays-flag t)
-  (calendar-time-display-form
-   '( 24-hours ":" minutes
-      (when time-zone (format "(%s)" time-zone))))
-  (calendar-week-start-day 1)      ; Monday
-  (calendar-date-style 'iso)
-  (calendar-time-zone-style 'numeric)) ; Emacs 28.1
-
 ;;; Org
 
 (use-package org
@@ -51,63 +38,12 @@
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
-(use-package org-capture
-  :bind (("C-c o c" . org-capture)
-         ("C-c o i" . org-capture-inbox))
-  :custom
-  (org-capture-templates
-   `(("i" "Inbox" entry (file "inbox.org")
-      ,(concat "* TODO %?\n"
-               "/Created on/ %U\n"))
-     ("m" "Meeting" entry  (file+olp "agenda.org" "Future" "Meetings")
-      ,(concat "* %? :meeting:\n"
-               "SCHEDULED: %^{Meeting}T\n"
-               "/Created on/ %U\n"))
-     ("a" "Appointment" entry (file+olp "agenda.org" "Future" "Appointments")
-      ,(concat "* %? :appointment:\n"
-               "SCHEDULED: %^{Appointment}T\n"
-               "/Created on/ %U\n"))
-     ("e" "Event")
-     ("es" "Scheduled" entry (file+olp "agenda.org" "Future" "Events")
-      ,(concat "* %? :event:\n"
-               "SCHEDULED: %^{Event}T\n"
-               "/Created on/ %U\n"))
-     ("ed" "Deadline" entry (file+olp "agenda.org" "Future" "Events")
-      ,(concat "* %? :event:\n"
-               "DEADLINE: %^{Event}T\n"
-               "/Created on/ %U\n"))))
-  :config
-  (defun org-capture-inbox ()
-    "Store a link of the current location and create an inbox `org-capture'."
-    (interactive)
-    (call-interactively 'org-store-link)
-    (org-capture nil "i")))
-
-(use-package org-refile
-  :after org
-  :custom
-  (org-refile-targets '(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
-                        ("agenda.org" . (:level . 2))))
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-allow-creating-parent-nodes 'confirm))
-
-(use-package org-agenda
-  :bind ("C-c o a" . org-agenda)
-  :custom
-  (org-agenda-files `(,org-directory))
-  (org-agenda-window-setup 'current-window)
-  (org-deadline-past-days 365)
-  (org-scheduled-past-days 365)
-  (org-agenda-skip-timestamp-if-done t)
-  (org-agenda-skip-deadline-if-done t)
-  (org-agenda-skip-scheduled-if-done t))
-
 (use-package denote
   :ensure t
   :hook (dired-mode . denote-dired-mode)
   :bind (("C-c n n" . denote)
          ("C-c n N" . denote-type)
+         ("C-c n o" . denote-open-or-create)
          ("C-c n r" . denote-rename-file)
          ("C-c n R" . denote-rename-file-using-front-matter)
          ("C-c n l" . denote-link)
@@ -120,7 +56,6 @@
          ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
          ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
   :custom
-  (denote-directory (expand-file-name "~/Documents/notes"))
   (denote-rename-buffer-mode t))
 
 (use-package consult-denote
@@ -151,11 +86,6 @@
   (org-noter-swap-window t)
   (org-noter-always-create-frame nil)
   (org-noter-separate-notes-from-heading t)
-  (org-noter-default-notes-file-names '("projects.org"))
-  (org-noter-notes-search-path
-   (list org-directory
-         denote-directory
-         (expand-file-name "references" denote-directory)))
   :config
   (require 'pdf-macs)
   (defun org-noter-pdf--show-arrow ()
