@@ -20,7 +20,7 @@ in
 
   config = lib.mkIf cfg.enable {
     i18n = {
-      defaultLocale = "en_US.UTF-8";
+      defaultLocale = "ca_ES.UTF-8";
       extraLocaleSettings = {
         LC_ADDRESS = "ca_ES.UTF-8";
         LC_IDENTIFICATION = "ca_ES.UTF-8";
@@ -29,7 +29,7 @@ in
         LC_NAME = "ca_ES.UTF-8";
         LC_PAPER = "ca_ES.UTF-8";
         LC_TELEPHONE = "ca_ES.UTF-8";
-        LC_TIME = "en_GB.UTF-8";
+        LC_TIME = "ca_ES.UTF-8";
       };
     };
     time.timeZone = cfg.timezone;

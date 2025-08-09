@@ -100,7 +100,7 @@ in
           hiding = "dodgewindows";
           floating = true;
           height = 50;
-          screen = "all";
+          screen = 0;
           widgets = [
             {
               iconTasks = {
