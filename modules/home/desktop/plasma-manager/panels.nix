@@ -19,7 +19,7 @@ in
           hiding = "none";
           floating = false;
           height = 32;
-          screen = "all";
+          screen = 0;
           widgets = [
             {
               kickoff = {
@@ -100,7 +100,7 @@ in
           hiding = "dodgewindows";
           floating = true;
           height = 50;
-          screen = 0;
+          screen = "all";
           widgets = [
             {
               iconTasks = {

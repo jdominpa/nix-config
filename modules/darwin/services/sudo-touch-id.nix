@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.jdp.darwin.system.sudoTouchId;
+  cfg = config.jdp.darwin.system.sudo-touch-id;
 in
 {
   options.jdp.darwin = {
-    system.sudoTouchId.enable = lib.mkEnableOption "Enable using Touch Id for sudo.";
+    system.sudo-touch-id.enable = lib.mkEnableOption "Enable Touch Id for sudo.";
   };
 
   config = lib.mkIf cfg.enable {

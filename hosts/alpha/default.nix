@@ -131,9 +131,6 @@ in
         enable = true;
         withLsp = true;
       };
-      services = {
-        syncthing.enable = true;
-      };
     };
   };
 

@@ -55,7 +55,7 @@ in
         power.enable = true;
         settings.enable = true;
         shell.zsh.enable = true;
-        sudoTouchId.enable = true;
+        sudo-touch-id.enable = true;
         trackpad.enable = true;
       };
     };
@@ -80,12 +80,6 @@ in
       editors.emacs = {
         enable = true;
         withLsp = true;
-      };
-      services = {
-        launchd = {
-          backupToiCloud.enable = true;
-        };
-        syncthing.enable = true;
       };
     };
   };
