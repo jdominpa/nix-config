@@ -5,7 +5,6 @@
 }:
 let
   cfg = config.jdp.darwin.system.dock;
-  inherit (config.jdp.base) user;
 in
 {
   options.jdp.darwin = {
@@ -36,9 +35,6 @@ in
         }
         {
           app = "/Applications/Nix Apps/Emacs.app";
-        }
-        {
-          app = "/System/Applications/Messages.app";
         }
         {
           app = "/Applications/WhatsApp.app";
