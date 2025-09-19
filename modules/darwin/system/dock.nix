@@ -25,9 +25,6 @@ in
       mru-spaces = false;
       persistent-apps = [
         {
-          app = "/System/Applications/Launchpad.app";
-        }
-        {
           app = "/Applications/Google Chrome.app";
         }
         {
