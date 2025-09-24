@@ -6,7 +6,7 @@
 let
   cfg = config.jdp.home.cli.zsh;
   inherit (config.jdp.base) user;
-  inherit (config.home-manager.users.${user.name}.xdg) dataHome;
+  inherit (config.home-manager.users.${user.name}.xdg) configHome dataHome;
 in
 {
   options.jdp.home = {
@@ -17,7 +17,7 @@ in
     home-manager.users.${user.name} = {
       programs.zsh = {
         enable = true;
-        dotDir = ".config/zsh";
+        dotDir = configHome;
         history = {
           size = 10000;
           save = 10000;
