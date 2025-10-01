@@ -6,7 +6,7 @@
   ...
 }:
 let
-  hostName = "alpha";
+  hostName = "nixos";
   inherit (config.jdp.base) user;
 in
 {

@@ -97,24 +97,24 @@
       # NixOS hosts
       nixosConfigurations = {
         # Desktop
-        alpha = lib.nixosSystem {
+        nixos = lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
             inherit inputs outputs;
           };
-          modules = [ ./hosts/alpha ];
+          modules = [ ./hosts/nixos ];
         };
       };
 
       # Darwin hosts
       darwinConfigurations = {
         # Work laptop
-        beta = nix-darwin.lib.darwinSystem {
+        macbook = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           specialArgs = {
             inherit inputs outputs lib;
           };
-          modules = [ ./hosts/beta ];
+          modules = [ ./hosts/macbook ];
         };
       };
     };

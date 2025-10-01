@@ -5,7 +5,6 @@
   ...
 }:
 let
-  hostName = "beta";
   inherit (config.jdp.base) user;
 in
 {
@@ -48,8 +47,7 @@ in
         keyboard.enable = true;
         locale.enable = true;
         networking = {
-          enable = true;
-          inherit hostName;
+          enable = false;
         };
         nix.enable = true;
         power.enable = true;
