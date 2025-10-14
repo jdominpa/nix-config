@@ -10,7 +10,6 @@
     ("cos" "\\cos")
     ("equiv" "\\equiv")
     ("exp" "\\exp")
-    ("forall" "\\forall")
     ("ge" "\\geq")
     ("gg" "\\gg")
     ("iff" "\\iff")

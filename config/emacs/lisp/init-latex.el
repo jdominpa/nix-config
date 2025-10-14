@@ -4,7 +4,7 @@
 
 (use-package emacs
   :custom
-  (fill-column 78)
+  (fill-column 80)
   (sentence-end-double-space nil) ; use a single space after a sentence
   (default-input-method "catalan-prefix")
   (default-transient-input-method "catalan-prefix"))
@@ -123,6 +123,8 @@
   :hook ((LaTeX-mode . turn-on-cdlatex)
          (LaTeX-mode . turn-on-cdlatex-electricindex)
          (LaTeX-mode . turn-on-auto-fill)
+         (LaTeX-mode . (lambda ()
+                         (setq-local fill-column 85)))
          (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . jinx-mode))
   :bind (:map LaTeX-mode-map
