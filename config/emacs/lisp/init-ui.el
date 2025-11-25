@@ -13,6 +13,15 @@
   :config
   (load-theme 'modus-vivendi t))
 
+;;; Light/dark theme according to system setting
+
+(use-package auto-dark
+  :ensure t
+  :custom
+  (auto-dark-allow-osascript t)
+  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
+  (auto-dark-mode t))
+
 ;;; Font configuration
 
 (use-package fontaine
