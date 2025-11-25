@@ -19,6 +19,7 @@
   :ensure t
   :custom
   (auto-dark-allow-osascript t)
+  (custom-safe-themes t)
   (auto-dark-themes '((modus-vivendi) (modus-operandi)))
   (auto-dark-mode t))
 
