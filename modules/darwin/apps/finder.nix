@@ -17,7 +17,7 @@ in
         AppleShowAllExtensions = true; # show file extensions
         FXDefaultSearchScope = "SCcf";
         FXEnableExtensionChangeWarning = false; # don't warn when changing file extensions
-        FXPreferredViewStyle = "Nlsv"; # set list as default view style
+        FXPreferredViewStyle = "clmv"; # set column view as default view style
         _FXSortFoldersFirst = true; # keep folders on top
         _FXSortFoldersFirstOnDesktop = true;
         _FXShowPosixPathInTitle = true;
