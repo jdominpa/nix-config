@@ -7,22 +7,25 @@
   :custom
   (tab-always-indent 'complete)
   (tab-width 4)
-  (indent-tabs-mode nil))
+  :config
+  (indent-tabs-mode -1))
 
 ;; Configure `electric' behaviour
 (use-package electric
   :custom
   (electric-quote-context-sensitive t)
   (electric-quote-replace-double t)
-  (electric-pair-mode t)
-  (electric-indent-mode t))
+  :config
+  (electric-pair-mode)
+  (electric-indent-mode))
 
 ;; Parentheses
 (use-package paren
   :custom
   (show-paren-style 'parenthesis)
   (show-paren-context-when-offscreen 'child-frame)
-  (show-paren-mode t))
+  :config
+  (show-paren-mode))
 
 ;; Enable automatic completion in `prog-mode' buffers
 (use-package prog-mode
@@ -35,12 +38,13 @@
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil)
-  (global-eldoc-mode t))
+  :config
+  (global-eldoc-mode))
 
 ;; Handle performance for long lines
 (use-package so-long
-  :custom
-  (global-so-long-mode t))
+  :config
+  (global-so-long-mode))
 
 ;; Tree-sitter
 (use-package treesit
@@ -79,8 +83,8 @@
             :rev :newest)
   :if (executable-find "emacs-lsp-booster")
   :after eglot
-  :custom
-  (eglot-booster-mode t))
+  :config
+  (eglot-booster-mode))
 
 (use-package consult-eglot
   :ensure t

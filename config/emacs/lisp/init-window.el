@@ -19,32 +19,32 @@ If buffer-or-name is nil return current buffer's mode."
                           (get-buffer buffer-or-name)
                         (current-buffer))))
 
-(defvar my/help-modes-list
+(defvar jdp-help-modes-list
   '(help-mode
     TeX-special-mode)
   "List of major-modes used in documentation buffers.")
 
-(defvar my/man-modes-list
+(defvar jdp-man-modes-list
   '(Man-mode
     woman-mode)
   "List of major-modes used in Man-type buffers.")
 
-(defvar my/message-modes-list
+(defvar jdp-message-modes-list
   '(compilation-mode)
   "List of major-modes used in message buffers.")
 
-(defvar my/repl-modes-list
+(defvar jdp-repl-modes-list
   '(eshell-mode
     shell-mode
     term-mode)
   "List of major-modes used in REPL buffers.")
 
-(defvar my/repl-names-list
+(defvar jdp-repl-names-list
   '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
     "^\\*term.*\\*$")
   "List of buffer names used in REPL buffers.")
 
-(defvar my/occur-grep-modes-list
+(defvar jdp-occur-grep-modes-list
   '(occur-mode
     grep-mode
     flymake-diagnostics-buffer-mode
@@ -67,7 +67,7 @@ If buffer-or-name is nil return current buffer's mode."
   (display-buffer-alist
    '(;; Top windows
      ((lambda (buf act)
-        (member (buffer-mode buf) my/occur-grep-modes-list))
+        (member (buffer-mode buf) jdp-occur-grep-modes-list))
       (display-buffer-reuse-window
        display-buffer-in-direction
        display-buffer-in-side-window)
@@ -78,7 +78,7 @@ If buffer-or-name is nil return current buffer's mode."
       (body-function . select-window))
      ;; Side windows
      ((lambda (buf act)
-        (member (buffer-mode buf) my/man-modes-list))
+        (member (buffer-mode buf) jdp-man-modes-list))
       nil
       (body-function . select-window))
      ("\\*Apropos\\*"
@@ -89,7 +89,7 @@ If buffer-or-name is nil return current buffer's mode."
       (dedicated . t)
       (body-function . select-window))
      ((lambda (buf act)
-        (member (buffer-mode buf) my/help-modes-list))
+        (member (buffer-mode buf) jdp-help-modes-list))
       (display-buffer-reuse-window
        display-buffer-in-side-window
        display-buffer-in-direction)
@@ -111,7 +111,7 @@ If buffer-or-name is nil return current buffer's mode."
       (side . bottom)
       (slot . -9))
      ((lambda (buf act)
-        (member (buffer-mode buf) my/message-modes-list))
+        (member (buffer-mode buf) jdp-message-modes-list))
       (display-buffer-at-bottom
        display-buffer-in-side-window)
       (window-height . 0.25)
@@ -183,10 +183,10 @@ If buffer-or-name is nil return current buffer's mode."
      ((lambda (buf act)
         (or (seq-some (lambda (regex)
                         (string-match-p regex buf))
-                      my/repl-names-list)
+                      jdp-repl-names-list)
             (seq-some (lambda (mode)
                         (equal (buffer-mode buf) mode))
-                      my/repl-modes-list)))
+                      jdp-repl-modes-list)))
       (display-buffer-reuse-window
        display-buffer-in-direction
        display-buffer-in-side-window)
@@ -244,12 +244,12 @@ If buffer-or-name is nil return current buffer's mode."
   :bind-keymap
   :custom
   (popper-reference-buffers
-   (append my/help-modes-list
-           my/message-modes-list
-           my/man-modes-list
-           my/repl-modes-list
-           my/repl-names-list
-           my/occur-grep-modes-list
+   (append jdp-help-modes-list
+           jdp-message-modes-list
+           jdp-man-modes-list
+           jdp-repl-modes-list
+           jdp-repl-names-list
+           jdp-occur-grep-modes-list
            '(Custom-mode
              messages-buffer-mode)
            '(("^\\*Warnings\\*$" . hide)
@@ -265,8 +265,6 @@ If buffer-or-name is nil return current buffer's mode."
              "[Oo]utput\\*"
              "\\*Completions\\*")))
   (popper-display-control 'user)
-  (popper-echo-mode t)
-  (popper-mode t)
   :config
   (defvar popper-repeat-map
     (let ((map (make-sparse-keymap)))
@@ -276,7 +274,9 @@ If buffer-or-name is nil return current buffer's mode."
     "Repeat map used for popper commands.")
   (put 'popper-toggle 'repeat-map 'popper-repeat-map)
   (put 'popper-cycle 'repeat-map 'popper-repeat-map)
-  (put 'popper-cycle-backwards 'repeat-map 'popper-repeat-map))
+  (put 'popper-cycle-backwards 'repeat-map 'popper-repeat-map)
+  (popper-echo-mode)
+  (popper-mode))
 
 (provide 'init-window)
 ;;; init-window.el ends here

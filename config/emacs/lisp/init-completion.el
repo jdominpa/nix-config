@@ -22,21 +22,23 @@
   (history-length 100)
   (history-delete-duplicates t)
   (savehist-save-minibuffer-history t)
-  (savehist-mode t))
+  :config
+  (savehist-mode))
 
 (use-package vertico
   :ensure t
+  :demand t
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
-  :custom
-  (vertico-reverse-mode t)
-  (vertico-mode t))
+  :config
+  (vertico-reverse-mode)
+  (vertico-mode))
 
 ;;; `marginalia' completion annotations
 
 (use-package marginalia
   :ensure t
-  :custom
-  (marginalia-mode t))
+  :config
+  (marginalia-mode))
 
 ;;; `orderless' completion style
 
@@ -151,10 +153,10 @@
   (text-mode-ispell-word-completion nil)
   (corfu-min-width 20)
   (corfu-popupinfo-delay '(nil . 1))
-  (corfu-popupinfo-mode t)
-  (corfu-history-mode t)
-  (global-corfu-mode t)
   :config
+  (corfu-popupinfo-mode)
+  (corfu-history-mode)
+  (global-corfu-mode)
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
@@ -175,11 +177,13 @@
 
 ;;; Snippets and abbreviations
 
+; TODO: switch to templ
 (use-package yasnippet
   :ensure t
   :custom
   (yas-triggers-in-fields t)
-  (yas-global-mode t))
+  :config
+  (yas-global-mode))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))

@@ -21,13 +21,15 @@
   (auto-dark-allow-osascript t)
   (custom-safe-themes t)
   (auto-dark-themes '((modus-vivendi) (modus-operandi)))
-  (auto-dark-mode t))
+  :config
+  (auto-dark-mode))
 
 ;;; Font configuration
 
 (use-package fontaine
   :ensure t
   :if (display-graphic-p)
+  :demand t
   :hook (after-init . (lambda ()
                         (fontaine-set-preset (or (fontaine-restore-latest-preset)
                                                  'default))))
@@ -43,8 +45,8 @@
                        :default-height 130
                        :fixed-pitch-family "Aporetic Sans Mono"
                        :variable-pitch-family "Aporetic Serif")))
-  :custom
-  (fontaine-mode t))
+  :config
+  (fontaine-mode))
 
 (use-package face-remap
   :bind (("C-x C-0" . global-text-scale-adjust) ; swap the default keybinds
@@ -63,7 +65,8 @@
   (which-key-preserve-window-configuration t)
   (which-key-idle-delay 0.6)
   (which-key-idle-secondary-delay 0.2)
-  (which-key-mode t))
+  :config
+  (which-key-mode))
 
 ;;; Mode line
 

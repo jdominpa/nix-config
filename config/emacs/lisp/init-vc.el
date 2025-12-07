@@ -21,7 +21,8 @@
   :ensure t
   :custom
   (diff-hl-draw-borders nil)
-  (global-diff-hl-mode t))
+  :config
+  (global-diff-hl-mode))
 
 ;;; `magit' (interactive git front-end)
 
@@ -35,8 +36,8 @@
 (use-package magit-todos
   :ensure t
   :after magit
-  :custom
-  (magit-todos-mode t))
+  :config
+  (magit-todos-mode))
 
 (provide 'init-vc)
 ;;; init-vc.el ends here

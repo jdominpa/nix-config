@@ -40,7 +40,8 @@
 
 (use-package denote
   :ensure t
-  :hook (dired-mode . denote-dired-mode)
+  :hook ((dired-mode . denote-dired-mode)
+         (after-init . denote-rename-buffer-mode))
   :bind (("C-c n n" . denote)
          ("C-c n N" . denote-type)
          ("C-c n o" . denote-open-or-create)
@@ -54,83 +55,15 @@
          ("C-c C-d C-i" . denote-dired-link-marked-notes)
          ("C-c C-d C-r" . denote-dired-rename-files)
          ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
-  :custom
-  (denote-rename-buffer-mode t))
+         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
 
 (use-package consult-denote
   :ensure t
+  :demand t
   :bind (("C-c n f" . consult-denote-find)
          ("C-c n g" . consult-denote-grep))
-  :custom
-  (consult-denote-mode t))
-
-(use-package org-noter
-  :ensure t
-  :bind (("C-c o n" . org-noter)
-         :map org-noter-doc-mode-map
-         ("M-p" . org-noter-sync-prev-note)
-         ("M-." . org-noter-sync-current-note)
-         ("M-n" . org-noter-sync-next-note)
-         ("C-M-p" . org-noter-sync-prev-page-or-chapter)
-         ("C-M-." . org-noter-sync-current-page-or-chapter)
-         ("C-M-n" . org-noter-sync-next-page-or-chapter)
-         :map org-noter-notes-mode-map
-         ("M-p" . org-noter-sync-prev-note)
-         ("M-." . org-noter-sync-current-note)
-         ("M-n" . org-noter-sync-next-note)
-         ("C-M-p" . org-noter-sync-prev-page-or-chapter)
-         ("C-M-." . org-noter-sync-current-page-or-chapter)
-         ("C-M-n" . org-noter-sync-next-page-or-chapter))
-  :custom
-  (org-noter-swap-window t)
-  (org-noter-always-create-frame nil)
-  (org-noter-separate-notes-from-heading t)
   :config
-  (require 'pdf-macs)
-  (defun org-noter-pdf--show-arrow ()
-    ;; From `pdf-util-tooltip-arrow'.
-    (pdf-util-assert-pdf-window)
-    (let* (x-gtk-use-system-tooltips
-           (arrow-top  (aref org-noter--arrow-location 2)) ; % of page
-           (arrow-left (aref org-noter--arrow-location 3))
-           (image-top  (if (floatp arrow-top)
-                           (round (* arrow-top  (cdr (pdf-view-image-size)))))) ; pixel location on page (magnification-dependent)
-           (image-left (if (floatp arrow-left)
-                           (floor (* arrow-left (car (pdf-view-image-size))))))
-           (dx (or image-left
-                   (+ (or (car (window-margins)) 0)
-                      (car (window-fringes)))))
-           (dy (or image-top 0))
-           (pos (list dx dy dx (+ dy (* 2 (frame-char-height)))))
-
-           (tooltip-frame-parameters
-            `((border-width . 0)
-              (internal-border-width . 0)
-              ,@tooltip-frame-parameters))
-           (tooltip-hide-delay 3))
-      (setq dy (max 0 (- dy
-                         (cdr (pdf-view-image-offset))
-                         (window-vscroll nil t)
-                         (frame-char-height))))
-      (when (overlay-get (pdf-view-current-overlay) 'before-string)
-        (let* ((e (window-inside-pixel-edges))
-               (xw (pdf-util-with-edges (e) e-width))
-               (display-left-margin (/ (- xw (car (pdf-view-image-size t))) 2)))
-          (cl-incf dx display-left-margin)))
-      (setq dx (max 0 (+ dx org-noter-arrow-horizontal-offset)))
-      (pdf-util-tooltip-in-window
-       (propertize
-        " " 'display (propertize
-                      "\u2192" ;; right arrow
-                      'display '(height 2)
-                      'face `(:foreground
-                              ,org-noter-arrow-foreground-color
-                              :background
-                              ,(if (bound-and-true-p pdf-view-midnight-minor-mode)
-                                   (cdr pdf-view-midnight-colors)
-                                 org-noter-arrow-background-color))))
-       dx dy))))
+  (consult-denote-mode))
 
 (when (package-installed-p 'pdf-tools)
   (use-package org-pdftools

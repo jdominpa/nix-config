@@ -26,7 +26,8 @@
   :custom
   (recentf-save-file (locate-user-emacs-file "recentf"))
   (recentf-exclude '("/tmp/" "/ssh:" ".gz" ".xz" ".zip"))
-  (recentf-mode t))
+  :config
+  (recentf-mode))
 
 ;;; Mouse configuration
 
@@ -39,7 +40,8 @@
      ((control) . text-scale)))
   (mouse-wheel-progressive-speed nil)
   (mouse-wheel-follow-mouse t)
-  (mouse-wheel-mode t))
+  :config
+  (mouse-wheel-mode))
 
 ;;; Scrolling behaviour
 
@@ -56,13 +58,14 @@
   :custom
   (repeat-exit-timeout 5)
   (set-mark-command-repeat-pop t)
-  (repeat-mode t))
+  :config
+  (repeat-mode))
 
 ;;; `auto-revert-mode'
 
 (use-package autorevert
-  :custom
-  (global-auto-revert-mode t))
+  :config
+  (global-auto-revert-mode))
 
 ;;; `whitespace-mode'
 
@@ -82,7 +85,8 @@
   :custom
   (save-place-file (locate-user-emacs-file "saveplace"))
   (save-place-forget-unreadable-files t)
-  (save-place-mode t))
+  :config
+  (save-place-mode))
 
 ;;; Transient menu for toggling modes
 
