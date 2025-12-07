@@ -25,9 +25,9 @@ in
       home.file = {
         ".emacs.d/lisp".source = lib.jdp.relativeToRoot "config/emacs/lisp";
         ".emacs.d/site-lisp".source = lib.jdp.relativeToRoot "config/emacs/site-lisp";
-        ".emacs.d/snippets".source = lib.jdp.relativeToRoot "config/emacs/snippets";
         ".emacs.d/abbrev_defs".source = lib.jdp.relativeToRoot "config/emacs/abbrev_defs";
         ".emacs.d/init.el".source = lib.jdp.relativeToRoot "config/emacs/init.el";
+        ".emacs.d/templates".source = lib.jdp.relativeToRoot "config/emacs/templates";
       };
 
       # LSP servers

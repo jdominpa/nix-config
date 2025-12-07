@@ -92,6 +92,10 @@
   :bind (:map eglot-mode-map
          ("M-g s" . consult-eglot-symbols)))
 
+(use-package eglot-tempel
+  :config
+  (eglot-tempel-mode))
+
 ;; Flymake
 (use-package flymake
   :bind (:map flymake-mode-map
@@ -193,7 +197,7 @@
                  (not (functionp 'json-rpc-connection))
                  (executable-find "emacs-lsp-booster"))
             (progn
-              (when-let ((command-from-exec-path (executable-find (car orig-result))))
+              (when-let* ((command-from-exec-path (executable-find (car orig-result))))
                 (setcar orig-result command-from-exec-path))
               (message "Using emacs-lsp-booster for %s!" orig-result)
               (cons "emacs-lsp-booster" orig-result))

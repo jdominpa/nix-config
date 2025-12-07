@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: main() function
-# key: main
-# --
-int main(${1:$$(yas-choose-value '("void" "int argc, char *argv[]"))})
-{
-    $0
-    return 0;
-}

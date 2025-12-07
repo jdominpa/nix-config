@@ -31,6 +31,7 @@ in
             corfu
             denote
             diff-hl
+            eglot-tempel
             embark
             embark-consult
             envrc
@@ -56,10 +57,10 @@ in
             popper
             rainbow-delimiters
             spacious-padding
+            tempel
             transient
             treesit-grammars.with-all-grammars
             vertico
-            yasnippet
           ]
         ))
         # Emacs LSP performance booster

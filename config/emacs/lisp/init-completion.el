@@ -177,13 +177,21 @@
 
 ;;; Snippets and abbreviations
 
-; TODO: switch to templ
-(use-package yasnippet
+(use-package tempel
   :ensure t
+  :init
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-complete
+                      completion-at-point-functions)))
+  :bind (("M-+" . tempel-complete)
+		 ("M-*" . tempel-insert))
+  :hook ((conf-mode . tempel-setup-capf)
+		 (prog-mode . tempel-setup-capf)
+		 (text-mode . tempel-setup-capf))
   :custom
-  (yas-triggers-in-fields t)
-  :config
-  (yas-global-mode))
+  (tempel-path (locate-user-emacs-file "templates/*.eld")))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))
