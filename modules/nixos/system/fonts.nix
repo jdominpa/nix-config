@@ -19,7 +19,7 @@ in
       fontDir.enable = true;
       packages = with pkgs; [
         aporetic
-        noto-fonts-emoji
+        noto-fonts-color-emoji
       ];
 
       # User defined fonts

@@ -23,7 +23,7 @@ in
 
     environment.systemPackages = with pkgs; [
       mangohud # FPS monitoring
-      protonup
+      protonup-ng
     ];
 
     # Game mode

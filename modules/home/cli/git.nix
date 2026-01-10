@@ -16,28 +16,30 @@ in
     home-manager.users.${user.name} = {
       programs.git = {
         enable = true;
-        userName = user.fullName;
-        userEmail = user.email;
-        extraConfig = {
-          init.defaultBranch = "main";
-          user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGebTck6crA64QvOnpPVBHgB7nzIX18+FU9nANAaE2W4";
-          gpg.format = "ssh";
+        settings = {
+          aliases = {
+            a = "add";
+            b = "branch";
+            c = "commit";
+            f = "fetch";
+            l = "log";
+            m = "merge";
+            p = "push";
+            s = "status";
+            co = "checkout";
+          };
           commit.gpgSign = true;
           commit.verbose = true;
+          user = {
+            name = user.fullName;
+            email = user.email;
+            signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGebTck6crA64QvOnpPVBHgB7nzIX18+FU9nANAaE2W4";
+          };
+          init.defaultBranch = "main";
+          gpg.format = "ssh";
           # Automatically track remote branch
           push.autoSetupRemote = true;
           core.editor = "emacsclient -r";
-        };
-        aliases = {
-          a = "add";
-          b = "branch";
-          c = "commit";
-          f = "fetch";
-          l = "log";
-          m = "merge";
-          p = "push";
-          s = "status";
-          co = "checkout";
         };
         ignores = [ ".direnv" ];
       };
