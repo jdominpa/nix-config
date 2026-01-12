@@ -44,6 +44,13 @@
       inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
 
+    # COSMIC manager
+    cosmic-manager = {
+      url = "github:HeitorAugustoLN/cosmic-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
     # Plasma manager
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
@@ -75,13 +82,13 @@
       # Custom packages.
       packages = forAllSystems (system: import ./pkgs pkgsFor.${system});
       # Formatter for the nix code in the flake
-      formatter = forAllSystems (system: pkgsFor.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: pkgsFor.${system}.nixfmt);
 
       checks = forAllSystems (system: {
         pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixfmt-rfc-style.enable = true; # formatter
+            nixfmt.enable = true; # formatter
           };
         };
       });

@@ -68,14 +68,12 @@ in
       apps = {
         steam.enable = true;
       };
-      desktop = {
-        plasma.enable = true;
-      };
       services = {
         bluetooth.enable = true;
+        cosmic.enable = true;
+        cosmic-greeter.enable = true;
         openssh.enable = true;
         power.enable = true;
-        sddm.enable = true;
       };
       system = {
         boot = {
@@ -112,17 +110,20 @@ in
         starship.enable = true;
         zsh.enable = true;
       };
-      desktop.plasma-manager = {
-        enable = true;
-        input.mice = [
-          {
-            name = "Logitech G502 HERO Gaming Mouse";
-            enable = true;
-            accelerationProfile = "none";
-            productId = "c08b";
-            vendorId = "046d";
-          }
-        ];
+      desktop = {
+        cosmic-manager.enable = true;
+        plasma-manager = {
+          enable = false;
+          input.mice = [
+            {
+              name = "Logitech G502 HERO Gaming Mouse";
+              enable = true;
+              accelerationProfile = "none";
+              productId = "c08b";
+              vendorId = "046d";
+            }
+          ];
+        };
       };
       dev = {
         tex.enable = true;
