@@ -56,6 +56,7 @@ in
             pdf-tools
             popper
             rainbow-delimiters
+            rustic
             spacious-padding
             tempel
             transient

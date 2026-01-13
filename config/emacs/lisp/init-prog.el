@@ -83,6 +83,9 @@
             :rev :newest)
   :if (executable-find "emacs-lsp-booster")
   :after eglot
+  :custom
+  ;; FIXME: see https://github.com/blahgeek/emacs-lsp-booster/issues/43
+  (eglot-booster-io-only t)
   :config
   (eglot-booster-mode))
 
@@ -93,6 +96,7 @@
          ("M-g s" . consult-eglot-symbols)))
 
 (use-package eglot-tempel
+  :ensure t
   :config
   (eglot-tempel-mode))
 
@@ -229,6 +233,17 @@
   :ensure t
   :defer t
   :hook (nix-mode . nix-prettify-mode))
+
+;; Rust
+(use-package rustic
+  :ensure t
+  :after rust-mode
+  :init
+  (remove-hook 'rustic-mode-hook 'flycheck-mode)
+  :custom
+  (rustic-lsp-client 'eglot)
+  :config
+  (setq rustic-format-on-save t))
 
 (provide 'init-prog)
 ;;; init-prog.el ends here

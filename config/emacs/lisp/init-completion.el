@@ -122,8 +122,8 @@
   :ensure t
   :bind (("C-." . embark-act)
          ("C-h B" . embark-bindings))
-  :custom
-  (prefix-help-command #'embark-prefix-help-command)
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
   :config
   (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*\\*"
                    display-buffer-alist nil nil 'equal)
