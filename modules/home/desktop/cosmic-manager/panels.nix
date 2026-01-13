@@ -55,8 +55,6 @@ in
           opacity = 1.0;
           output = mkRON "enum" "All";
           plugins_center = mkRON "optional" [
-            "com.system76.CosmicPanelLauncherButton"
-            "com.system76.CosmicPanelWorkspacesButton"
             "com.system76.CosmicPanelAppButton"
             "com.system76.CosmicAppList"
             "com.system76.CosmicAppletMinimize"
