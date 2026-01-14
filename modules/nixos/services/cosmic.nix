@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -15,5 +16,6 @@ in
     services.desktopManager = {
       cosmic.enable = true;
     };
+    environment.systemPackages = [ pkgs.cosmic-ext-calculator ];
   };
 }

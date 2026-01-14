@@ -17,17 +17,6 @@ in
       programs.git = {
         enable = true;
         settings = {
-          aliases = {
-            a = "add";
-            b = "branch";
-            c = "commit";
-            f = "fetch";
-            l = "log";
-            m = "merge";
-            p = "push";
-            s = "status";
-            co = "checkout";
-          };
           commit.gpgSign = true;
           commit.verbose = true;
           user = {
