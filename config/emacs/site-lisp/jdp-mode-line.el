@@ -17,8 +17,7 @@
 (defface jdp-mode-line-indicator-button nil
   "Generic face used for indicators that have a background.
 Modify this face to, for example, add a :box attribute to all
-relevant indicators (combines nicely with my `spacious-padding'
-package).")
+relevant indicators.")
 
 (defface jdp-mode-line-indicator-red
   '((default :inherit bold)

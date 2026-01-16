@@ -32,6 +32,7 @@ in
             denote
             diff-hl
             eglot-tempel
+            eldoc-box
             embark
             embark-consult
             envrc
@@ -57,7 +58,6 @@ in
             popper
             rainbow-delimiters
             rustic
-            spacious-padding
             tempel
             transient
             treesit-grammars.with-all-grammars

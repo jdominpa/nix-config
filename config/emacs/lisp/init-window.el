@@ -73,7 +73,8 @@ If buffer-or-name is nil return current buffer's mode."
        display-buffer-in-side-window)
       (side . top)
       (slot . 5)
-      (window-height . (lambda (win) (fit-window-to-buffer 20 10)))
+      (window-height . (lambda (win)
+						 (fit-window-to-buffer win 20 10)))
       (direction . above)
       (body-function . select-window))
      ;; Side windows

@@ -38,8 +38,24 @@
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil)
+  (eldoc-documentation-strategy 'eldoc-documentation-compose)
+  (eldoc-doc-buffer-separator
+   (concat "\n"
+           (propertize
+            (concat
+             (propertize "---" 'display " ")
+             "\n")
+            'face '(:strike-through t :extend t)
+            'font-lock-face
+            '(:strike-through t :extend t))))
   :config
   (global-eldoc-mode))
+
+(use-package eldoc-box
+  :ensure t
+  :bind (("C-c k" . eldoc-box-help-at-point)
+		 :map eglot-mode-map
+		 ("C-h ." . eldoc-box-help-at-point)))
 
 ;; Handle performance for long lines
 (use-package so-long
@@ -74,6 +90,7 @@
   (eglot-events-buffer-size '(:size 20000 :format short))
   (eglot-ignored-server-capabilities
    '(:documentHighlightProvider))
+  (eglot-code-action-indications '(margin mode-line))
   :config
   (fset #'jsonrpc--log-event #'ignore)
   (with-eval-after-load 'orderless
@@ -120,7 +137,6 @@
               ("C-c ! D" . flymake-show-project-diagnostics))
   :custom
   (flymake-proc-compilation-prevents-syntax-check t)
-  (flymake-show-diagnostics-at-end-of-line 'short)
   (flymake-mode-line-format
    '("" flymake-mode-line-exception flymake-mode-line-counters)))
 
