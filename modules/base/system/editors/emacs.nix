@@ -49,6 +49,7 @@ in
             markdown-mode
             meow
             modus-themes
+            nael
             nix-mode
             orderless
             org-appear

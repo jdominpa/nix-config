@@ -73,8 +73,7 @@
 (use-package eglot
   :functions eglot-ensure
   :commands eglot
-  :hook (((c-mode c-ts-mode nix-mode) . eglot-ensure)
-		 (eglot-managed-mode . jdp-eglot-capf))
+  :hook (eglot-managed-mode . jdp-eglot-capf)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
               ("C-c l s" . eglot-shutdown)
@@ -165,7 +164,7 @@
 
 ;; C/C++
 (use-package cc-mode
-  :defer t
+  :hook (c-mode . eglot-ensure)
   :bind (:map c-mode-base-map
               ("TAB" . nil)
               ([tab] . nil))
@@ -174,7 +173,7 @@
   (c-basic-offset 4))
 
 (use-package c-ts-mode
-  :defer t
+  :hook (c-ts-mode . eglot-ensure)
   :custom
   (c-ts-mode-indent-offset 4))
 
@@ -188,6 +187,12 @@
   :ensure t
   :defer t)
 
+;; Lean 4
+
+(use-package nael
+  :ensure t
+  :hook (nael-mode . eglot-ensure))
+
 ;; Markdown
 (use-package markdown-mode
   :ensure t
@@ -198,13 +203,12 @@
 ;; Nix
 (use-package nix-mode
   :ensure t
-  :defer t
-  :hook (nix-mode . nix-prettify-mode))
+  :hook ((nix-mode . eglot-ensure)
+		 (nix-mode . nix-prettify-mode)))
 
 ;; Rust
 (use-package rustic
   :ensure t
-  :after rust-mode
   :init
   (remove-hook 'rustic-mode-hook 'flycheck-mode)
   :custom
