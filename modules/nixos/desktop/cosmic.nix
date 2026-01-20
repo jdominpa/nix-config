@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.jdp.nixos.services.cosmic;
+  cfg = config.jdp.nixos.desktop.cosmic;
 in
 {
   options.jdp.nixos = {
-    services.cosmic.enable = lib.mkEnableOption "Enable COSMIC desktop environment.";
+    desktop.cosmic.enable = lib.mkEnableOption "Enable COSMIC desktop environment.";
   };
 
   config = lib.mkIf cfg.enable {

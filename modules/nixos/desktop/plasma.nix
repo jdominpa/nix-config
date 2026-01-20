@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.jdp.nixos.services.plasma;
+  cfg = config.jdp.nixos.desktop.plasma;
 in
 {
   options.jdp.nixos = {
-    services.plasma.enable = lib.mkEnableOption "Enable KDE Plasma desktop environment.";
+    desktop.plasma.enable = lib.mkEnableOption "Enable KDE Plasma desktop environment.";
   };
 
   config = lib.mkIf cfg.enable {

@@ -3,6 +3,9 @@
   # Emacs community overlay
   emacs-overlay = inputs.emacs-overlay.overlays.default;
 
+  # Niri flake
+  niri-flake = inputs.niri-flake.overlays.niri;
+
   # Bring our custom packages from the 'pkgs' directory
   additions = final: _prev: import ../pkgs final.pkgs;
 

@@ -17,8 +17,8 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.jdp.nixos.services.plasma.enable;
-        message = "`jdp.nixos.services.plasma` needs to be enabled if `jdp.home.desktop.plasma-manager` is enabled.";
+        assertion = config.jdp.nixos.desktop.plasma.enable;
+        message = "`jdp.nixos.desktop.plasma` needs to be enabled if `jdp.home.desktop.plasma-manager` is enabled.";
       }
     ];
 

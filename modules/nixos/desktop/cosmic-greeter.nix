@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.jdp.nixos.services.cosmic-greeter;
+  cfg = config.jdp.nixos.desktop.cosmic-greeter;
 in
 {
   options.jdp.nixos = {
-    services.cosmic-greeter.enable = lib.mkEnableOption "Whether to enable COSMIC greeter.";
+    desktop.cosmic-greeter.enable = lib.mkEnableOption "Whether to enable COSMIC greeter.";
   };
 
   config = lib.mkIf cfg.enable {

@@ -16,8 +16,8 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.jdp.nixos.services.cosmic.enable;
-        message = "`jdp.nixos.services.cosmic` needs to be enabled if `jdp.home.desktop.cosmic-manager` is enabled.";
+        assertion = config.jdp.nixos.desktop.cosmic.enable;
+        message = "`jdp.nixos.desktop.cosmic` needs to be enabled if `jdp.home.desktop.cosmic-manager` is enabled.";
       }
     ];
 
