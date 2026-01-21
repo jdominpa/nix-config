@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -49,14 +48,13 @@ in
         layout = {
           border = {
             enable = true;
-            width = 2;
+            width = 1;
           };
-          empty-workspace-above-first = true;
           gaps = 8;
           shadow.enable = true;
           struts = {
-            left = 64;
-            right = 64;
+            left = 32;
+            right = 32;
           };
         };
         inherit (cfg) outputs;

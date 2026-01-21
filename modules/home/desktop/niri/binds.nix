@@ -13,37 +13,49 @@ in
       programs.niri.settings.binds = {
         "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
         "Mod+T" = {
-          action.spawn = "ghostty";
+          action.spawn = "kitty";
           hotkey-overlay = {
             title = "Open a terminal";
           };
         };
         "Mod+Space" = {
-          action.spawn = "fuzzel";
+          action.spawn = [
+            "noctalia-shell"
+            "ipc"
+            "call"
+            "launcher"
+            "toggle"
+          ];
           hotkey-overlay = {
             title = "Run application launcher";
-          };
-        };
-        "Mod+Shift+X" = {
-          action.spawn = "swaylock";
-          hotkey-overlay = {
-            title = "Lock the screen";
           };
         };
         "Mod+P".action.screenshot = [ ];
         "Mod+Ctrl+P".action.screenshot-window = [ ];
         "Mod+Alt+P".action.screenshot-screen = [ ];
         "Mod+Shift+Escape".action.toggle-keyboard-shortcuts-inhibit = [ ];
-        "Mod+Shift+E".action.quit = [ ];
+        "Mod+Shift+X" = {
+          action.spawn = [
+            "noctalia-shell"
+            "ipc"
+            "call"
+            "lockScreen"
+            "lock"
+          ];
+          hotkey-overlay = {
+            title = "Lock the screen";
+          };
+        };
         "Mod+Shift+Z".action.power-off-monitors = [ ];
+        "Mod+Shift+E".action.quit = [ ];
 
         # Media and brightness bindings
         "XF86AudioRaiseVolume" = {
-          action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
+          action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+";
           allow-when-locked = true;
         };
         "XF86AudioLowerVolume" = {
-          action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
+          action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-";
           allow-when-locked = true;
         };
         "XF86AudioMute" = {
@@ -164,9 +176,9 @@ in
         "Mod+Ctrl+M".action.expand-column-to-available-width = [ ];
         "Mod+C".action.center-column = [ ];
         "Mod+Minus".action.set-column-width = "-10%";
-        "Mod+Plus".action.set-column-width = "+10%";
+        "Mod+Equal".action.set-column-width = "+10%";
         "Mod+Shift+Minus".action.set-window-height = "-10%";
-        "Mod+Shift+Plus".action.set-window-height = "+10%";
+        "Mod+Shift+Equal".action.set-window-height = "+10%";
         "Mod+V".action.toggle-window-floating = [ ];
         "Mod+Shift+V".action.switch-focus-between-floating-and-tiling = [ ];
         "Mod+W".action.toggle-column-tabbed-display = [ ];

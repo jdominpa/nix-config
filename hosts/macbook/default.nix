@@ -63,6 +63,7 @@ in
           enable = true;
           sshAgent = true;
         };
+        kitty.enable = true;
       };
       cli = {
         direnv.enable = true;

@@ -32,8 +32,8 @@ in
       videoDrivers = [ "nvidia" ];
       # Configure keymap in X11
       xkb = {
-        layout = "us";
-        variant = "";
+        layout = "us,us";
+        variant = ",intl";
       };
     };
     # Needed for piper
@@ -69,9 +69,9 @@ in
         steam.enable = true;
       };
       desktop = {
-        cosmic.enable = true;
         gdm.enable = true;
         niri.enable = true;
+        noctalia.enable = true;
       };
       services = {
         bluetooth.enable = true;
@@ -104,7 +104,7 @@ in
           sshAgent = true;
         };
         discord.enable = true;
-        ghostty.enable = true;
+        kitty.enable = true;
         google-chrome.enable = true;
       };
       cli = {
@@ -114,43 +114,29 @@ in
         starship.enable = true;
         zsh.enable = true;
       };
-      desktop = {
-        cosmic-manager.enable = true;
-        niri = {
-          enable = true;
-          outputs = {
-            "DP-1" = {
-              enable = true;
-              mode.width = 1920;
-              mode.height = 1080;
-              mode.refresh = 143.855;
-              position.x = 0;
-              position.y = 0;
-              variable-refresh-rate = true;
-            };
-            "DP-2" = {
-              enable = true;
-              focus-at-startup = true;
-              mode.width = 2560;
-              mode.height = 1440;
-              mode.refresh = 240.001;
-              position.x = 1920;
-              position.y = 0;
-              variable-refresh-rate = true;
-            };
+      desktop.niri = {
+        enable = true;
+        noctalia.enable = true;
+        outputs = {
+          "DP-1" = {
+            enable = true;
+            mode.width = 1920;
+            mode.height = 1080;
+            mode.refresh = 143.855;
+            position.x = 0;
+            position.y = 0;
+            variable-refresh-rate = true;
           };
-        };
-        plasma-manager = {
-          enable = false;
-          input.mice = [
-            {
-              name = "Logitech G502 HERO Gaming Mouse";
-              enable = true;
-              accelerationProfile = "none";
-              productId = "c08b";
-              vendorId = "046d";
-            }
-          ];
+          "DP-2" = {
+            enable = true;
+            focus-at-startup = true;
+            mode.width = 2560;
+            mode.height = 1440;
+            mode.refresh = 240.001;
+            position.x = 1920;
+            position.y = 0;
+            variable-refresh-rate = true;
+          };
         };
       };
       dev = {
