@@ -4,9 +4,14 @@
 #
 ############################################################################
 
-# List all the commands
+[private]
 default:
-    @just --list
+	@echo "error: no subcommand specified"
+	@echo "Try 'just help' for more information."
+
+# List all subcommands
+help:
+	@just --list
 
 # Update flake inputs (all of them if none are specified)
 [group('nix')]
