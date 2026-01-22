@@ -5,12 +5,12 @@
   ...
 }:
 let
-  cfg = config.jdp.base.system.editors.emacs;
+  cfg = config.jdp.base.editors.emacs;
   emacs = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs-git else pkgs.emacs-git-pgtk;
 in
 {
   options.jdp.base = {
-    system.editors.emacs.enable = lib.mkEnableOption "Whether to install emacs in this system.";
+    editors.emacs.enable = lib.mkEnableOption "Whether to install emacs in this system.";
   };
 
   config = lib.mkIf cfg.enable {

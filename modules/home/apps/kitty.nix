@@ -9,7 +9,7 @@ let
 in
 {
   options.jdp.home = {
-    apps.kitty.enable = lib.mkEnableOption "Install Kitty terminal.";
+    apps.kitty.enable = lib.mkEnableOption "Whether to configure Kitty terminal.";
   };
 
   config = lib.mkIf cfg.enable {

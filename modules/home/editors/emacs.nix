@@ -18,8 +18,8 @@ in
 
   config = lib.mkIf cfg.enable {
     warnings =
-      lib.optional (!config.jdp.base.system.editors.emacs.enable)
-        "`jdp.home.editors.emacs` is enabled but emacs is not installed. Consider enabling `jdp.base.system.editors.emacs`.";
+      lib.optional (!config.jdp.base.editors.emacs.enable)
+        "`jdp.home.editors.emacs` is enabled but emacs is not installed. Consider enabling `jdp.base.editors.emacs`.";
 
     home-manager.users.${user.name} = {
       home.file = {
@@ -31,12 +31,9 @@ in
       };
 
       # LSP servers
-      home.packages = lib.optionals cfg.withLsp (
-        with pkgs;
-        [
-          nixd
-        ]
-      );
+      home.packages = lib.optionals cfg.withLsp [
+        pkgs.nixd
+      ];
     };
   };
 }

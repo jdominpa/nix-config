@@ -28,7 +28,7 @@ in
           app = "/Applications/Google Chrome.app";
         }
         {
-          app = "/System/Applications/Utilities/Terminal.app";
+          app = "/Applications/Nix Apps/kitty.app";
         }
         {
           app = "/Applications/Nix Apps/Emacs.app";

@@ -48,8 +48,11 @@ in
 
   jdp = {
     base = {
+      apps = {
+        kitty.enable = true;
+      };
+      editors.emacs.enable = true;
       system = {
-        editors.emacs.enable = true;
         nix.enable = true;
         packages.enable = true;
         shell.aliases.enable = true;
