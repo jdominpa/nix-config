@@ -19,6 +19,11 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      mpv
+      qalculate-gtk
+      thunar
+      thunar-archive-plugin
+      thunar-volman
       xwayland-satellite
     ];
     programs.niri = {

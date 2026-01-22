@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -29,6 +30,7 @@ in
 
     home-manager.users.${user.name} = {
       programs.niri.settings = {
+        gestures.hot-corners.enable = false;
         hotkey-overlay.skip-at-startup = true;
         input = {
           keyboard = {

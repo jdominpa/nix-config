@@ -19,6 +19,17 @@ in
         inputs.noctalia.homeModules.default
       ];
 
+      # Cursor settings
+      home.pointerCursor = {
+        gtk.enable = true;
+        x11.enable = true;
+        package = pkgs.bibata-cursors;
+        name = "Bibata-Modern-Ice";
+        size = 24;
+      };
+      gtk.enable = true;
+
+      # Noctalia settings
       programs.noctalia-shell = {
         enable = true;
         settings = {
@@ -32,10 +43,13 @@ in
             volumeStep = 2;
           };
           bar = {
-            backgroundOpacity = 1;
+            backgroundOpacity = 0.33;
             density = "comfortable";
             floating = false;
+            marginHorizontal = 0.25;
+            marginVertical = 0.25;
             showCapsule = true;
+            useSeparateOpacity = true;
             widgets = {
               center = [
                 {
@@ -45,6 +59,9 @@ in
               left = [
                 {
                   id = "ControlCenter";
+                }
+                {
+                  id = "SystemMonitor";
                 }
                 {
                   id = "Launcher";
@@ -58,23 +75,20 @@ in
                   id = "Tray";
                 }
                 {
-                  id = "MediaMini";
-                }
-                {
                   id = "KeyboardLayout";
                   showIcon = false;
+                }
+                {
+                  id = "MediaMini";
                 }
                 {
                   id = "Volume";
                 }
                 {
-                  id = "Battery";
-                }
-                {
                   id = "NotificationHistory";
                 }
                 {
-                  id = "SystemMonitor";
+                  id = "Battery";
                 }
                 {
                   id = "Clock";
@@ -87,10 +101,14 @@ in
           colorSchemes = {
             darkMode = true;
             predefinedScheme = "Catppuccin";
+            useWallpaperColors = false;
           };
           controlCenter = {
             shortcuts = {
               left = [
+                {
+                  id = "WiFi";
+                }
                 {
                   id = "Network";
                 }
@@ -146,9 +164,9 @@ in
           dock.enabled = false;
           general = {
             animationSpeed = 1.5;
-            shadowDirection = "center";
-            shadowOffsetX = 0;
-            shadowOffsetY = 0;
+            shadowDirection = "bottom_right";
+            shadowOffsetX = 2;
+            shadowOffsetY = 3;
             telemetryEnabled = false;
           };
           location = {
@@ -165,12 +183,12 @@ in
           };
           sessionMenu = {
             largeButtonsLayout = "grid";
-            largeButtonsStyle = false;
+            largeButtonsStyle = true;
           };
           ui = {
             fontDefault = "Aporetic Sans";
             fontFixed = "Aporetic Sans Mono";
-            panelBackgroundOpacity = 1;
+            panelBackgroundOpacity = 0.85;
           };
           wallpaper = {
             directory = "";

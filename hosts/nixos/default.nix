@@ -128,6 +128,7 @@ in
             mode.refresh = 143.855;
             position.x = 0;
             position.y = 0;
+            scale = 1.0;
             variable-refresh-rate = true;
           };
           "DP-2" = {
@@ -138,6 +139,7 @@ in
             mode.refresh = 240.001;
             position.x = 1920;
             position.y = 0;
+            scale = 1.0;
             variable-refresh-rate = true;
           };
         };
