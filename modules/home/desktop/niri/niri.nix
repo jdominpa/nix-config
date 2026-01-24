@@ -30,6 +30,9 @@ in
 
     home-manager.users.${user.name} = {
       programs.niri.settings = {
+        environment = {
+          "NIXOS_OZONE_WL" = "1";
+        };
         gestures.hot-corners.enable = false;
         hotkey-overlay.skip-at-startup = true;
         input = {
@@ -52,7 +55,7 @@ in
             enable = true;
             width = 1;
           };
-          gaps = 8;
+          gaps = 12;
           shadow.enable = true;
           struts = {
             left = 32;

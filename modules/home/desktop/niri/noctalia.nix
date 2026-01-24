@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -27,7 +28,12 @@ in
         name = "Bibata-Modern-Ice";
         size = 24;
       };
-      gtk.enable = true;
+      gtk = {
+        enable = true;
+        colorScheme = "dark";
+        gtk3.colorScheme = "dark";
+        gtk4.colorScheme = "dark";
+      };
 
       # Noctalia settings
       programs.noctalia-shell = {
@@ -40,16 +46,16 @@ in
           };
           audio = {
             preferredPlayer = "";
-            volumeStep = 2;
+            volumeStep = 1;
           };
           bar = {
-            backgroundOpacity = 0.33;
+            backgroundOpacity = 1;
             density = "comfortable";
             floating = false;
             marginHorizontal = 0.25;
             marginVertical = 0.25;
             showCapsule = true;
-            useSeparateOpacity = true;
+            useSeparateOpacity = false;
             widgets = {
               center = [
                 {
@@ -92,8 +98,8 @@ in
                 }
                 {
                   id = "Clock";
-                  formatHorizontal = "HH:mm, dd.MM.yyyy";
-                  tooltipFormat = "HH:mm, dd.MM.yyyy";
+                  formatHorizontal = "HH:mm ddd, MMM dd";
+                  tooltipFormat = "HH:mm ddd, MMM dd";
                 }
               ];
             };
@@ -106,9 +112,6 @@ in
           controlCenter = {
             shortcuts = {
               left = [
-                {
-                  id = "WiFi";
-                }
                 {
                   id = "Network";
                 }
@@ -188,7 +191,7 @@ in
           ui = {
             fontDefault = "Aporetic Sans";
             fontFixed = "Aporetic Sans Mono";
-            panelBackgroundOpacity = 0.85;
+            panelBackgroundOpacity = 0.5;
           };
           wallpaper = {
             directory = "";

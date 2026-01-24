@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       mpv
+      nomacs
       qalculate-gtk
       thunar
       thunar-archive-plugin

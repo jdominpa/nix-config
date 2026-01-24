@@ -6,8 +6,8 @@
   ...
 }:
 let
-  cfg = user.home-manager;
   inherit (config.jdp.base) user;
+  cfg = user.home-manager;
 in
 {
   config = lib.mkIf cfg.enable {
