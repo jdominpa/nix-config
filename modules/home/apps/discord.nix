@@ -15,7 +15,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${user.name} = {
-      home.packages = [ pkgs.discord ];
+      home.packages = if pkgs.stdenv.hostPlatform.isLinux then [ pkgs.vesktop ] else [ pkgs.discord ];
     };
   };
 }

@@ -194,7 +194,7 @@ in
             panelBackgroundOpacity = 0.5;
           };
           wallpaper = {
-            directory = "";
+            directory = "${user.homeDirectory}/Imatges/Wallpapers";
             enabled = true;
             fillColor = "#000000";
             fillMode = "crop";

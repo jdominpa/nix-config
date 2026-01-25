@@ -18,18 +18,38 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      mpv
-      nomacs
-      qalculate-gtk
-      thunar
-      thunar-archive-plugin
-      thunar-volman
-      xwayland-satellite
-    ];
-    programs.niri = {
-      enable = true;
-      package = pkgs.niri;
+    environment = {
+      systemPackages = with pkgs; [
+        mpv
+        nomacs
+        qalculate-gtk
+        xwayland-satellite
+      ];
+      variables."NIXOS_OZONE_WL" = "1";
+    };
+    programs = {
+      niri = {
+        enable = true;
+        package = pkgs.niri;
+      };
+      thunar = {
+        enable = true;
+        plugins = with pkgs; [
+          thunar-archive-plugin
+          thunar-volman
+        ];
+      };
+    };
+    xdg.portal = {
+      config.niri = {
+        default = [
+          "gtk"
+          "gnome"
+        ];
+        "org.freedesktop.impl.portal.Screencast" = [ "gnome" ];
+        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+      };
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
   };
 }

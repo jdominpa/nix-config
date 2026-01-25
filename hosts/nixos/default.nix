@@ -33,6 +33,7 @@ in
       # Configure keymap in X11
       xkb = {
         layout = "us,us";
+        options = "grp:shift_caps_toggle";
         variant = ",intl";
       };
     };

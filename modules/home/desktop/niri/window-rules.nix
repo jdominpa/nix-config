@@ -25,6 +25,15 @@ in
             open-maximized = true;
           }
           {
+            matches = [
+              {
+                app-id = "^gimp";
+                title = "^GIMP Startup$";
+              }
+            ];
+            open-focused = false;
+          }
+          {
             geometry-corner-radius = {
               bottom-left = 12.0;
               bottom-right = 12.0;

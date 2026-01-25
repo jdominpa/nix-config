@@ -30,9 +30,6 @@ in
 
     home-manager.users.${user.name} = {
       programs.niri.settings = {
-        environment = {
-          "NIXOS_OZONE_WL" = "1";
-        };
         gestures.hot-corners.enable = false;
         hotkey-overlay.skip-at-startup = true;
         input = {
@@ -41,6 +38,7 @@ in
             repeat-rate = 30;
             xkb = {
               layout = "us,us";
+              options = "grp:shift_caps_toggle";
               variant = ",intl";
             };
           };
@@ -51,9 +49,19 @@ in
           warp-mouse-to-focus.enable = true;
         };
         layout = {
-          border = {
+          border.enable = false;
+          focus-ring = {
             enable = true;
-            width = 1;
+            active = {
+              color = "#2fafff";
+            };
+            inactive = {
+              color = "transparent";
+            };
+            urgent = {
+              color = "#ff5f59";
+            };
+            width = 2;
           };
           gaps = 12;
           shadow.enable = true;
