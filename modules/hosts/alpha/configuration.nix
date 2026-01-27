@@ -12,11 +12,18 @@
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
       ++ (with self.modules.nixos; [
+        bluetooth
         cli-tools
         emacs
+        fonts
         jdominpa
+        locale
         nix
+        pipewire
+        powerProfiles
+        printing
         shell
+        ssh
       ])
       ++ [
         {

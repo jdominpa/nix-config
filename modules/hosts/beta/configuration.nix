@@ -9,9 +9,13 @@
       [
         cli-tools
         emacs
+        fonts
         jdominpa
+        locale
         nix
+        powerProfiles
         shell
+        ssh
       ]
       ++ [
         {
@@ -22,5 +26,11 @@
           };
         }
       ];
+
+    networking = {
+      hostName = "beta";
+      computerName = "beta";
+    };
+    system.defaults.smb.NetBIOSName = "beta";
   };
 }

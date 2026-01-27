@@ -3,30 +3,35 @@
   ...
 }:
 let
-  sharedSettings = {
-    nixpkgs = {
-      config.allowUnfree = true;
-      overlays = [
-        # TODO: move these to their respective configurations
-        # inputs.niri-flake.overlays.niri
-        (final: _prev: {
-          stable = inputs.nixpkgs-stable.legacyPackages.${final.system};
-        })
-      ];
+  sharedSettings =
+    { pkgs, ... }:
+    {
+      nixpkgs = {
+        config.allowUnfree = true;
+        overlays = [
+          # TODO: move these to their respective configurations
+          # inputs.niri-flake.overlays.niri
+          (final: _prev: {
+            stable = import inputs.nixpkgs-stable {
+              inherit (final) config;
+              inherit (pkgs.stdenv.hostPlatform) system;
+            };
+          })
+        ];
+      };
+      nix.settings = {
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+        substituters = [
+          "https://nix-community.cachix.org"
+        ];
+        trusted-public-keys = [
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        ];
+      };
     };
-    nix.settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      substituters = [
-        "https://nix-community.cachix.org"
-      ];
-      trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      ];
-    };
-  };
 in
 {
   flake.modules.nixos.nix = {
