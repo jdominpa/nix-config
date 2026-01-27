@@ -3,6 +3,7 @@ let
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
+        btop
         coreutils
         curl
         findutils
@@ -34,7 +35,6 @@ in
       imports = [ genericPackages ];
 
       environment.systemPackages = with pkgs; [
-        btop
         exfat
         hfsprogs
         lm_sensors

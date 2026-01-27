@@ -1,5 +1,6 @@
 {
   inputs,
+  self,
   ...
 }:
 {
@@ -10,9 +11,37 @@
         inputs.nixos-hardware.nixosModules.common-cpu-intel
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
-      ++ (with inputs.self.modules.nixos; [
+      ++ (with self.modules.nixos; [
+        cli-tools
+        emacs
         jdominpa
-      ]);
+        nix
+        shell
+      ])
+      ++ [
+        {
+          home-manager.users.jdominpa = {
+            imports = with self.modules.homeManager; [
+              emacs
+            ];
+          };
+        }
+      ];
+
+      boot.loader = {
+        efi.canTouchEfiVariables = true;
+        # TODO: check systemd-boot.windows option
+        systemd-boot = {
+          enable = true;
+          # Don't keep to many generations
+          configurationLimit = 10;
+        };
+      };
+
+      environment.systemPackages = with pkgs; [
+        headsetcontrol # Control logitech headset
+        piper # Control logitech mice
+      ];
 
       # Nvidia drivers settings
       hardware = {
@@ -22,6 +51,12 @@
           modesetting.enable = true;
         };
       };
+
+      networking = {
+        hostName = "alpha";
+        networkmanager.enable = true;
+      };
+
       services = {
         xserver = {
           videoDrivers = [ "nvidia" ];
@@ -35,12 +70,6 @@
         # Needed for piper
         ratbagd.enable = true;
       };
-
-      # Peripherials
-      environment.systemPackages = with pkgs; [
-        headsetcontrol # Control logitech headset
-        piper # Control logitech mice
-      ];
 
       # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
       system.stateVersion = "24.05";

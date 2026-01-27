@@ -6,17 +6,11 @@ let
   sharedSettings =
     { pkgs, ... }:
     {
+      nix.settings.trusted-users = [ "jdominpa" ];
       users.users.jdominpa.shell = pkgs.zsh;
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        # TODO: see if this can be deleted
-        # extraSpecialArgs = {
-        #   inherit
-        #     inputs
-        #     outputs
-        #   ;
-        # };
         users.jdominpa = {
           # Let home-manager manage itself
           programs.home-manager.enable = true;

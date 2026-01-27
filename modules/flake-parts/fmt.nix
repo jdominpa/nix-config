@@ -21,6 +21,10 @@
           statix.enable = true;
         };
         settings = {
+          excludes = [
+            "*.el"
+            "*.eld"
+          ];
           on-unmatched = "warn";
         };
       };
