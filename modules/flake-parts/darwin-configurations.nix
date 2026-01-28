@@ -1,10 +1,12 @@
 {
-  lib,
-  flake-parts-lib,
+  inputs,
   ...
 }:
+let
+  inherit (inputs.nixpkgs) lib;
+in
 {
-  options.flake = flake-parts-lib.mkSubmoduleOptions {
+  options.flake = inputs.flake-parts.lib.mkSubmoduleOptions {
     darwinConfigurations = lib.mkOption {
       type = lib.types.lazyAttrsOf lib.types.raw;
       default = { };

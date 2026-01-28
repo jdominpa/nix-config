@@ -22,6 +22,7 @@
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               emacs
+              shell
             ];
           };
         }

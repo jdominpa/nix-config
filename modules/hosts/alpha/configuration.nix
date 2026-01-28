@@ -18,18 +18,22 @@
         fonts
         jdominpa
         locale
+        niri-desktop
         nix
         pipewire
         powerProfiles
         printing
         shell
         ssh
+        steam
       ])
       ++ [
         {
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               emacs
+              niri-desktop
+              shell
             ];
           };
         }
@@ -56,6 +60,35 @@
         nvidia = {
           open = false;
           modesetting.enable = true;
+        };
+      };
+
+      # Niri output monitors
+      home-manager.users.jdominpa = {
+        programs.niri.settings = {
+          outputs = {
+            "DP-1" = {
+              enable = true;
+              mode.width = 1920;
+              mode.height = 1080;
+              mode.refresh = 143.855;
+              position.x = 0;
+              position.y = 0;
+              scale = 1.0;
+              variable-refresh-rate = true;
+            };
+            "DP-2" = {
+              enable = true;
+              focus-at-startup = true;
+              mode.width = 2560;
+              mode.height = 1440;
+              mode.refresh = 240.001;
+              position.x = 1920;
+              position.y = 0;
+              scale = 1.0;
+              variable-refresh-rate = true;
+            };
+          };
         };
       };
 
