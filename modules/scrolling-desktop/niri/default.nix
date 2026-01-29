@@ -1,5 +1,6 @@
 {
   inputs,
+  self,
   ...
 }:
 {
@@ -11,6 +12,7 @@
         systemPackages = [ pkgs.xwayland-satellite ];
         variables."NIXOS_OZONE_WL" = "1";
       };
+      home-manager.sharedModules = [ self.modules.homeManager.niri ];
       programs.niri = {
         enable = true;
         package = pkgs.niri;

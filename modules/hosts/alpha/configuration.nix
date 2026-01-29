@@ -3,8 +3,11 @@
   self,
   ...
 }:
+let
+  hostName = "alpha";
+in
 {
-  flake.modules.nixos.alpha =
+  flake.modules.nixos.${hostName} =
     { pkgs, ... }:
     {
       imports = [
@@ -12,28 +15,32 @@
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
       ++ (with self.modules.nixos; [
+        basic-cli-tools
         bluetooth
-        cli-tools
+        browser
         emacs
         fonts
         jdominpa
         locale
-        niri-desktop
         nix
         pipewire
         powerProfiles
         printing
+        scrolling-desktop
         shell
         ssh
         steam
+        terminal
       ])
       ++ [
         {
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
+              bitwarden
+              direnv
               emacs
-              niri-desktop
-              shell
+              git
+              latex
             ];
           };
         }
@@ -93,7 +100,7 @@
       };
 
       networking = {
-        hostName = "alpha";
+        inherit hostName;
         networkmanager.enable = true;
       };
 

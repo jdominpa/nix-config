@@ -1,3 +1,7 @@
+{
+  self,
+  ...
+}:
 let
   sharedSettings = {
     environment.shellAliases = {
@@ -5,6 +9,7 @@ let
       ll = "ls -l";
       la = "ls -la";
     };
+    home-manager.sharedModules = [ self.modules.homeManager.shell ];
   };
 in
 {
@@ -32,6 +37,7 @@ in
     };
 
   flake.modules.homeManager.shell = {
+    imports = [ self.modules.homeManager.starship ];
     programs.zsh = {
       enable = true;
       history = {

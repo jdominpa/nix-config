@@ -1,10 +1,12 @@
 {
   inputs,
+  self,
   ...
 }:
 {
   flake.modules.nixos.noctalia = {
     imports = [ inputs.noctalia.nixosModules.default ];
+    home-manager.sharedModules = [ self.modules.homeManager.noctalia ];
     services.noctalia-shell.enable = true;
   };
 

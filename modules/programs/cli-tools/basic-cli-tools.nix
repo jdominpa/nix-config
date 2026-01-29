@@ -1,5 +1,9 @@
+{
+  self,
+  ...
+}:
 let
-  genericPackages =
+  basicPackages =
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
@@ -26,13 +30,14 @@ let
         which
         zip
       ];
+      home-manager.sharedModules = [ self.modules.homeManager.basic-cli-tools ];
     };
 in
 {
-  flake.modules.nixos.cli-tools =
+  flake.modules.nixos.basic-cli-tools =
     { pkgs, ... }:
     {
-      imports = [ genericPackages ];
+      imports = [ basicPackages ];
 
       environment.systemPackages = with pkgs; [
         exfat
@@ -44,7 +49,14 @@ in
       ];
     };
 
-  flake.modules.darwin.cli-tools = {
-    imports = [ genericPackages ];
+  flake.modules.darwin.basic-cli-tools = {
+    imports = [ basicPackages ];
+  };
+
+  flake.modules.homeManager.basic-cli-tools = {
+    programs.fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
   };
 }

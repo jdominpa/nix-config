@@ -2,12 +2,17 @@
   self,
   ...
 }:
+let
+  hostName = "beta";
+in
 {
   flake.modules.darwin.beta = {
     imports =
       with self.modules.darwin;
       [
-        cli-tools
+        basic-cli-tools
+        bitwarden
+        browser
         emacs
         fonts
         jdominpa
@@ -16,22 +21,27 @@
         powerProfiles
         shell
         ssh
+        terminal
       ]
       ++ [
         {
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
+              bitwarden
+              direnv
               emacs
-              shell
+              git
+              kanata
+              latex
             ];
           };
         }
       ];
 
     networking = {
-      hostName = "beta";
-      computerName = "beta";
+      inherit hostName;
+      computerName = hostName;
     };
-    system.defaults.smb.NetBIOSName = "beta";
+    system.defaults.smb.NetBIOSName = hostName;
   };
 }
