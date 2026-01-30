@@ -13,14 +13,12 @@ in
         basic-cli-tools
         bitwarden
         browser
+        desktop-system
         emacs
-        fonts
+        homebrew
         jdominpa
-        locale
         nix
-        powerProfiles
         shell
-        ssh
         terminal
       ]
       ++ [
@@ -28,7 +26,6 @@ in
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               bitwarden
-              direnv
               emacs
               git
               kanata

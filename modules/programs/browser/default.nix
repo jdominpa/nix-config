@@ -2,10 +2,12 @@
   flake.modules.nixos.browser =
     { pkgs, ... }:
     {
-      environment.systemPackages = [ pkgs.chromium ];
+      environment.systemPackages = [ pkgs.google-chrome ];
     };
 
-  flake.modules.darwin.browser = {
-    homebrew.casks = [ "google-chrome" ];
-  };
+  flake.modules.darwin.browser =
+    { pkgs, ... }:
+    {
+      environment.systemPackages = [ pkgs.google-chrome ];
+    };
 }

@@ -15,4 +15,10 @@
         ];
       };
     };
+
+  flake.modules.darwin.desktop-tools = {
+    homebrew.casks = [
+      "google-drive"
+    ];
+  };
 }

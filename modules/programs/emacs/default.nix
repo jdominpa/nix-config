@@ -5,6 +5,9 @@
 let
   emacsConfig =
     { pkgs, ... }:
+    let
+      emacs = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs-git else pkgs.emacs-git-pgtk;
+    in
     {
       nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ];
       environment = {

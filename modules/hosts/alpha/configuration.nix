@@ -16,19 +16,12 @@ in
       ]
       ++ (with self.modules.nixos; [
         basic-cli-tools
-        bluetooth
         browser
         emacs
-        fonts
         jdominpa
-        locale
         nix
-        pipewire
-        powerProfiles
-        printing
-        scrolling-desktop
+        desktop-system
         shell
-        ssh
         steam
         terminal
       ])
@@ -37,7 +30,7 @@ in
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               bitwarden
-              direnv
+              discord
               emacs
               git
               latex
