@@ -1,52 +1,62 @@
 {
   inputs,
+  self,
   ...
 }:
 let
+  username = "jdominpa";
   sharedSettings =
     { pkgs, ... }:
     {
-      nix.settings.trusted-users = [ "jdominpa" ];
-      users.users.jdominpa.shell = pkgs.zsh;
+      nix.settings.trusted-users = [ username ];
+      users.users.${username}.shell = pkgs.zsh;
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.jdominpa = {
-          # Let home-manager manage itself
-          programs.home-manager.enable = true;
-          home = {
-            username = "jdominpa";
-            # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-            stateVersion = "24.05";
-          };
+        users.${username} = {
+          imports = [ self.modules.homeManager.${username} ];
         };
       };
     };
 in
 {
-  flake.modules.nixos.jdominpa = {
+  flake.modules.nixos.${username} = {
     imports = [
       sharedSettings
       inputs.home-manager.nixosModules.home-manager
     ];
-    users.users.jdominpa = {
+    users.users.${username} = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
-      home = "/home/jdominpa";
+      home = "/home/${username}";
     };
-    home-manager.users.jdominpa.home.homeDirectory = "/home/jdominpa";
   };
 
-  flake.modules.darwin.jdominpa = {
+  flake.modules.darwin.${username} = {
     imports = [
       sharedSettings
       inputs.home-manager.darwinModules.home-manager
     ];
-    users.users.jdominpa = {
+    users.users.${username} = {
       isHidden = false;
-      home = "/Users/jdominpa";
+      home = "/Users/${username}";
     };
-    system.primaryUser = "jdominpa";
-    home-manager.users.jdominpa.home.homeDirectory = "/Users/jdominpa";
+    system.primaryUser = username;
   };
+
+  flake.modules.homeManager.${username} =
+    { pkgs, ... }:
+    let
+      inherit (pkgs.stdenv.hostPlatform) isLinux;
+    in
+    {
+      # Let home-manager manage itself
+      programs.home-manager.enable = true;
+      home = {
+        inherit username;
+        homeDirectory = (if isLinux then "/home" else "/Users") + "/${username}";
+        # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+        stateVersion = "24.05";
+      };
+    };
 }
