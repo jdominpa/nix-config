@@ -1,5 +1,4 @@
 {
-  inputs,
   self,
   ...
 }:
@@ -10,21 +9,14 @@ let
     {
       nix.settings.trusted-users = [ username ];
       users.users.${username}.shell = pkgs.zsh;
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        users.${username} = {
-          imports = [ self.modules.homeManager.${username} ];
-        };
+      home-manager.users.${username} = {
+        imports = [ self.modules.homeManager.${username} ];
       };
     };
 in
 {
   flake.modules.nixos.${username} = {
-    imports = [
-      sharedSettings
-      inputs.home-manager.nixosModules.home-manager
-    ];
+    imports = [ sharedSettings ];
     users.users.${username} = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
@@ -33,10 +25,7 @@ in
   };
 
   flake.modules.darwin.${username} = {
-    imports = [
-      sharedSettings
-      inputs.home-manager.darwinModules.home-manager
-    ];
+    imports = [ sharedSettings ];
     users.users.${username} = {
       isHidden = false;
       home = "/Users/${username}";

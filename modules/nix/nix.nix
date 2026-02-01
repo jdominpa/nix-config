@@ -9,8 +9,6 @@ let
       nixpkgs = {
         config.allowUnfree = true;
         overlays = [
-          # TODO: move these to their respective configurations
-          # inputs.niri-flake.overlays.niri
           (final: _prev: {
             stable = import inputs.nixpkgs-stable {
               inherit (final) config;

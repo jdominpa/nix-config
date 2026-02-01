@@ -20,10 +20,6 @@
   flake.modules.homeManager.terminal = {
     programs.kitty = {
       enable = true;
-      font = {
-        name = "Aporetic Sans Mono";
-        size = 13;
-      };
       settings = {
         cursor_shape = "block";
         cursor_blink_interval = 0;

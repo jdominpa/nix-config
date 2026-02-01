@@ -7,12 +7,29 @@
           block-out-from = "screencast";
         }
         {
-          matches = [ { app-id = "^emacs$"; } ];
+          matches = [
+            {
+              app-id = "^emacs$";
+            }
+            {
+              app-id = "^steam$";
+              title = "^Steam$";
+            }
+          ];
           open-maximized = true;
         }
         {
-          matches = [ { app-id = "^steam$"; } ];
-          open-maximized = true;
+          matches = [
+            {
+              app-id = "^steam$";
+              title = "^Friends List$";
+            }
+            {
+              app-id = "^steam$";
+              title = "^Steam Settings$";
+            }
+          ];
+          open-floating = true;
         }
         {
           matches = [

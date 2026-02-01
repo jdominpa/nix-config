@@ -16,9 +16,11 @@ in
         desktop-system
         emacs
         homebrew
+        home-manager
         jdominpa
         nix
         shell
+        stylix
         terminal
       ]
       ++ [

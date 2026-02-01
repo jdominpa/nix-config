@@ -18,11 +18,13 @@ in
         basic-cli-tools
         browser
         emacs
+        home-manager
         jdominpa
         nix
         desktop-system
         shell
         steam
+        stylix
         terminal
       ])
       ++ [
