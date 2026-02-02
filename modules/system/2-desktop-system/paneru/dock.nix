@@ -1,8 +1,8 @@
 {
   flake.modules.darwin.dock = {
     system.defaults.dock = {
-      autohide = true;
-      autohide-delay = 0.1; # lower delay before showing/hidding the dock
+      autohide = true; # hide dock since it cannot be disabled
+      autohide-delay = 100000.0; # show/hide dock after 100000s (basically never)
       autohide-time-modifier = 0.5; # faster hidding animation
       enable-spring-load-actions-on-all-items = true;
       expose-animation-duration = 0.5; # animation speed of mission control
@@ -11,32 +11,10 @@
       mineffect = "scale"; # faster animation when minimizing windows
       minimize-to-application = true; # minimize application to its dock icon
       mru-spaces = false;
-      persistent-apps = [
-        {
-          app = "/Applications/Nix Apps/Google Chrome.app";
-        }
-        {
-          app = "/Applications/Nix Apps/kitty.app";
-        }
-        {
-          app = "/Applications/Nix Apps/Emacs.app";
-        }
-        {
-          app = "/Applications/WhatsApp.app";
-        }
-        {
-          app = "/System/Applications/Mail.app";
-        }
-        {
-          app = "/System/Applications/App Store.app";
-        }
-        {
-          app = "/System/Applications/System Settings.app";
-        }
-      ];
+      persistent-apps = [ ];
       showhidden = true;
       show-recents = false;
-      tilesize = 50;
+      tilesize = 16; # extremely small dock
       wvous-bl-corner = 1;
       wvous-br-corner = 1;
       wvous-tl-corner = 1;
