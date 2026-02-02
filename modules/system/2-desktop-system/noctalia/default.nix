@@ -36,6 +36,9 @@
           widgets = {
             center = [
               {
+                id = "MediaMini";
+              }
+              {
                 id = "Workspace";
               }
             ];
@@ -60,9 +63,6 @@
               {
                 id = "KeyboardLayout";
                 showIcon = false;
-              }
-              {
-                id = "MediaMini";
               }
               {
                 id = "Volume";
