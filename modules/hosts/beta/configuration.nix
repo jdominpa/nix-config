@@ -11,7 +11,6 @@ in
       with self.modules.darwin;
       [
         basic-cli-tools
-        bitwarden
         browser
         desktop-system
         emacs
@@ -42,5 +41,8 @@ in
       computerName = hostName;
     };
     system.defaults.smb.NetBIOSName = hostName;
+
+    # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+    system.stateVersion = 6;
   };
 }

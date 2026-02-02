@@ -11,11 +11,6 @@ let
         enable = true;
         autoEnable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
-        cursor = {
-          name = "Bibata-Modern-Ice";
-          package = pkgs.bibata-cursors;
-          size = 24;
-        };
         fonts = {
           sansSerif = {
             package = pkgs.aporetic;
@@ -39,12 +34,6 @@ let
             terminal = 13;
           };
         };
-        icons = {
-          enable = true;
-          dark = "Papirus-Dark";
-          light = "Papirus-Light";
-          package = pkgs.papirus-icon-theme;
-        };
         image = null;
         imageScalingMode = "fill";
         opacity = {
@@ -59,12 +48,27 @@ let
     };
 in
 {
-  flake.modules.nixos.stylix = {
-    imports = [
-      inputs.stylix.nixosModules.stylix
-      settings
-    ];
-  };
+  flake.modules.nixos.stylix =
+    { pkgs, ... }:
+    {
+      imports = [
+        inputs.stylix.nixosModules.stylix
+        settings
+      ];
+      stylix = {
+        cursor = {
+          name = "Bibata-Modern-Ice";
+          package = pkgs.bibata-cursors;
+          size = 24;
+        };
+        icons = {
+          enable = true;
+          dark = "Papirus-Dark";
+          light = "Papirus-Light";
+          package = pkgs.papirus-icon-theme;
+        };
+      };
+    };
 
   flake.modules.darwin.stylix = {
     imports = [

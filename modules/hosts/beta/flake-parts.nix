@@ -2,12 +2,15 @@
   inputs,
   ...
 }:
+let
+  hostName = "beta";
+in
 {
-  flake.darwinConfigurations.beta = inputs.nix-darwin.lib.darwinSystem {
+  flake.darwinConfigurations.${hostName} = inputs.nix-darwin.lib.darwinSystem {
     system = "aarch64-darwin";
     modules = [
-      { nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "aarch-darwin"; }
-      inputs.self.modules.darwin.beta
+      { nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "aarch64-darwin"; }
+      inputs.self.modules.darwin.${hostName}
     ];
   };
 }

@@ -13,7 +13,7 @@
       mru-spaces = false;
       persistent-apps = [
         {
-          app = "/Applications/Google Chrome.app";
+          app = "/Applications/Nix Apps/Google Chrome.app";
         }
         {
           app = "/Applications/Nix Apps/kitty.app";
