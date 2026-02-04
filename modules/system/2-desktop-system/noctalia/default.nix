@@ -82,8 +82,8 @@
           };
         };
         colorSchemes = {
-          # darkMode = true;
-          # predefinedScheme = "Catppuccin";
+          darkMode = true;
+          predefinedScheme = "Catppuccin";
           useWallpaperColors = false;
         };
         controlCenter = {
@@ -165,6 +165,7 @@
           largeButtonsLayout = "grid";
           largeButtonsStyle = true;
         };
+        ui.panelBackgroundOpacity = 0.5;
         wallpaper = {
           directory = "~/Imatges/Wallpapers";
           enabled = true;

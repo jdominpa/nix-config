@@ -81,6 +81,7 @@ in
     stylix.targets = {
       emacs.enable = false;
       kitty.colors.enable = false;
+      noctalia-shell.enable = false;
       starship.colors.enable = false;
       zen-browser.profileNames = [ "default" ];
     };
