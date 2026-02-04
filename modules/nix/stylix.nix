@@ -82,6 +82,7 @@ in
       emacs.enable = false;
       kitty.colors.enable = false;
       starship.colors.enable = false;
+      zen-browser.profileNames = [ "default" ];
     };
   };
 }

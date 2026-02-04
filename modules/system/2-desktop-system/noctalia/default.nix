@@ -36,9 +36,6 @@
           widgets = {
             center = [
               {
-                id = "MediaMini";
-              }
-              {
                 id = "Workspace";
               }
             ];
@@ -54,6 +51,9 @@
               }
               {
                 id = "ActiveWindow";
+              }
+              {
+                id = "MediaMini";
               }
             ];
             right = [
@@ -82,8 +82,8 @@
           };
         };
         colorSchemes = {
-          darkMode = true;
-          predefinedScheme = "Catppuccin";
+          # darkMode = true;
+          # predefinedScheme = "Catppuccin";
           useWallpaperColors = false;
         };
         controlCenter = {
@@ -180,7 +180,7 @@
           transitionEdgeSmoothness = 0.05;
           transitionType = "random";
           useSolidColor = false;
-          wallpaperChangeMode = "random";
+          wallpaperChangeMode = "static";
         };
       };
     };
