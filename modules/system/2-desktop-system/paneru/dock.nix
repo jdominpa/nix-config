@@ -14,7 +14,7 @@
       persistent-apps = [ ];
       showhidden = true;
       show-recents = false;
-      tilesize = 16; # extremely small dock
+      tilesize = 36;
       wvous-bl-corner = 1;
       wvous-br-corner = 1;
       wvous-tl-corner = 1;

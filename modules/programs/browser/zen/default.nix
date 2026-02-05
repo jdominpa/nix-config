@@ -3,17 +3,28 @@
   self,
   ...
 }:
+let
+  zen-browser =
+    { pkgs, ... }:
+    let
+      inherit (pkgs.stdenv.hostPlatform) system;
+    in
+    {
+      environment.systemPackages = [ inputs.zen-browser.packages."${system}".twilight ];
+      home-manager.sharedModules = [ self.modules.homeManager.zen-browser ];
+    };
+in
 {
   flake.modules.nixos.zen-browser = {
-    home-manager.sharedModules = [ self.modules.homeManager.zen-browser ];
+    imports = [ zen-browser ];
   };
 
   flake.modules.darwin.zen-browser = {
-    home-manager.sharedModules = [ self.modules.homeManager.zen-browser ];
+    imports = [ zen-browser ];
   };
 
   flake.modules.homeManager.zen-browser =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     {
       imports = [
         inputs.zen-browser.homeModules.twilight
@@ -23,7 +34,7 @@
       ];
       programs.zen-browser = {
         enable = true;
-        nativeMessagingHosts = [ pkgs.firefoxpwa ];
+        nativeMessagingHosts = lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.firefoxpwa ];
         profiles.default = {
           id = 0;
           name = "Default";
