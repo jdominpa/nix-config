@@ -5,7 +5,7 @@
       programs.zen-browser.profiles.default.search = {
         force = true;
         default = "google";
-        privateDefault = "google";
+        privateDefault = "ddg";
         order = [
           "NixOS Packages"
           "NixOS Options"

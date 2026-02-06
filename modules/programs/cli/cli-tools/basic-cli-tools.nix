@@ -26,6 +26,7 @@ let
         ripgrep
         tree
         unrar
+        unzip
         wget
         which
         zip

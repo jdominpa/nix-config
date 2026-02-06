@@ -39,6 +39,10 @@ in
           id = 0;
           name = "Default";
           isDefault = true;
+          mods = [
+            "f7c71d9a-bce2-420f-ae44-a64bd92975ab" # Better Unloaded Tabs
+            "c8d9e6e6-e702-4e15-8972-3596e57cf398" # Zen Back Forward
+          ];
         };
       };
     };
