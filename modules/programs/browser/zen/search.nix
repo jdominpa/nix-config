@@ -4,13 +4,13 @@
     {
       programs.zen-browser.profiles.default.search = {
         force = true;
-        default = "google";
-        privateDefault = "ddg";
+        default = "ecosia";
+        privateDefault = "ecosia";
         order = [
           "NixOS Packages"
           "NixOS Options"
+          "NixOS Wiki"
           "Home Manager"
-          "Noogle"
           "Lean Search Engine"
           "Google Maps"
         ];
@@ -39,11 +39,11 @@
                   ];
                 }
               ];
-              icon = nix-icon;
               definedAliases = [
                 "@np"
                 "@nixpkgs"
               ];
+              icon = nix-icon;
             };
             "NixOS Options" = {
               urls = [
@@ -61,11 +61,29 @@
                   ];
                 }
               ];
-              icon = nix-icon;
               definedAliases = [
                 "@no"
                 "@nixopts"
               ];
+              icon = nix-icon;
+            };
+            "NixOS Wiki" = {
+              urls = [
+                {
+                  template = "https://wiki.nixos.org/w/index.php";
+                  params = [
+                    {
+                      name = "search";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              definedAliases = [
+                "@nw"
+                "@nixwiki"
+              ];
+              icon = nix-icon;
             };
             "Home Manager" = {
               urls = [
@@ -83,20 +101,11 @@
                   ];
                 }
               ];
-              icon = nix-icon;
               definedAliases = [
                 "@hm"
                 "@home"
               ];
-            };
-            "Noogle" = {
-              urls = [ { template = "https://noogle.dev/q?term={searchTerms}"; } ];
               icon = nix-icon;
-              updateInterval = 24 * 60 * 60 * 1000;
-              definedAliases = [
-                "@noogle"
-                "@ng"
-              ];
             };
             "Lean Search Engine" = {
               urls = [
@@ -111,6 +120,7 @@
                 }
               ];
               definedAliases = [ "@lean" ];
+              icon = "https://lean-lang.org/static/svg/lean-logo-official-TM-transparent-2400x900.svg";
             };
             "Google Maps" = {
               urls = [
@@ -124,15 +134,16 @@
                   ];
                 }
               ];
-              icon = "https://www.google.com/images/branding/product/ico/maps15_bnuw3a_32dp.ico";
               definedAliases = [
                 "@maps"
                 "@gmaps"
               ];
+              icon = "https://www.google.com/images/branding/product/ico/maps15_bnuw3a_32dp.ico";
             };
             "bing".metaData.hidden = true;
+            "ddg".metaData.hidden = true;
             "ebay".metaData.hidden = true;
-            "Perplexity".metaData.hidden = true;
+            "perplexity".metaData.hidden = true;
           };
       };
     };
