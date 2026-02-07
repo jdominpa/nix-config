@@ -17,6 +17,7 @@ in
         homebrew
         home-manager
         jdominpa
+        kanata
         nix
         shell
         stylix
@@ -29,7 +30,6 @@ in
               bitwarden
               emacs
               git
-              kanata
               latex
             ];
           };

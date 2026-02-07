@@ -1,7 +1,8 @@
 {
-  flake.modules.homeManager.kanata =
+  flake.modules.darwin.kanata =
     { pkgs, ... }:
     {
-      home.packages = [ pkgs.kanata ];
+      environment.systemPackages = [ pkgs.kanata ];
+      homebrew.casks = [ "karabiner-elements" ];
     };
 }
