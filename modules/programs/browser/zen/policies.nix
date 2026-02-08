@@ -66,7 +66,6 @@
         Preferences = mkLockedAttrs {
           "browser.aboutConfig.showWarning" = false;
           "browser.aboutwelcome.enabled" = false;
-          "browser.ctrlTab.sortByRecentlyUsed" = true;
           "browser.newtabpage.activity-stream.feeds.topsites" = false;
           "browser.startup.firstrunSkipsHomepage" = true;
           "browser.tabs.warnOnClose" = false;
