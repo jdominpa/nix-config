@@ -29,7 +29,7 @@
     in
     {
       programs.zen-browser.policies = {
-        AutofillAddressEnabled = true;
+        AutofillAddressEnabled = false;
         AutofillCreditCardEnabled = false;
         DisableAppUpdate = true;
         DisableFeedbackCommands = true;
@@ -60,6 +60,7 @@
           };
         };
         HardwareAcceleration = true;
+        HttpsOnlyMode = "force_enabled";
         NoDefaultBookmarks = true;
         OfferToSaveLogins = false;
         PasswordManagerEnabled = false;
@@ -94,6 +95,7 @@
           FormData = true;
           Locked = true;
         };
+        SearchSuggestEnable = false;
       };
     };
 }
