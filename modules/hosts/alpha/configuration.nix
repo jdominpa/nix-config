@@ -18,12 +18,12 @@ in
         basic-cli-tools
         browser
         emacs
+        gaming
         home-manager
         jdominpa
         nix
         desktop-system
         shell
-        steam
         stylix
         terminal
       ])
