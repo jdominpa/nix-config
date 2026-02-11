@@ -60,7 +60,7 @@ in
       hardware = {
         graphics.enable = true;
         nvidia = {
-          open = false;
+          open = true;
           modesetting.enable = true;
         };
       };
