@@ -15,10 +15,4 @@
         ];
       };
     };
-
-  flake.modules.darwin.desktop-tools = {
-    homebrew.casks = [
-      "proton-drive"
-    ];
-  };
 }

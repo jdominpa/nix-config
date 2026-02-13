@@ -17,12 +17,13 @@ in
       ++ (with self.modules.nixos; [
         basic-cli-tools
         browser
+        desktop-system
         emacs
         gaming
         home-manager
         jdominpa
         nix
-        desktop-system
+        proton
         shell
         stylix
         terminal

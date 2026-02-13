@@ -19,6 +19,7 @@ in
         jdominpa
         kanata
         nix
+        proton
         shell
         stylix
         terminal
