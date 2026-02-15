@@ -7,12 +7,21 @@
         nomacs
         qalculate-gtk
       ];
-      programs.thunar = {
-        enable = true;
-        plugins = with pkgs; [
-          thunar-archive-plugin
-          thunar-volman
-        ];
+      programs = {
+        localsend.enable = true;
+        thunar = {
+          enable = true;
+          plugins = with pkgs; [
+            thunar-archive-plugin
+            thunar-volman
+          ];
+        };
       };
+    };
+
+  flake.modules.darwin.desktop-tools =
+    { pkgs, ... }:
+    {
+      environment.systemPackages = [ pkgs.localsend ];
     };
 }
