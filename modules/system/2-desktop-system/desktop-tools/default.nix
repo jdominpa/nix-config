@@ -19,9 +19,9 @@
       };
     };
 
-  flake.modules.darwin.desktop-tools =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [ pkgs.localsend ];
+  flake.modules.darwin.desktop-tools = {
+    homebrew.masApps = {
+      LocalSend = 1661733229;
     };
+  };
 }
