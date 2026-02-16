@@ -19,7 +19,10 @@ in
     imports = [ sharedSettings ];
     users.users.${username} = {
       isNormalUser = true;
-      extraGroups = [ "wheel" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
       home = "/home/${username}";
     };
   };

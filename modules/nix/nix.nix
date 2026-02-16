@@ -10,10 +10,7 @@ let
         config.allowUnfree = true;
         overlays = [
           (final: _prev: {
-            stable = import inputs.nixpkgs-stable {
-              inherit (final) config;
-              inherit (pkgs.stdenv.hostPlatform) system;
-            };
+            stable = inputs.nixpkgs-stable.legacyPackages.${final.stdenv.hostPlatform.system};
           })
         ];
       };
