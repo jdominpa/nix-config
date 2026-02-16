@@ -14,7 +14,6 @@ in
         browser
         desktop-system
         emacs
-        freetube
         homebrew
         home-manager
         jdominpa

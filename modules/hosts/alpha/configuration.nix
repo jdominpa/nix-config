@@ -19,7 +19,6 @@ in
         browser
         desktop-system
         emacs
-        freetube
         gaming
         home-manager
         jdominpa
