@@ -28,6 +28,9 @@
               app-id = "^steam$";
               title = "^Steam Settings$";
             }
+            {
+              app-id = "^thunar$";
+            }
           ];
           open-floating = true;
         }
