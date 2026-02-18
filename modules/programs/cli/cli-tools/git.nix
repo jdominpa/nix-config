@@ -7,7 +7,7 @@
         commit.verbose = true;
         user = {
           name = "Joan Domingo Pasarin";
-          email = "jdomingopasarin@gmail.com";
+          email = "joandomingo.work@proton.me";
           signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGebTck6crA64QvOnpPVBHgB7nzIX18+FU9nANAaE2W4";
         };
         init.defaultBranch = "main";
