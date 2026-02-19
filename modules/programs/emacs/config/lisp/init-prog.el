@@ -53,7 +53,7 @@
 
 (use-package eldoc-box
   :ensure t
-  :bind (("C-c h" . eldoc-box-help-at-point)
+  :bind (("C-c ." . eldoc-box-help-at-point)
 		 :map eglot-mode-map
 		 ("C-h ." . eldoc-box-help-at-point)))
 
