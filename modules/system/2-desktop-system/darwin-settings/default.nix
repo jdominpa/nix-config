@@ -3,7 +3,7 @@
   ...
 }:
 {
-  flake.modules.darwin.paneru = {
+  flake.modules.darwin.darwin-settings = {
     imports = with self.modules.darwin; [
       dock
       keyboard

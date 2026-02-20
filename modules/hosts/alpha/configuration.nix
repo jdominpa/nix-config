@@ -23,7 +23,6 @@ in
         gaming
         home-manager
         jdominpa
-        mullvad-vpn
         nix
         shell
         stylix
