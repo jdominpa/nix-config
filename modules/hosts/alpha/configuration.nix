@@ -23,8 +23,8 @@ in
         gaming
         home-manager
         jdominpa
+        mullvad-vpn
         nix
-        proton
         shell
         stylix
         terminal
