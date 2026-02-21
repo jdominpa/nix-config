@@ -63,11 +63,13 @@
   (global-so-long-mode))
 
 ;; Tree-sitter
-(use-package treesit
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
   :config
-  (dolist (mapping '((c-mode . c-ts-mode)
-                     (c++-mode . c++-ts-mode)))
-    (add-to-list 'major-mode-remap-alist mapping)))
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 ;; Emacs native LSP client
 (use-package eglot
@@ -111,7 +113,7 @@
   :if (executable-find "emacs-lsp-booster")
   :after eglot
   :custom
-  ;; FIXME: see https://github.com/blahgeek/emacs-lsp-booster/issues/43
+  ;; NOTE: see https://github.com/blahgeek/emacs-lsp-booster/issues/43
   (eglot-booster-io-only t)
   :config
   (eglot-booster-mode))
@@ -173,7 +175,6 @@
   (c-basic-offset 4))
 
 (use-package c-ts-mode
-  :hook (c-ts-mode . eglot-ensure)
   :custom
   (c-ts-mode-indent-offset 4))
 
@@ -183,7 +184,7 @@
                              (setq-local sentence-end-double-space t))))
 
 ;; Justfile
-(use-package just-mode
+(use-package just-ts-mode
   :ensure t
   :defer t)
 
@@ -201,16 +202,23 @@
   (markdown-hide-markup t))
 
 ;; Nix
-(use-package nix-mode
+(use-package nix-ts-mode
   :ensure t
-  :hook ((nix-mode . eglot-ensure)
-		 (nix-mode . nix-prettify-mode)))
+  :hook (nix-ts-mode . eglot-ensure)
+  :custom
+  (treesit-font-lock-level 4))
 
 ;; Rust
+(use-package rust-mode
+  :ensure t
+  :custom
+  (rust-mode-treesitter-derive t))
+
 (use-package rustic
   :ensure t
   :init
   (remove-hook 'rustic-mode-hook 'flycheck-mode)
+  :after rust-mode
   :custom
   (rustic-lsp-client 'eglot)
   :config

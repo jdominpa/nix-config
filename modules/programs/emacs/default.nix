@@ -36,7 +36,7 @@ let
               fontaine
               hl-todo
               jinx
-              just-mode
+              just-ts-mode
               kind-icon
               macrostep
               magit
@@ -46,7 +46,7 @@ let
               meow
               modus-themes
               nael
-              nix-mode
+              nix-ts-mode
               orderless
               org-appear
               org-modern
@@ -57,7 +57,18 @@ let
               rustic
               tempel
               transient
-              treesit-grammars.with-all-grammars
+              treesit-auto
+              # treesit-grammars.with-all-grammars
+              (treesit-grammars.with-grammars (
+                grammars:
+                builtins.attrValues (
+                  removeAttrs grammars [
+                    # FIXME: temporarily remove quint's tree-sitter grammar since
+                    # it broke with the last update to `flake.lock`
+                    "tree-sitter-quint"
+                  ]
+                )
+              ))
               vertico
             ]
           ))
