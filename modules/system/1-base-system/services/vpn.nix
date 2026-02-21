@@ -4,6 +4,7 @@
     {
       services.mullvad-vpn = {
         enable = true;
+        enableEarlyBootBlocking = true;
         package = pkgs.mullvad-vpn;
       };
     };
