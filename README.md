@@ -1,4 +1,6 @@
-[Dendritic](https://github.com/mightyiam/dendritic) NixOS/macOS configuration using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes), [nix-darwin](https://github.com/nix-darwin/nix-darwin) and
+[Dendritic](https://github.com/mightyiam/dendritic) NixOS/macOS configuration
+using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes),
+[nix-darwin](https://github.com/nix-darwin/nix-darwin) and
 [home-manager](https://nixos.wiki/wiki/Home_Manager).
 
 ## Deployment
@@ -21,8 +23,9 @@ sudo nixos-rebuild switch --flake .#<hostname>
 
 ### macOS
 
-For first time deployment, install [nix](https://nixos.org/download/#nix-install-macos) and [homebrew](https://brew.sh) manually. Then proceed as
-follows:
+For first time deployment, install
+[nix](https://nixos.org/download/#nix-install-macos) and
+[homebrew](https://brew.sh) manually. Then proceed as follows:
 
 ```bash
 # Prepare the deployment environment

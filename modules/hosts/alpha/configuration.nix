@@ -44,7 +44,6 @@ in
 
       boot.loader = {
         efi.canTouchEfiVariables = true;
-        # TODO: check systemd-boot.windows option
         systemd-boot = {
           enable = true;
           # Don't keep to many generations
