@@ -11,6 +11,7 @@ in
       with self.modules.darwin;
       [
         basic-cli-tools
+        bitwarden
         browser
         desktop-system
         emacs

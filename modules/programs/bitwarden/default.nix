@@ -1,12 +1,23 @@
 {
+  flake.modules.darwin.bitwarden = {
+    homebrew.masApps = {
+      Bitwarden = 1352778147;
+    };
+  };
+
   flake.modules.homeManager.bitwarden =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       inherit (pkgs.stdenv.hostPlatform) isLinux;
     in
     {
       home = {
-        packages = [ pkgs.bitwarden-desktop ];
+        packages = lib.optionals isLinux [ pkgs.bitwarden-desktop ];
         sessionVariables.SSH_AUTH_SOCK =
           "${config.home.homeDirectory}/"
           + (
