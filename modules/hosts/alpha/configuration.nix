@@ -19,10 +19,10 @@ in
         browser
         desktop-system
         emacs
-        freetube
         gaming
         home-manager
         jdominpa
+        matrix
         nix
         shell
         stylix
