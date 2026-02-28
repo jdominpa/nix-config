@@ -18,7 +18,7 @@
       enable = true;
       settings = {
         appLauncher = {
-          enableClipboardHistory = true;
+          enableClipboardHistory = false;
           terminalCommand = "kitty -e";
           viewMode = "list";
         };
