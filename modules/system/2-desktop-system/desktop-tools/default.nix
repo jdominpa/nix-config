@@ -3,9 +3,11 @@
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
+        libsecret
         mpv
         nomacs
         qalculate-gtk
+        seahorse
       ];
       programs = {
         localsend.enable = true;
