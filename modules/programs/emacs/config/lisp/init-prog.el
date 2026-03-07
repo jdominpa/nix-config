@@ -7,8 +7,7 @@
   :custom
   (tab-always-indent 'complete)
   (tab-width 4)
-  :config
-  (indent-tabs-mode -1))
+  (indent-tabs-mode nil))
 
 ;; Configure `electric' behaviour
 (use-package electric
