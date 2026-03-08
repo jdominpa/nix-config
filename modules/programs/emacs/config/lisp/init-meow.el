@@ -155,6 +155,8 @@
             (?c . line)
             (?v . paragraph)))
 
+  (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
+
   (meow-global-mode))
 
 (provide 'init-meow)

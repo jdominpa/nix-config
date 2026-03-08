@@ -45,6 +45,7 @@ let
               markdown-mode
               meow
               modus-themes
+              mu4e
               nael
               nix-ts-mode
               orderless

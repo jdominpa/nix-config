@@ -3,7 +3,8 @@
 ;;; Dired file manager
 
 (use-package dired
-  :hook (dired-mode . hl-line-mode)
+  :hook ((dired-mode . hl-line-mode)
+		 (dired-mode . turn-on-gnus-dired-mode))
   :custom
   (dired-recursive-copies 'always)
   (dired-recursive-deletes 'always)

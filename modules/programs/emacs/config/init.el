@@ -78,17 +78,18 @@
     (exec-path-from-shell-initialize)))
 
 (require 'init-meow)
-(require 'init-emacs)
-(require 'init-ui)
 (require 'init-completion)
-(require 'init-search)
 (require 'init-dired)
-(require 'init-window)
-(require 'init-vc)
-(require 'init-shell)
+(require 'init-emacs)
+(require 'init-email)
 (require 'init-latex)
 (require 'init-org)
 (require 'init-prog)
+(require 'init-search)
+(require 'init-shell)
+(require 'init-ui)
+(require 'init-vc)
+(require 'init-window)
 
 
 ;;; System specific settings
