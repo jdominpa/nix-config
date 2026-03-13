@@ -33,7 +33,6 @@ in
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               bitwarden
-              cli-mail
               discord
               emacs
               git

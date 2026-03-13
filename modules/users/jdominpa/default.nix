@@ -42,8 +42,8 @@ in
       inherit (pkgs.stdenv.hostPlatform) isLinux;
     in
     {
-      # Let home-manager manage itself
-      programs.home-manager.enable = true;
+      imports = [ self.modules.homeManager."${username}-mail" ];
+      programs.home-manager.enable = true; # let home-manager manage itself
       home = {
         inherit username;
         homeDirectory = (if isLinux then "/home" else "/Users") + "/${username}";
