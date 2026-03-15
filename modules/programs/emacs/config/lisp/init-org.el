@@ -1,5 +1,18 @@
 ;;; init-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
 
+;;; Calendar
+
+(use-package calendar
+  :commands calendar
+  :custom
+  (calendar-mark-holidays-flag t)
+  (calendar-time-display-form
+   '( 24-hours ":" minutes
+      (when time-zone (format "(%s)" time-zone))))
+  (calendar-week-start-day 1)           ; Monday
+  (calendar-date-style 'iso)
+  (calendar-time-zone-style 'numeric))  ; Emacs 28.1
+
 ;;; Org
 
 (use-package org
@@ -14,7 +27,7 @@
          (";" . cdlatex-math-symbol))
   :custom
   ;; General settings
-  (org-directory (expand-file-name "~/Documents/org"))
+  (org-directory (expand-file-name "~/org"))
   (org-read-date-prefer-future 'time)
   (org-log-done 'time)
   (org-log-into-drawer t)
@@ -37,6 +50,80 @@
   :config
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+
+(use-package org-capture
+  :bind (("C-c o c" . org-capture)
+         ("C-c o i" . org-capture-inbox))
+  :custom
+  (org-capture-templates
+   `(("i" "Inbox" entry (file "inbox.org")
+      ,(concat "* TODO %^{Task}\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
+               ":CAPTURED: %a\n"
+               ":END:\n"
+               "%?"))
+     ("e" "Event" entry (file+headline "agenda.org" "Events")
+      ,(concat "* %^{Event}\n"
+               "SCHEDULED: %^{Scheduled}T\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
+               ":CAPTURED: %a\n"
+               ":END:\n"
+               "%?"))
+     ("d" "Deadline" entry (file+headline "agenda.org" "Deadlines")
+      ,(concat "* %^{Task}\n"
+               "DEADLINE: %^{Deadline}T\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
+               ":CAPTURED: %a\n"
+               ":END:\n"
+               "%?"))
+     ("c" "Contact" entry (file "contacts.org")
+      ,(concat "* %^{Name}\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
+               ":CAPTURED: %a\n"
+               ":PHONE: %^{Phone}\n"
+               ":EMAIL: %^{Email}\n"
+               ":ADDRESS: %^{Address}\n"
+               ":BIRTHDAY: %^{Birthday +1y}u\n"
+               ":END:\n"
+               "%?"))))
+  :config
+  (defun org-capture-inbox ()
+    "Store a link of the current location and create an inbox `org-capture'."
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "i")))
+
+(use-package org-refile
+  :after org
+  :custom
+  (org-refile-targets '(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
+                        ("agenda.org" . (:level . 2))))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-allow-creating-parent-nodes 'confirm))
+
+(use-package org-agenda
+  :bind ("C-c o a" . org-agenda)
+  :custom
+  (org-agenda-files
+   (mapcar (lambda (file) (concat org-directory "/" file))
+           '("agenda.org" "contacts.org")))
+  (org-agenda-window-setup 'current-window)
+  (org-deadline-past-days 365)
+  (org-scheduled-past-days 365)
+  (org-agenda-skip-timestamp-if-done t)
+  (org-agenda-skip-deadline-if-done t)
+  (org-agenda-skip-scheduled-if-done t))
+
+(use-package org-contacts
+  :ensure t
+  :commands (org-contacts org-contacts-agenda org-contacts-export-as-vcard)
+  :custom
+  (org-contacts-files (list (concat org-directory "/contacts.org"))))
 
 (use-package denote
   :ensure t
