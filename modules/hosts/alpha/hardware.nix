@@ -1,4 +1,8 @@
 {
+  inputs,
+  ...
+}:
+{
   flake.modules.nixos.alpha =
     {
       config,
@@ -9,6 +13,7 @@
     {
       imports = [
         (modulesPath + "/installer/scan/not-detected.nix")
+        inputs.disko.nixosModules.disko
       ];
 
       boot.initrd.availableKernelModules = [
@@ -23,23 +28,64 @@
       boot.kernelModules = [ "kvm-intel" ];
       boot.extraModulePackages = [ ];
 
-      fileSystems."/" = {
-        device = "/dev/disk/by-uuid/0ab4253a-c0be-4bca-9c28-f06b488d322e";
-        fsType = "ext4";
+      disko.devices.disk.main = {
+        type = "disk";
+        device = "/dev/nvme0n1";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              type = "EF00";
+              size = "512M";
+              label = "boot";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
+              };
+            };
+            swap = {
+              size = "4G";
+              content = {
+                type = "swap";
+                randomEncryption = true;
+              };
+            };
+            luks = {
+              size = "100%";
+              label = "luks";
+              content = {
+                type = "luks";
+                name = "crypted";
+                settings.allowDiscards = true;
+                content = {
+                  type = "filesystem";
+                  format = "ext4";
+                  mountpoint = "/";
+                };
+              };
+            };
+          };
+        };
       };
+      # fileSystems."/" = {
+      #   device = "/dev/disk/by-uuid/0ab4253a-c0be-4bca-9c28-f06b488d322e";
+      #   fsType = "ext4";
+      # };
 
-      fileSystems."/boot" = {
-        device = "/dev/disk/by-uuid/CEE1-DAEB";
-        fsType = "vfat";
-        options = [
-          "fmask=0077"
-          "dmask=0077"
-        ];
-      };
+      # fileSystems."/boot" = {
+      #   device = "/dev/disk/by-uuid/CEE1-DAEB";
+      #   fsType = "vfat";
+      #   options = [
+      #     "fmask=0077"
+      #     "dmask=0077"
+      #   ];
+      # };
 
-      swapDevices = [
-        { device = "/dev/disk/by-uuid/5bb1458f-c61b-496f-b8ac-93f25b07b758"; }
-      ];
+      # swapDevices = [
+      #   { device = "/dev/disk/by-uuid/5bb1458f-c61b-496f-b8ac-93f25b07b758"; }
+      # ];
 
       # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
       # (the default) this is the recommended approach. When using systemd-networkd it's
