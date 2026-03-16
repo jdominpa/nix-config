@@ -37,28 +37,37 @@
             ESP = {
               type = "EF00";
               size = "512M";
-              label = "boot";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
-              };
-            };
-            swap = {
-              size = "4G";
-              content = {
-                type = "swap";
-                randomEncryption = true;
+                mountOptions = [
+                  "fmask=0177" # file mask: 777-177=600 (owner rw-, group/others ---)
+                  "dmask=0077" # directory mask: 777-077=700 (owner rwx, group/others ---)
+                  "noexec" # no execution
+                  "nosuid" # ignore setuid
+                  "nodev" # no device nodes
+                ];
               };
             };
             luks = {
               size = "100%";
-              label = "luks";
               content = {
                 type = "luks";
                 name = "crypted";
+                # TRIM for SSDs; slightly less secure, better performance
                 settings.allowDiscards = true;
+                # Add boot.initrd.luks.devices so initrd prompts for passphrase at boot
+                initrdUnlock = true;
+                extraFormatArgs = [
+                  "--type luks2"
+                  "--cipher aes-xts-plain64"
+                  "--hash sha512"
+                  "--iter-time 5000"
+                  "--key-size 256"
+                  "--pbkdf argon2id"
+                  "--use-random" # Block until enough entropy from /dev/random
+                ];
                 content = {
                   type = "filesystem";
                   format = "ext4";
@@ -69,23 +78,6 @@
           };
         };
       };
-      # fileSystems."/" = {
-      #   device = "/dev/disk/by-uuid/0ab4253a-c0be-4bca-9c28-f06b488d322e";
-      #   fsType = "ext4";
-      # };
-
-      # fileSystems."/boot" = {
-      #   device = "/dev/disk/by-uuid/CEE1-DAEB";
-      #   fsType = "vfat";
-      #   options = [
-      #     "fmask=0077"
-      #     "dmask=0077"
-      #   ];
-      # };
-
-      # swapDevices = [
-      #   { device = "/dev/disk/by-uuid/5bb1458f-c61b-496f-b8ac-93f25b07b758"; }
-      # ];
 
       # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
       # (the default) this is the recommended approach. When using systemd-networkd it's
