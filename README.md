@@ -7,18 +7,67 @@ using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes),
 
 ### NixOS
 
-```bash
-# Prepare the deployment environment
-nix-shell -p git just
+This steps assume that the NixOS configuration for the machine already exists in
+the flake. Otherwise you will have to add it after cloning the flake in Step 2.
 
-# Deploy using `just` & Justfile
-just switch <hostname>
+#### 1. Boot the installer
+
+Download the NixOS ISO image from the NixOS [download
+page](https://nixos.org/download.html#nixos-iso) and create a bootable USB drive
+following the instructions in [Section 2.4.1 "Booting from a USB flash
+drive"](https://nixos.org/manual/nixos/stable/index.html#sec-booting-from-usb)
+of the NixOS manual. Then, boot the machine from the USB drive.
+
+#### 2. Format the disk
+
+Clone the flake.
+
+```bash
+git clone https://github.com/jdominpa/nix-config /tmp/nix-config
 ```
 
-On NixOS the configuration can also be deployed with the usual commands:
+Identify the name of the system disk using `lsblk`. Then, format the disk with
+the following command:
 
 ```bash
-sudo nixos-rebuild switch --flake .#<hostname>
+nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
+  --mode destroy,format,mount \
+  --flake /tmp/nix-config#<hostname>
+```
+
+#### 3. Generate hardware configuration
+
+Generate the hardware configuration for the machine with the command
+`nixos-generate-config`. The flag `--no-filesystems` is used to skip the
+filesystem configuration since that is managed with `disko`.
+
+```bash
+nixos-generate-config --no-filesystem --root /mnt
+```
+
+After that, edit the host's hardware configuration `hardware.nix` of the flake
+and update it with the hardware configuration generated.
+
+#### 4. Install NixOS
+
+Install NixOS:
+
+```bash
+nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
+```
+
+Once the installation is finished, move the cloned flake to the machine
+filesystem to save the `hardware.nix` changes
+
+```bash
+cp -r /tmp/nix-config /mnt/etc/nixos/nix-config
+```
+
+Finally, unmount `/mnt` and reboot the machine
+
+```bash
+unmount -R /mnt
+reboot
 ```
 
 ### macOS
@@ -34,6 +83,24 @@ nix-shell -p git just
 # Deploy using `just` & Justfile
 just switch <hostname>
 ```
+
+## How to add a new host
+
+The easiest way to add a new host is to copy and adapt an existing configuration:
+
+1. Create a new folder under `modules/hosts/` with the name of the new host.
+2. Copy `flake-parts.nix` from another NixOS/macOS host to the new folder. Make
+sure you also change the hostname in the file to the new hostname.
+3. For NixOS, copy `/etc/nixos/configuration.nix` and
+`/etc/nixos/hardware-configuration.nix` to the new folder and edit
+`configuration.nix` to import any needed modules. For macOS, copy
+`configuration.nix` from another macOS configuration and add/remove any needed
+modules.
+4. Edit `configuration.nix` and `hardware-configuration.nix` to make sure that
+both files are `flake-parts` modules
+
+**NOTE**: for NixOS, the host's disko configuration has to be added to
+ `hardware-configuration.nix` as well.
 
 ## References
 

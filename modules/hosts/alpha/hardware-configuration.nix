@@ -69,9 +69,34 @@
                   "--use-random" # Block until enough entropy from /dev/random
                 ];
                 content = {
-                  type = "filesystem";
-                  format = "ext4";
-                  mountpoint = "/";
+                  type = "btrfs";
+                  extraArgs = [ "-f" ]; # Force overwrite if filesystem already exists
+                  subvolumes = {
+                    # Top-level subvolume (id 5); used for btrfs send/receive and snapshots
+                    "/" = {
+                      mountpoint = "/btr_pool";
+                      mountOptions = [ "subvolid=5" ];
+                    };
+                    "@" = {
+                      mountpoint = "/";
+                      mountOptions = [ "compress=zstd:1" ];
+                    };
+                    "@nix" = {
+                      mountpoint = "/nix";
+                      mountOptions = [
+                        "compress=zstd:1"
+                        "noatime"
+                      ];
+                    };
+                    "@home" = {
+                      mountpoint = "/home";
+                      mountOptions = [ "compress=zstd:1" ];
+                    };
+                    "@swap" = {
+                      mountpoint = "/swap";
+                      swap.swapfile.size = "4G";
+                    };
+                  };
                 };
               };
             };
