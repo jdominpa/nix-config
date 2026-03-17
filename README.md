@@ -20,17 +20,16 @@ of the NixOS manual. Then, boot the machine from the USB drive.
 
 #### 2. Format the disk
 
-Clone the flake.
-
 ```bash
+# Clone this flake
 git clone https://github.com/jdominpa/nix-config /tmp/nix-config
 ```
 
-Identify the name of the system disk using `lsblk`. Then, format the disk with
-the following command:
+Identify the name of the system disk using `lsblk` and make sure the `disko` configuration for the host you want to install is set to that disk.
+Then, format the disk with the following command:
 
 ```bash
-nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
   --mode destroy,format,mount \
   --flake /tmp/nix-config#<hostname>
 ```
@@ -42,7 +41,7 @@ Generate the hardware configuration for the machine with the command
 filesystem configuration since that is managed with `disko`.
 
 ```bash
-nixos-generate-config --no-filesystem --root /mnt
+sudo nixos-generate-config --no-filesystems --root /mnt
 ```
 
 After that, edit the host's hardware configuration `hardware.nix` of the flake
@@ -50,23 +49,18 @@ and update it with the hardware configuration generated.
 
 #### 4. Install NixOS
 
-Install NixOS:
-
 ```bash
-nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
-```
+# Install NixOS with <hostname> configuration
+sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
 
-Once the installation is finished, move the cloned flake to the machine
-filesystem to save the `hardware.nix` changes
+# Set user password for any users defined in the configuration
+sudo nixos-enter --root /mnt -c 'passwd <username>'
 
-```bash
-cp -r /tmp/nix-config /mnt/etc/nixos/nix-config
-```
+# Copy the flake (with hardware-config.nix changes) to the machine's filesystem
+sudo cp -r /tmp/nix-config /mnt/etc/nixos/nix-config
 
-Finally, unmount `/mnt` and reboot the machine
-
-```bash
-unmount -R /mnt
+# Unmount and reboot
+sudo umount -R /mnt
 reboot
 ```
 
