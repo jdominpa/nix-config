@@ -1,8 +1,9 @@
 {
   flake.modules.homeManager.jdominpa-mail =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       mailDir = "${config.home.homeDirectory}/Mail";
+      inherit (pkgs.stdenv.hostPlatform) isLinux;
     in
     {
       accounts.email = {
@@ -76,6 +77,6 @@
         msmtp.enable = true;
         mu.enable = true;
       };
-      services.mbsync.enable = true;
+      services.mbsync.enable = isLinux;
     };
 }
