@@ -25,8 +25,9 @@ of the NixOS manual. Then, boot the machine from the USB drive.
 git clone https://github.com/jdominpa/nix-config /tmp/nix-config
 ```
 
-Identify the name of the system disk using `lsblk` and make sure the `disko` configuration for the host you want to install is set to that disk.
-Then, format the disk with the following command:
+Identify the name of the system disk using `lsblk` and make sure the `disko`
+configuration for the host you want to install is set to that disk. Then, format
+the disk with the following command:
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \

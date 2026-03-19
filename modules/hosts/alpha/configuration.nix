@@ -17,6 +17,7 @@ in
       ++ (with self.modules.nixos; [
         basic-cli-tools
         browser
+        btrbk
         desktop-system
         emacs
         gaming

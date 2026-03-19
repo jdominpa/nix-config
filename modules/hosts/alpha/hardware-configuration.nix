@@ -88,6 +88,10 @@
                       mountpoint = "/home";
                       mountOptions = [ "compress=zstd:1" ];
                     };
+                    "@snapshots" = {
+                      mountpoint = "/btr_pool/snapshots";
+                      mountOptions = [ "noatime" ];
+                    };
                     "@swap" = {
                       mountpoint = "/swap";
                       swap.swapfile.size = "4G";
