@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.jdominpa-mail =
+  flake.modules.homeManager.jdominpa =
     { config, pkgs, ... }:
     let
       mailDir = "${config.home.homeDirectory}/Mail";
