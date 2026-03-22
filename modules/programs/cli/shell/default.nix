@@ -5,6 +5,8 @@
 let
   sharedSettings = {
     environment.shellAliases = {
+      cat = "bat";
+      grep = "rg";
       ls = "ls -h --color=auto --group-directories-first";
       ll = "ls -l";
       la = "ls -la";
