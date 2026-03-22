@@ -38,7 +38,6 @@ in
               emacs
               git
               latex
-              proton
               syncthing
             ];
           };
