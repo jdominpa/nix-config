@@ -1,6 +1,4 @@
 {
-  description = "My NixOS/Darwin configuration";
-
   nixConfig = {
     extra-substituters = [
       # Nix community's cache server

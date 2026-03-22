@@ -39,6 +39,7 @@ in
               git
               latex
               proton
+              syncthing
             ];
           };
         }

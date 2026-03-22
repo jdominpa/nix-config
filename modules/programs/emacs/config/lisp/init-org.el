@@ -142,7 +142,9 @@
          ("C-c C-d C-i" . denote-dired-link-marked-notes)
          ("C-c C-d C-r" . denote-dired-rename-files)
          ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
+         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+  :custom
+  (denote-directory (concat org-directory "/notes")))
 
 (use-package consult-denote
   :ensure t

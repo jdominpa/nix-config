@@ -32,6 +32,7 @@ in
               emacs
               git
               latex
+              syncthing
             ];
           };
         }
