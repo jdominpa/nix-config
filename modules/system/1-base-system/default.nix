@@ -11,7 +11,6 @@
       powerProfiles
       printing
       ssh
-      vpn
     ];
   };
 
@@ -21,7 +20,6 @@
       locale
       powerProfiles
       ssh
-      vpn
     ];
   };
 }
