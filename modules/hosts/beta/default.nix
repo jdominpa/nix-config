@@ -31,6 +31,7 @@ in
         nix
         shell
         stylix
+        syncthing
         terminal
       ]
       ++ [

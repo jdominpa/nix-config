@@ -1,11 +1,14 @@
 {
+  flake.modules.darwin.syncthing = {
+    homebrew.casks = [ "syncthing-app" ];
+  };
+
   flake.modules.homeManager.syncthing =
-    { lib, pkgs, ... }:
+    { pkgs, ... }:
     let
-      inherit (pkgs.stdenv.hostPlatform) isLinux isDarwin;
+      inherit (pkgs.stdenv.hostPlatform) isLinux;
     in
     {
-      home.packages = lib.optionals isDarwin [ pkgs.syncthing-macos ];
       services.syncthing = {
         enable = true;
         tray.enable = isLinux;
