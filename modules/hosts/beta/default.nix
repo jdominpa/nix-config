@@ -11,7 +11,7 @@ in
     system = "aarch64-darwin";
     modules = [
       { nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "aarch64-darwin"; }
-      inputs.self.modules.darwin.${hostName}
+      self.modules.darwin.${hostName}
     ];
   };
 
