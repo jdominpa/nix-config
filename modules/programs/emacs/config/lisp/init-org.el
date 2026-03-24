@@ -110,7 +110,7 @@
   :bind ("C-c o a" . org-agenda)
   :custom
   (org-agenda-files
-   (mapcar (lambda (file) (concat org-directory "/" file))
+   (mapcar (lambda (file) (expand-file-name file org-directory))
            '("agenda.org" "contacts.org")))
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
@@ -123,7 +123,7 @@
   :ensure t
   :commands (org-contacts org-contacts-agenda org-contacts-export-as-vcard)
   :custom
-  (org-contacts-files (list (concat org-directory "/contacts.org"))))
+  (org-contacts-files (list (expand-file-name "contacts.org" org-directory))))
 
 (use-package denote
   :ensure t
@@ -142,9 +142,7 @@
          ("C-c C-d C-i" . denote-dired-link-marked-notes)
          ("C-c C-d C-r" . denote-dired-rename-files)
          ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
-  :custom
-  (denote-directory (concat org-directory "/notes")))
+         ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
 
 (use-package consult-denote
   :ensure t
