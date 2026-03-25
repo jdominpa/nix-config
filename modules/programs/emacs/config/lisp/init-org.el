@@ -27,7 +27,7 @@
          (";" . cdlatex-math-symbol))
   :custom
   ;; General settings
-  (org-directory (expand-file-name "~/org"))
+  (org-directory (expand-file-name "~/Documents/org"))
   (org-read-date-prefer-future 'time)
   (org-log-done 'time)
   (org-log-into-drawer t)
@@ -78,17 +78,6 @@
                ":CREATED: %U\n"
                ":CAPTURED: %a\n"
                ":END:\n"
-               "%?"))
-     ("c" "Contact" entry (file "contacts.org")
-      ,(concat "* %^{Name}\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":CAPTURED: %a\n"
-               ":PHONE: %^{Phone}\n"
-               ":EMAIL: %^{Email}\n"
-               ":ADDRESS: %^{Address}\n"
-               ":BIRTHDAY: %^{Birthday +1y}u\n"
-               ":END:\n"
                "%?"))))
   :config
   (defun org-capture-inbox ()
@@ -111,19 +100,13 @@
   :custom
   (org-agenda-files
    (mapcar (lambda (file) (expand-file-name file org-directory))
-           '("agenda.org" "contacts.org")))
+           '("agenda.org" "inbox.org" "projects.org")))
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
   (org-scheduled-past-days 365)
   (org-agenda-skip-timestamp-if-done t)
   (org-agenda-skip-deadline-if-done t)
   (org-agenda-skip-scheduled-if-done t))
-
-(use-package org-contacts
-  :ensure t
-  :commands (org-contacts org-contacts-agenda org-contacts-export-as-vcard)
-  :custom
-  (org-contacts-files (list (expand-file-name "contacts.org" org-directory))))
 
 (use-package denote
   :ensure t

@@ -50,7 +50,6 @@ let
               nix-ts-mode
               orderless
               org-appear
-              org-contacts
               org-modern
               org-pdftools
               pdf-tools
