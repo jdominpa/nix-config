@@ -60,7 +60,6 @@
       ,(concat "* TODO %^{Task}\n"
                ":PROPERTIES:\n"
                ":CREATED: %U\n"
-               ":CAPTURED: %a\n"
                ":END:\n"
                "%?"))
      ("e" "Event" entry (file+headline "agenda.org" "Events")
@@ -68,7 +67,6 @@
                "SCHEDULED: %^{Scheduled}T\n"
                ":PROPERTIES:\n"
                ":CREATED: %U\n"
-               ":CAPTURED: %a\n"
                ":END:\n"
                "%?"))
      ("d" "Deadline" entry (file+headline "agenda.org" "Deadlines")
@@ -76,7 +74,13 @@
                "DEADLINE: %^{Deadline}T\n"
                ":PROPERTIES:\n"
                ":CREATED: %U\n"
-               ":CAPTURED: %a\n"
+               ":END:\n"
+               "%?"))
+     ("r" "Recurring event" entry (file+headline "agenda.org" "Recurring")
+      ,(concat "* %^{Event}\n"
+               "SCHEDULED: %^{Deadline}T\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
                ":END:\n"
                "%?"))))
   :config
@@ -89,8 +93,7 @@
 (use-package org-refile
   :after org
   :custom
-  (org-refile-targets '(("projects.org" . (:regexp . "\\(?:\\(?:Note\\|Task\\)s\\)"))
-                        ("agenda.org" . (:level . 2))))
+  (org-refile-targets '(("agenda.org" . (:level . 2))))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-refile-allow-creating-parent-nodes 'confirm))
@@ -100,7 +103,7 @@
   :custom
   (org-agenda-files
    (mapcar (lambda (file) (expand-file-name file org-directory))
-           '("agenda.org" "inbox.org" "projects.org")))
+           '("agenda.org" "inbox.org")))
   (org-agenda-window-setup 'current-window)
   (org-deadline-past-days 365)
   (org-scheduled-past-days 365)
