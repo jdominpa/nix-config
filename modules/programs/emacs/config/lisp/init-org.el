@@ -36,6 +36,7 @@
   (org-todo-keywords '((sequence "TODO(t)" "HOLD(h@/!)" "|" "CANCELED(c@)" "DONE(d!)")))
   (org-enforce-todo-dependencies t)
   (org-enforce-todo-checkbox-dependencies t)
+  (org-archive-location (expand-file-name "archive/%s::" org-directory))
   ;; Appearance
   (org-highlight-latex-and-related '(latex entities))
   (org-hide-emphasis-markers t)
