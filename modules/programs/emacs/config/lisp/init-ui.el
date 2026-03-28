@@ -68,12 +68,26 @@
   :config
   (which-key-mode))
 
+;;; Spacious padding
+(use-package spacious-padding
+  :ensure t
+  :custom
+  (spacious-padding-widths
+   '( :fringe-width 6
+      :internal-border-width 1
+      :mode-line-width 2
+      :right-divider-width 1))
+  (spacious-padding-subtle-frame-lines t)
+  :config
+  (spacious-padding-mode))
+
 ;;; Mode line
 
 (use-package jdp-mode-line
   :custom
   (ring-bell-function 'ignore)
   (mode-line-right-align-edge 'right-margin)
+  (mode-line-position '("%l,%c"))
   (project-mode-line t)
   (mode-line-collapse-minor-modes
    '(not
@@ -93,6 +107,8 @@
                   mode-line-frame-identification
                   (project-mode-line jdp-mode-line-project-format)
                   jdp-mode-line-buffer-identification
+                  "  "
+                  mode-line-position
                   (vc-mode (" " vc-mode))
                   "  "
                   mode-line-modes

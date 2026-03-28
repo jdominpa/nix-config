@@ -56,6 +56,7 @@ let
               popper
               rainbow-delimiters
               rustic
+              spacious-padding
               tempel
               transient
               treesit-auto
