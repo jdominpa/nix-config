@@ -164,17 +164,16 @@
 ;;; Programming language modes configurations
 
 ;; C/C++
-(use-package cc-mode
-  :hook (c-mode . eglot-ensure)
-  :bind (:map c-mode-base-map
-              ("TAB" . nil)
-              ([tab] . nil))
-  :custom
-  (c-default-style "k&r")
-  (c-basic-offset 4))
-
 (use-package c-ts-mode
+  :hook ((c-ts-mode . eglot-ensure)
+         ;; NOTE: on-type formatting does not work correctly with
+         ;; electric-indent-mode and clangd
+         (c-ts-mode . (lambda ()
+                        (setq-local eglot-ignored-server-capabilities
+                                    (append eglot-ignored-server-capabilities
+                                            '(:documentOnTypeFormattingProvider))))))
   :custom
+  (c-ts-mode-indent-style 'k&r)
   (c-ts-mode-indent-offset 4))
 
 ;; Elisp
