@@ -18,7 +18,10 @@
          ("M-u" . upcase-dwim))
   :custom
   (help-window-select t)
-  (next-error-recenter '(nil)))
+  (kill-do-not-save-duplicates t)
+  (next-error-recenter '(nil))
+  (mode-require-final-newline 'visit-save)
+  (scroll-error-top-bottom t))
 
 ;;; Track recently visited files and directories
 
