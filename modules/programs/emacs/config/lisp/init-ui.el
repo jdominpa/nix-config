@@ -73,7 +73,7 @@
   :ensure t
   :custom
   (spacious-padding-widths
-   '( :fringe-width 6
+   '( :fringe-width 4
       :internal-border-width 1
       :mode-line-width 2
       :right-divider-width 1))
