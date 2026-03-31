@@ -15,7 +15,7 @@ c-mode c-ts-mode
 	r> n>
 	"}")
 
-(main "int main(" (p "int argc, char *argv[]") ")" n>
+(main "int main(" (p "int argc, char **argv") ")" n>
 	  "{" n>
 	  r> n
 	  "}")
