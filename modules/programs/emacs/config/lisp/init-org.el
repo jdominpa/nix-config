@@ -70,6 +70,13 @@
                ":END:\n"
                "%^{Scheduled}T\n"
                "%?"))
+     ("s" "Scheduled" entry (file+headline "agenda.org" "Scheduled")
+      ,(concat "* TODO %^{Task}\n"
+               "SCHEDULED: %^{Scheduled}T\n"
+               ":PROPERTIES:\n"
+               ":CREATED: %U\n"
+               ":END:\n"
+               "%?"))
      ("d" "Deadline" entry (file+headline "agenda.org" "Deadlines")
       ,(concat "* TODO %^{Task}\n"
                "DEADLINE: %^{Deadline}T\n"
@@ -77,8 +84,8 @@
                ":CREATED: %U\n"
                ":END:\n"
                "%?"))
-     ("r" "Recurring event" entry (file+headline "agenda.org" "Recurring")
-      ,(concat "* %^{Event}\n"
+     ("r" "Recurring task" entry (file+headline "agenda.org" "Recurring")
+      ,(concat "* TODO %^{Task}\n"
                "SCHEDULED: %^{Scheduled}T\n"
                ":PROPERTIES:\n"
                ":CREATED: %U\n"
