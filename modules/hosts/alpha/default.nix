@@ -28,7 +28,6 @@ in
         gaming
         home-manager
         jdominpa
-        matrix
         nix
         shell
         stylix
