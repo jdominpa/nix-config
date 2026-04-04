@@ -21,6 +21,8 @@ let
         gnused
         gnutar
         just
+        man
+        man-pages
         neovim
         nix-melt # Ranger-like `flake.lock` file viewer
         nix-tree # Nix dependency tree
