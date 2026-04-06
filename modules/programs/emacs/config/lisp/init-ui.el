@@ -75,7 +75,7 @@
   (spacious-padding-widths
    '( :fringe-width 4
       :internal-border-width 1
-      :mode-line-width 2
+      :mode-line-width 1
       :right-divider-width 1))
   (spacious-padding-subtle-frame-lines t)
   :config
