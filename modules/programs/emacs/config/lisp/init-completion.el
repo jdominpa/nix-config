@@ -124,6 +124,15 @@
          ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
+  :custom
+  (embark-verbose-indicator-display-action
+   `(display-buffer-in-side-window
+     (side . bottom)
+     (window-height . fit-window-to-buffer)
+     (body-function . ,(lambda (win)
+                         (with-selected-window win
+                           (and mode-line-format
+                                (setq-local mode-line-format nil)))))))
   :config
   (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*\\*"
                    display-buffer-alist nil nil 'equal)
