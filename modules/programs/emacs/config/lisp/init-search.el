@@ -33,10 +33,9 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-;" . avy-goto-char-timer)
-         ("C-c ;" . avy-goto-char-timer) ; meow leader keybind
+  :bind (("M-j" . avy-goto-char-timer)
          :map isearch-mode-map
-         ("C-;" . avy-isearch))
+         ("M-j" . avy-isearch))
   :custom
   (avy-single-candidate-jump nil)
   :config
