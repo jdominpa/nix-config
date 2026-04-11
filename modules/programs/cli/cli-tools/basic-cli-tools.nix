@@ -42,7 +42,6 @@ in
     { pkgs, ... }:
     {
       imports = [ basicPackages ];
-
       environment.systemPackages = with pkgs; [
         exfat
         hfsprogs
@@ -51,11 +50,20 @@ in
         pciutils
         usbutils
       ];
+      programs.zoxide.enable = true;
     };
 
-  flake.modules.darwin.basic-cli-tools = {
-    imports = [ basicPackages ];
-  };
+  flake.modules.darwin.basic-cli-tools =
+    { lib, pkgs, ... }:
+    {
+      imports = [ basicPackages ];
+      environment.systemPackages = [
+        pkgs.zoxide
+      ];
+      programs.zsh.shellInit = ''
+        eval "$(${lib.meta.getExe pkgs.zoxide} init zsh)"
+      '';
+    };
 
   flake.modules.homeManager.basic-cli-tools = {
     programs = {
