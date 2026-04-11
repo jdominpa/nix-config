@@ -29,6 +29,7 @@ in
         jdominpa
         kanata
         nix
+        nix-index
         shell
         stylix
         syncthing

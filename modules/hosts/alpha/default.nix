@@ -29,6 +29,7 @@ in
         home-manager
         jdominpa
         nix
+        nix-index
         shell
         stylix
         terminal
