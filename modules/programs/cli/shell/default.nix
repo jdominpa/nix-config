@@ -75,16 +75,6 @@ in
           # (not just tab/shift-tab but cursor keys as well):
           zstyle ':completion:*' menu select
 
-          # adds `cdr` command for navigating to recent directories
-          autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
-          add-zsh-hook chpwd chpwd_recent_dirs
-
-          # enable menu-style completion for cdr
-          zstyle ':completion:*:*:cdr:*:*' menu selection
-
-          # fall through to cd if cdr is passed a non-recent dir as an argument
-          zstyle ':chpwd:*' recent-dirs-default true
-
           #
           # Options
           #
@@ -116,6 +106,20 @@ in
           autoload -U edit-command-line
           zle -N edit-command-line
           bindkey '^x^x' edit-command-line
+
+          #
+          # Hooks
+          #
+
+          # adds `cdr` command for navigating to recent directories
+          autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+          add-zsh-hook chpwd chpwd_recent_dirs
+
+          # enable menu-style completion for cdr
+          zstyle ':completion:*:*:cdr:*:*' menu selection
+
+          # fall through to cd if cdr is passed a non-recent dir as an argument
+          zstyle ':chpwd:*' recent-dirs-default true
         '';
       };
     };
