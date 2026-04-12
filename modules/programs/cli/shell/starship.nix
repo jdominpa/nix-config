@@ -44,13 +44,13 @@
             style = "italic cyan";
           };
           git_branch = {
-            format = "\\[$branch(:$remote_branch) ";
+            format = "\\[$branch(:$remote_branch)";
           };
           git_commit = {
-            format = "$hash ";
+            format = " $hash";
           };
           git_status = {
-            format = "$all_status$ahead_behind\\]";
+            format = "( $all_status$ahead_behind)\\]";
             ahead = "[↑](bold white)";    # UPWARDS ARROW (U+2191)
             behind = "[↓](bold white)";   # DOWNWARDS ARROW (U+2193)
             diverged = "[⇕](bold white)"; # UP DOWN DOUBLE ARROW (U+21D5)
