@@ -74,7 +74,6 @@
 (use-package eglot
   :functions eglot-ensure
   :commands eglot
-  :hook (eglot-managed-mode . jdp-eglot-capf)
   :bind (:map eglot-mode-map
               ("C-c l R" . eglot-reconnect)
               ("C-c l s" . eglot-shutdown)
@@ -99,12 +98,7 @@
 	(add-to-list 'completion-category-overrides
 				 '(eglot-capf (styles . (orderless basic)))))
   (with-eval-after-load 'cape
-	(advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-	(defun jdp-eglot-capf ()
-	  (setq-local completion-at-point-functions
-				  (list (cape-capf-super
-						 #'eglot-completion-at-point
-						 #'tempel-expand))))))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
 (use-package eglot-booster
   :vc (:url "https://github.com/jdtsmith/eglot-booster"
