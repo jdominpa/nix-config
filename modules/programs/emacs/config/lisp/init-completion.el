@@ -157,6 +157,9 @@
 
 (use-package corfu
   :ensure t
+  :bind (:map corfu-map
+              ("M-p" . nil)
+              ("M-n" . nil))
   :custom
   (read-extended-command-predicate #'command-completion-default-include-p)
   (text-mode-ispell-word-completion nil)
@@ -173,8 +176,7 @@
   :ensure t
   :after corfu
   :demand t
-  :bind ("M-+" . cape-prefix-map)
-  :init
+  :config
   (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
     (add-hook 'completion-at-point-functions backend)))
 
@@ -194,8 +196,15 @@
     (setq-local completion-at-point-functions
                 (cons #'tempel-complete
                       completion-at-point-functions)))
-  :bind (("M-+" . tempel-complete)
-		 ("M-*" . tempel-insert))
+  :bind (("C-<tab>" . tempel-complete)
+		 ("C-S-<tab>" . tempel-insert)
+         :map tempel-map
+         ("M-{" . nil)
+         ("M-}" )
+         ([remap backward-paragraph] . nil)
+         ([remap forward-paragraph] . nil)
+         ("M-p" . tempel-previous)
+         ("M-n" . tempel-next))
   :hook ((conf-mode . tempel-setup-capf)
 		 (prog-mode . tempel-setup-capf)
 		 (text-mode . tempel-setup-capf))
