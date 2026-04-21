@@ -157,9 +157,6 @@
 
 (use-package corfu
   :ensure t
-  :bind (:map corfu-map
-              ("M-p" . nil)
-              ("M-n" . nil))
   :custom
   (read-extended-command-predicate #'command-completion-default-include-p)
   (text-mode-ispell-word-completion nil)
@@ -203,8 +200,8 @@
          ("M-}" )
          ([remap backward-paragraph] . nil)
          ([remap forward-paragraph] . nil)
-         ("M-p" . tempel-previous)
-         ("M-n" . tempel-next))
+         ([remap backward-sentence] . tempel-previous)
+         ([remap forward-sentence] . tempel-next))
   :hook ((conf-mode . tempel-setup-capf)
 		 (prog-mode . tempel-setup-capf)
 		 (text-mode . tempel-setup-capf))
