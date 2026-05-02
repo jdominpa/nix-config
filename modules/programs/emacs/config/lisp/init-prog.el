@@ -62,13 +62,9 @@
   (global-so-long-mode))
 
 ;; Tree-sitter
-(use-package treesit-auto
-  :ensure t
+(use-package treesit
   :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+  (treesit-enabled-modes t))
 
 ;; Emacs native LSP client
 (use-package eglot
@@ -196,6 +192,7 @@
 ;; Nix
 (use-package nix-ts-mode
   :ensure t
+  :mode "\\.nix\\'"
   :hook (nix-ts-mode . eglot-ensure)
   :custom
   (treesit-font-lock-level 4))

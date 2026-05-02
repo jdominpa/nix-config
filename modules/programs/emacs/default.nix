@@ -59,7 +59,6 @@ let
               spacious-padding
               tempel
               transient
-              treesit-auto
               # treesit-grammars.with-all-grammars
               (treesit-grammars.with-grammars (
                 grammars:
