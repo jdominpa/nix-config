@@ -101,7 +101,7 @@ in
   flake.modules.homeManager.emacs = {
     home.file = {
       ".emacs.d/lisp".source = ./config/lisp;
-      ".emacs.d/site-lisp".source = ./config/site-lisp;
+      ".emacs.d/modules".source = ./config/modules;
       ".emacs.d/abbrev_defs".source = ./config/abbrev_defs;
       ".emacs.d/init.el".source = ./config/init.el;
       ".emacs.d/templates".source = ./config/templates;

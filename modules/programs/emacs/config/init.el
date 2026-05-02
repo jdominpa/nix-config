@@ -49,12 +49,12 @@
   ;; Enable all commands
   (disabled-command-function nil))
 
-;; `lisp' is for emacs configuration modules
-;; `site-lisp' is for custom elisp files and third party packages
+;; `modules' is for emacs configuration modules
+;; `lisp' is for custom elisp files and third party packages
 (mapc
  (lambda (string)
    (add-to-list 'load-path (locate-user-emacs-file string)))
- '("lisp" "site-lisp"))
+ '("lisp" "modules"))
 
 (use-package package
   :custom
