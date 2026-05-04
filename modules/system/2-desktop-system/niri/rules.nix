@@ -12,6 +12,9 @@
               app-id = "^emacs$";
             }
             {
+              app-id = "^brave-browser$";
+            }
+            {
               app-id = "^steam$";
               title = "^Steam$";
             }
