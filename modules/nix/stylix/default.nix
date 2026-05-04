@@ -10,7 +10,7 @@ let
       stylix = {
         enable = true;
         autoEnable = true;
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/da-one-black.yaml";
         fonts = {
           sansSerif = {
             package = pkgs.aporetic;
@@ -34,7 +34,7 @@ let
             terminal = 13;
           };
         };
-        image = null;
+        image = ./wallpaper.jpg;
         imageScalingMode = "fill";
         opacity = {
           applications = 1.0;
@@ -81,7 +81,6 @@ in
     stylix.targets = {
       emacs.enable = false;
       kitty.colors.enable = false;
-      noctalia-shell.enable = false;
       starship.colors.enable = false;
       zen-browser.profileNames = [ "default" ];
     };

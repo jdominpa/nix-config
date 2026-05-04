@@ -83,8 +83,7 @@
         };
         colorSchemes = {
           darkMode = true;
-          predefinedScheme = "Catppuccin";
-          useWallpaperColors = false;
+          useWallpaperColors = true;
         };
         controlCenter = {
           shortcuts = {
@@ -167,8 +166,8 @@
         };
         ui.panelBackgroundOpacity = 0.5;
         wallpaper = {
-          directory = "~/Imatges/Wallpapers";
           enabled = true;
+          directory = "~/Imatges/Wallpapers";
           fillColor = "#000000";
           fillMode = "crop";
           monitorDirectories = [ ];
