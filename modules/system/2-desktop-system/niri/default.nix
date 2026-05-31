@@ -37,6 +37,9 @@
       overview.zoom = 0.5;
       prefer-no-csd = true;
       screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
+      spawn-at-startup = [
+        { argv = [ "noctalia-shell" ]; }
+      ];
     };
   };
 }
