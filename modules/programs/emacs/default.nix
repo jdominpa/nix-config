@@ -59,17 +59,7 @@ let
               spacious-padding
               tempel
               transient
-              # treesit-grammars.with-all-grammars
-              (treesit-grammars.with-grammars (
-                grammars:
-                builtins.attrValues (
-                  removeAttrs grammars [
-                    # FIXME: temporarily remove quint's tree-sitter grammar since
-                    # it broke with the last update to `flake.lock`
-                    "tree-sitter-quint"
-                  ]
-                )
-              ))
+              treesit-grammars.with-all-grammars
               vertico
             ]
           ))
