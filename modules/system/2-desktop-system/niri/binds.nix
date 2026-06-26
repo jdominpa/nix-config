@@ -4,21 +4,16 @@
       "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
       "Mod+T" = {
         action.spawn = "kitty";
-        hotkey-overlay = {
-          title = "Open a terminal";
-        };
+        hotkey-overlay.title = "Open a terminal";
       };
       "Mod+Space" = {
         action.spawn = [
-          "noctalia-shell"
-          "ipc"
-          "call"
+          "noctalia"
+          "msg"
+          "panel-toggle"
           "launcher"
-          "toggle"
         ];
-        hotkey-overlay = {
-          title = "Run application launcher";
-        };
+        hotkey-overlay.title = "Run application launcher";
       };
       "Mod+P".action.screenshot = [ ];
       "Mod+Ctrl+P".action.screenshot-window = [ ];
@@ -26,15 +21,12 @@
       "Mod+Escape".action.toggle-keyboard-shortcuts-inhibit = [ ];
       "Mod+Alt+L" = {
         action.spawn = [
-          "noctalia-shell"
-          "ipc"
-          "call"
-          "lockScreen"
+          "noctalia"
+          "msg"
+          "session"
           "lock"
         ];
-        hotkey-overlay = {
-          title = "Lock the screen";
-        };
+        hotkey-overlay.title = "Lock the screen";
       };
       "Mod+Shift+Z".action.power-off-monitors = [ ];
       "Mod+Shift+Q".action.quit = [ ];

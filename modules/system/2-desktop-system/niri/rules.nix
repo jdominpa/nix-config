@@ -4,7 +4,7 @@
       window-rules = [
         {
           matches = [ { app-id = "^bitwarden$"; } ];
-          block-out-from = "screencast";
+          block-out-from = "screen-capture";
         }
         {
           matches = [
@@ -20,6 +20,12 @@
             }
           ];
           open-maximized = true;
+        }
+        {
+          matches = [ { app-id = "dev.noctalia.Noctalia.Settings"; } ];
+          open-floating = true;
+          default-column-width.fixed = 1080;
+          default-window-height.fixed = 920;
         }
         {
           matches = [
@@ -57,6 +63,11 @@
         }
       ];
       layer-rules = [
+        # Rule for overview mode with noctalia
+        {
+          matches = [ { namespace = "^noctalia-wallpaper"; } ];
+          place-within-backdrop = true;
+        }
         {
           matches = [ { namespace = "^swaync-notification-window$"; } ];
           block-out-from = "screencast";

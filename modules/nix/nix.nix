@@ -6,6 +6,10 @@ let
   sharedSettings = {
     nixpkgs = {
       config.allowUnfree = true;
+      # FIXME: temporary fix, remove eventually
+      config.permittedInsecurePackages = [
+        "electron-39.8.10"
+      ];
       overlays = [
         (final: _prev: {
           stable = inputs.nixpkgs-stable.legacyPackages.${final.stdenv.hostPlatform.system};

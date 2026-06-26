@@ -34,11 +34,14 @@
     programs.niri.settings = {
       gestures.hot-corners.enable = false;
       hotkey-overlay.skip-at-startup = true;
-      overview.zoom = 0.5;
+      overview = {
+        workspace-shadow.enable = false; # needed for overview mode with noctalia
+        zoom = 0.5;
+      };
       prefer-no-csd = true;
       screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
       spawn-at-startup = [
-        { argv = [ "noctalia-shell" ]; }
+        { argv = [ "noctalia" ]; }
       ];
     };
   };

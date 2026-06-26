@@ -1,6 +1,7 @@
 {
   flake.modules.homeManager.niri = {
     programs.niri.settings.layout = {
+      background-color = "transparent"; # needed for overview mode with noctalia
       border.enable = false;
       focus-ring = {
         enable = true;

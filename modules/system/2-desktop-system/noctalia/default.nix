@@ -13,173 +13,91 @@
     imports = [ inputs.noctalia.homeModules.default ];
 
     # Noctalia settings
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
       settings = {
-        appLauncher = {
-          enableClipboardHistory = false;
-          terminalCommand = "kitty -e";
-          viewMode = "list";
-        };
-        audio = {
-          preferredPlayer = "";
-          volumeStep = 1;
-        };
         bar = {
-          density = "comfortable";
-          floating = false;
-          marginHorizontal = 0.25;
-          marginVertical = 0.25;
-          showCapsule = true;
-          useSeparateOpacity = false;
           widgets = {
-            center = [
-              {
-                id = "Workspace";
-              }
+            start = [
+              "session"
+              "launcher"
+              "control-center"
+              "spacer_0"
+              "media"
             ];
-            left = [
-              {
-                id = "ControlCenter";
-              }
-              {
-                id = "SystemMonitor";
-              }
-              {
-                id = "Launcher";
-              }
-              {
-                id = "ActiveWindow";
-              }
-              {
-                id = "MediaMini";
-              }
+            center = [ "workspaces" ];
+            end = [
+              "tray"
+              "spacer_1"
+              "keyboard_layout"
+              "notifications"
+              "clipboard"
+              "network"
+              "bluetooth"
+              "volume"
+              "brightness"
+              "battery"
+              "spacer_0"
+              "clock"
             ];
-            right = [
-              {
-                id = "Tray";
-              }
-              {
-                id = "KeyboardLayout";
-                showIcon = false;
-              }
-              {
-                id = "Volume";
-              }
-              {
-                id = "NotificationHistory";
-              }
-              {
-                id = "Battery";
-              }
-              {
-                id = "Clock";
-                formatHorizontal = "HH:mm ddd, MMM dd";
-                tooltipFormat = "HH:mm ddd, MMM dd";
-              }
-            ];
+            margin_edge = 5;
+            margin_ends = 5;
+            padding = 10;
           };
         };
-        colorSchemes = {
-          darkMode = true;
-          useWallpaperColors = true;
-        };
-        controlCenter = {
-          shortcuts = {
-            left = [
-              {
-                id = "Network";
-              }
-              {
-                id = "Bluetooth";
-              }
-              {
-                id = "WallpaperSelector";
-              }
-            ];
-            right = [
-              {
-                id = "PowerProfile";
-              }
-              {
-                id = "NoctaliaPerformance";
-              }
-              {
-                id = "KeepAwake";
-              }
-              {
-                id = "NightLight";
-              }
-            ];
+        idle = {
+          behavior = {
+            lock = {
+              action = "lock";
+              enabled = true;
+              timeout = 900.0;
+            };
+            lock-and-suspend = {
+              action = "lock_and_suspend";
+              enabled = false;
+            };
+            screen-off = {
+              action = "screen_off";
+              enabled = true;
+              timeout = 1200.0;
+            };
           };
-          cards = [
-            {
-              enabled = true;
-              id = "profile-card";
-            }
-            {
-              enabled = true;
-              id = "shortcuts-card";
-            }
-            {
-              enabled = true;
-              id = "audio-card";
-            }
-            {
-              enabled = true;
-              id = "brightness-card";
-            }
-            {
-              enabled = true;
-              id = "weather-card";
-            }
-            {
-              enabled = true;
-              id = "media-sysmon-card";
-            }
+          behavior_order = [
+            "lock"
+            "screen-off"
+            "lock-and-suspend"
           ];
         };
-        dock.enabled = false;
-        general = {
-          animationSpeed = 1.5;
-          shadowDirection = "bottom_right";
-          shadowOffsetX = 2;
-          shadowOffsetY = 3;
-          telemetryEnabled = false;
+        keybinds.validate = [
+          "Return"
+          "KP_Enter"
+        ];
+        location.auto_locate = true;
+        nightlight.enabled = true;
+        shell = {
+          clipboard_history_max_entries = 10;
+          panel.open_near_click_control_center = true;
         };
-        location = {
-          name = "Barcelona";
-          firstDayOfWeek = 1;
+
+        # TODO: replace with stylix
+        shell.font_family = "Aporetic Sans";
+        theme = {
+          mode = "dark";
         };
-        nightLight.enabled = true;
-        notifications = {
-          enabled = true;
-          sounds = {
-            enabled = true;
-            excludedApps = "discord,chrome,chromium";
+        wallpaper.directory = "~/Imatges/Wallpapers";
+
+        widget = {
+          bluetooth.hide_when_no_connected_device = true;
+          clock.format = "{:%H:%M %d-%m-%Y}";
+          spacer_0 = {
+            length = 15;
+            type = "spacer";
           };
-        };
-        sessionMenu = {
-          largeButtonsLayout = "grid";
-          largeButtonsStyle = true;
-        };
-        ui.panelBackgroundOpacity = 0.5;
-        wallpaper = {
-          enabled = true;
-          directory = "~/Imatges/Wallpapers";
-          fillColor = "#000000";
-          fillMode = "crop";
-          monitorDirectories = [ ];
-          overviewEnabled = false;
-          randomEnabled = false;
-          randomIntervalSec = 300;
-          setWallpaperOnAllMonitors = true;
-          solidColor = "#1a1a2e";
-          transitionDuration = 1500;
-          transitionEdgeSmoothness = 0.05;
-          transitionType = "random";
-          useSolidColor = false;
-          wallpaperChangeMode = "static";
+          spacer_1 = {
+            length = 10;
+            type = "spacer";
+          };
+          volume.scroll_step = 2;
         };
       };
     };
