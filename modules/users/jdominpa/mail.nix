@@ -14,7 +14,6 @@
             address = "work@jdompas.com";
             userName = "work@jdompas.com";
             realName = "Joan Domingo Pasarin";
-            passwordCommand = "secret-tool lookup service imap account work@jdompas.com";
             imap = {
               host = "127.0.0.1";
               port = 1143;
@@ -73,10 +72,10 @@
         maildirBasePath = mailDir;
       };
       programs = {
-        mbsync.enable = true;
-        msmtp.enable = true;
-        mu.enable = true;
+        mbsync.enable = false;
+        msmtp.enable = false;
+        mu.enable = false;
       };
-      services.mbsync.enable = isLinux;
+      services.mbsync.enable = false;
     };
 }
