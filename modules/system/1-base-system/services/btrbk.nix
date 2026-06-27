@@ -5,8 +5,8 @@
       onCalendar = "daily";
       settings = {
         # how to prune local snapshots:
-        # 1. keep daily snapshots for 7 days, weekly for 4 weeks
-        snapshot_preserve = "7d 4w";
+        # 1. keep daily snapshots for 7 days
+        snapshot_preserve = "7d";
         # 2. keep all snapshots for 2 days, no matter how frequently you (or your cron job) run btrbk
         snapshot_preserve_min = "2d";
         volume."/btr_pool" = {
