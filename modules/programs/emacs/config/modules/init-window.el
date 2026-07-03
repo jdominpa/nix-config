@@ -36,7 +36,8 @@ If buffer-or-name is nil return current buffer's mode."
 (defvar jdp-repl-modes-list
   '(eshell-mode
     shell-mode
-    term-mode)
+    term-mode
+    ghostel-mode)
   "List of major-modes used in REPL buffers.")
 
 (defvar jdp-repl-names-list

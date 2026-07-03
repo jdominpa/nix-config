@@ -34,6 +34,7 @@ let
               envrc
               exec-path-from-shell
               fontaine
+              ghostel
               hl-todo
               jinx
               just-ts-mode

@@ -86,7 +86,7 @@
 (require 'init-org)
 (require 'init-prog)
 (require 'init-search)
-(require 'init-shell)
+(require 'init-term)
 (require 'init-ui)
 (require 'init-vc)
 (require 'init-window)
