@@ -52,7 +52,7 @@
 
 (use-package eldoc-box
   :ensure t
-  :bind (("C-c ." . eldoc-box-help-at-point)
+  :bind (("C-c ." . eldoc-box-help-at-point) ; meow leader keybind
 		 :map eglot-mode-map
 		 ("C-h ." . eldoc-box-help-at-point)))
 
