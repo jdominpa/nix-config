@@ -1,5 +1,5 @@
 {
-  flake.modules.darwin.keyboard = {
+  flake.modules.darwin.darwin-settings = {
     system = {
       defaults.NSGlobalDomain = {
         AppleKeyboardUIMode = 3; # Mode 3 enables full keyboard control.
