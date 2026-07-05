@@ -78,14 +78,6 @@
           clipboard_history_max_entries = 10;
           panel.open_near_click_control_center = true;
         };
-
-        # TODO: replace with stylix
-        shell.font_family = "Aporetic Sans";
-        theme = {
-          mode = "dark";
-        };
-        wallpaper.directory = "~/Imatges/Wallpapers";
-
         widget = {
           bluetooth.hide_when_no_connected_device = true;
           clock.format = "{:%H:%M %d-%m-%Y}";
