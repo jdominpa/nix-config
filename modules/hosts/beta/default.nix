@@ -32,7 +32,6 @@ in
         nix-index
         shell
         stylix
-        syncthing
         terminal
       ]
       ++ [
