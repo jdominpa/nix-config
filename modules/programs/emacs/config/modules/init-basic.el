@@ -31,7 +31,7 @@
    auto-save-default t
    auto-save-include-big-deletions t
    auto-save-list-file-prefix (locate-user-emacs-file "autosaves/")
-   auto-save-file-name-transforms `(".*" ,auto-save-list-file-prefix t)
+   auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
    ;; Disable [bidirectional text] scanning for a modest performance boost
    ;; Will improve long line display performance
    bidi-inhibit-bpa t
@@ -77,9 +77,7 @@
   ;; Encoding and locale
   (prefer-coding-system 'utf-8-unix)
   (setq default-input-method "catalan-prefix"
-        default-transient-input-method "catalan-prefix")
-  ;; Disable cursor blinking
-  (blink-cursor-mode -1))
+        default-transient-input-method "catalan-prefix"))
 
 ;; History
 ;;; [saveplace] save last visited place
@@ -103,8 +101,8 @@
 
 ;; Scrolling
 (use-package emacs
-  :bind (("C-v" . +scroll-window-down)
-         ("M-v" . +scroll-window)
+  :bind (("C-v" . +scroll-window)
+         ("M-v" . +scroll-window-down)
          ("C-M-v" . +scroll-other-window)
          ("C-M-S-v" . +scroll-other-window-down))
   :config
@@ -123,12 +121,12 @@
    auto-hscroll-mode t
    hscroll-step 0
    hscroll-margin 2)
-  (defvar +scrolling-lines 10
+  (defvar +scrolling-lines (/ (window-height) 3)
     "Number of lines to scroll with scroll commands")
-  (defun +scroll-other-window () (interactive) (scroll-up +scrolling-lines))
-  (defun +scroll-other-window-down () (interactive) (scroll-down +scrolling-lines))
   (defun +scroll-window () (interactive) (scroll-up +scrolling-lines))
-  (defun +scroll-window-down () (interactive) (scroll-down +scrolling-lines)))
+  (defun +scroll-window-down () (interactive) (scroll-down +scrolling-lines))
+  (defun +scroll-other-window () (interactive) (scroll-other-window +scrolling-lines))
+  (defun +scroll-other-window-down () (interactive) (scroll-other-window-down +scrolling-lines)))
 
 ;; [repeat] Enable repeatable commands
 (use-package repeat
@@ -139,12 +137,13 @@
 
 ;; [mouse] Mouse settings
 (use-package mouse
+  :when (display-graphic-p)
   :hook (after-init . mouse-wheel-mode)
   :config
   (setopt mouse-wheel-scroll-amount
-          '(5
-            ((shift) . 10)
-            ((meta) . 1)
+          '(2
+            ((shift) . hscroll)
+            ((meta) . 10)
             ((control) . text-scale)))
   (setq mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse t))

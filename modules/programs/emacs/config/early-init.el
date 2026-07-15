@@ -33,12 +33,6 @@
 ;; Do not resize the frame at this early stage
 (setq frame-inhibit-implied-resize t)
 
-;; Resize frame pixelwise
-(setq frame-resize-pixelwise t)
-
-;; Frame title
-(setq frame-title-format "Emacs")
-
 ;; Inhibit startup screen and message
 (setq inhibit-startup-screen t
       inhibit-startup-echo-area-message t

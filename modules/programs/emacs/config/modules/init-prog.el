@@ -2,6 +2,14 @@
 
 ;;; General programming settings
 
+;; [whitespace] Show visualize TAB, (HARD) SPC, newline
+(use-package whitespace
+  :hook ((prog-mode conf-mode) . whitespace-mode)
+  :config
+  ;; only show bad whitespace
+  (setopt whitespace-style
+          '(face trailing empty indentation space-before-tab space-after-tab)))
+
 ;; Configure `electric' behaviour
 (use-package electric
   :custom
@@ -203,3 +211,5 @@
 
 (provide 'init-prog)
 ;;; init-prog.el ends here
+
+

@@ -1,29 +1,37 @@
 ;;; init-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
 
 ;;; Minibuffer configuration and `vertico'
-
 (use-package minibuffer
-  :custom
-  (completion-ignore-case t)
-  (completion-pcm-leading-wildcard t)
-  (read-buffer-completion-ignore-case t)
-  (read-file-name-completion-ignore-case t)
-  (enable-recursive-minibuffers t)
-  (read-answer-short t)
-  (resize-mini-windows t)
-  (minibuffer-eldef-shorten-default t)
-  (file-name-shadow-mode t)
-  (minibuffer-depth-indicate-mode t)
-  (minibuffer-electric-default-mode t))
-
-(use-package savehist
-  :custom
-  (savehist-file (locate-user-emacs-file "savehist"))
-  (history-length 100)
-  (history-delete-duplicates t)
-  (savehist-save-minibuffer-history t)
+  :hook ((after-init . file-name-shadow-mode)
+         (after-init . minibuffer-depth-indicate-mode)
+         (after-init . minibuffer-electric-default-mode)
+         (minibuffer-setup . cursor-intangible-mode))
   :config
-  (savehist-mode))
+  (setq
+   completion-ignore-case t
+   completion-pcm-leading-wildcard t
+   read-buffer-completion-ignore-case t
+   read-file-name-completion-ignore-case t
+   enable-recursive-minibuffers t
+   read-answer-short t
+   resize-mini-windows t
+   minibuffer-default-prompt-format " [%s]")
+  (setopt
+   minibuffer-eldef-shorten-default t
+   ;; Keep the cursor out of the read-only portions of the minibuffer
+   minibuffer-prompt-properties '( read-only t
+                                   intangible t
+                                   cursor-intangible t
+                                   face minibuffer-prompt)))
+
+;; [savehist] Save minibuffer history
+(use-package savehist
+  :hook (after-init . savehist-mode)
+  :config
+  (setq savehist-file (locate-user-emacs-file "savehist")
+        history-length 100
+        history-delete-duplicates t
+        savehist-save-minibuffer-history t))
 
 (use-package vertico
   :ensure t
@@ -158,7 +166,6 @@
 (use-package corfu
   :ensure t
   :custom
-  (read-extended-command-predicate #'command-completion-default-include-p)
   (text-mode-ispell-word-completion nil)
   (corfu-min-width 20)
   (corfu-popupinfo-delay '(nil . 1))
