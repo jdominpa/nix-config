@@ -1,12 +1,5 @@
 ;;; init-vc.el --- Configurations for version control frameworks -*- lexical-binding: t -*-
 
-;;; Version control framework
-
-(use-package vc
-  :defer t
-  :custom
-  (vc-follow-symlinks t))
-
 ;;; `ediff'
 
 (use-package ediff

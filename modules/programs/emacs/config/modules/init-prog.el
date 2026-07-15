@@ -2,13 +2,6 @@
 
 ;;; General programming settings
 
-;; Tabs and indentation
-(use-package emacs
-  :custom
-  (tab-always-indent 'complete)
-  (tab-width 4)
-  (indent-tabs-mode nil))
-
 ;; Configure `electric' behaviour
 (use-package electric
   :custom
@@ -55,11 +48,6 @@
   :bind (("C-c ." . eldoc-box-help-at-point) ; meow leader keybind
 		 :map eglot-mode-map
 		 ("C-h ." . eldoc-box-help-at-point)))
-
-;; Handle performance for long lines
-(use-package so-long
-  :config
-  (global-so-long-mode))
 
 ;; Tree-sitter
 (use-package treesit

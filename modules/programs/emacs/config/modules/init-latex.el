@@ -1,14 +1,5 @@
 ;;; init-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
 
-;;; Input method settings
-
-(use-package emacs
-  :custom
-  (fill-column 80)
-  (sentence-end-double-space nil) ; use a single space after a sentence
-  (default-input-method "catalan-prefix")
-  (default-transient-input-method "catalan-prefix"))
-
 ;;; Spellchecking
 
 (use-package jinx

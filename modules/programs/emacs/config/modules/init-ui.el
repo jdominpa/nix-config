@@ -85,7 +85,6 @@
 
 (use-package jdp-mode-line
   :custom
-  (ring-bell-function 'ignore)
   (mode-line-right-align-edge 'right-margin)
   (mode-line-position '("%l,%c"))
   (project-mode-line t)

@@ -21,22 +21,12 @@
 
 ;; Basic settings
 (use-package emacs
-  :custom
+  :config
   ;; Frame settings
-  (frame-resize-pixelwise t)    ; Resize the frame pixelwise
-  (frame-title-format "Emacs")  ; Frame title
-  ;; GUI elements
-  (use-dialog-box t)
-  (use-file-dialog nil)
-  (use-short-answers t)
-  (blink-cursor-mode nil)
-  ;; Send custom.el file to oblivion
-  (custom-file (make-temp-file "emacs-custom-"))
-  ;; Backup settings
-  (make-backup-files nil)
-  (create-lockfiles nil)
+  (setq frame-resize-pixelwise t    ; Resize the frame pixelwise
+        frame-title-format "Emacs") ; Frame title
   ;; Enable all commands
-  (disabled-command-function nil))
+  (setq disabled-command-function nil))
 
 ;; `modules' is for emacs configuration modules
 ;; `lisp' is for custom elisp files and third party packages
@@ -59,8 +49,7 @@
 (use-package exec-path-from-shell
   :ensure t
   :config
-  (dolist (var '("SSH_AUTH_SOCK" "NIX_PATH" "NIX_PROFILES" "NIX_USER_PROFILE_DIR" "NIX_SSL_CERT_FILE"))
-    (add-to-list 'exec-path-from-shell-variables var))
+  (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK")
   (when (or (memq window-system '(mac ns x pgtk))
             (unless (memq system-type '(ms-dos windows-nt))
               (daemonp)))
