@@ -11,7 +11,7 @@ let
         btop
         coreutils
         curl
-        findutils
+        fd
         fzf
         gawk
         git
