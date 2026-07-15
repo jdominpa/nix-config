@@ -1,4 +1,4 @@
-;;; init-emacs.el --- General configurations for Emacs -*- lexical-binding: t -*-
+;;; init-basic.el --- General configurations for Emacs -*- lexical-binding: t -*-
 
 ;;; General settings
 
@@ -16,12 +16,73 @@
          ("M-c" . capitalize-dwim)
          ("M-l" . downcase-dwim)
          ("M-u" . upcase-dwim))
-  :custom
-  (help-window-select t)
-  (kill-do-not-save-duplicates t)
-  (next-error-recenter '(nil))
-  (mode-require-final-newline 'visit-save)
-  (scroll-error-top-bottom t))
+  :config
+  (setopt
+   help-window-select t
+   kill-do-not-save-duplicates t
+   next-error-recenter '(nil)
+   mode-require-final-newline 'visit-save
+   scroll-error-top-bottom t
+   ;; Backup settings
+   create-lockfiles nil
+   backup-directory-alist `(("." . ,(locate-user-emacs-file "backups/")))
+   vc-make-backup-files t
+   version-control t
+   backup-by-copying t
+   delete-old-versions t
+   kept-new-versions 5
+   tramp-backup-directory-alist backup-directory-alist
+   ;; Auto-save
+   auto-save-default t
+   auto-save-include-big-deletions t
+   auto-save-list-file-prefix (locate-user-emacs-file "autosaves/")
+   auto-save-file-name-transforms (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                                              ;; Prefix tramp autosaves to prevent conflicts with local ones
+                                              (concat auto-save-list-file-prefix "tramp-\\2") t)
+                                        (list ".*" auto-save-list-file-prefix t))
+   ;; Send custom.el to oblivion
+   custom-file (make-temp-file "emacs-custom-")
+   ;; Always follow links when visiting a [symbolic link]
+   find-file-visit-truename t
+   vc-follow-symlinks t
+   ring-bell-function 'ignore
+   ;; Set `fill-column' indicator to 80 chars
+   fill-column 80
+   ;; Sentence end
+   sentence-end-double-space nil
+   ;; Default input method
+   default-input-method "catalan-prefix"
+   default-transient-input-method "catalan-prefix"
+   ;; [tab]
+   ;; Indent with 4 spaces by default.
+   indent-tabs-mode nil
+   tab-width 4
+   ;; Indent first, otherwise run completion-at-point
+   tab-always-indent 'complete
+   ;; Use y-or-n to replace yes-or-no
+   use-short-answers t
+   ;; Inhibit switching out from `y-or-n-p' and `read-char-choice'
+   y-or-n-p-use-read-key t
+   read-char-choice-use-read-key t
+   )
+  (setq blink-cursor-mode nil)
+
+  (setq-default
+   ;; Disable [bidirectional text] scanning for a modest performance boost.
+   ;; Will improve long line display performance
+   bidi-inhibit-bpa t
+   bidi-paragraph-direction 'left-to-right
+   bidi-display-reordering 'left-to-right
+   ;; Smaller threshold to improve long line performance
+   long-line-threshold 10000
+   large-hscroll-threshold 10000
+   syntax-wholeline-max 2000)
+  )
+
+;; Handle performance for long lines
+(use-package so-long
+  :config
+  (global-so-long-mode))
 
 ;;; Track recently visited files and directories
 
@@ -159,5 +220,5 @@
                                            (intern-soft linter) :local))
                             (call-interactively #'flymake-mode)))))]]))
 
-(provide 'init-emacs)
-;;; init-emacs.el ends here
+(provide 'init-basic)
+;;; init-basic.el ends here

@@ -9,7 +9,7 @@
   (dired-recursive-copies 'always)
   (dired-recursive-deletes 'always)
   (delete-by-moving-to-trash t)
-  (dired-listing-switches "-aGFhlv --group-directories-first --time-style=long-iso")
+  (dired-listing-switches "-aGFhlv")
   (dired-dwim-target t)
   (dired-auto-revert-buffer #'dired-directory-changed-p)
   (dired-mouse-drag-files t))

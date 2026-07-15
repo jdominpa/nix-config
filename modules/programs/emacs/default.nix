@@ -94,6 +94,7 @@ in
       ".emacs.d/lisp".source = ./config/lisp;
       ".emacs.d/modules".source = ./config/modules;
       ".emacs.d/abbrev_defs".source = ./config/abbrev_defs;
+      ".emacs.d/early-init.el".source = ./config/early-init.el;
       ".emacs.d/init.el".source = ./config/init.el;
       ".emacs.d/templates".source = ./config/templates;
     };

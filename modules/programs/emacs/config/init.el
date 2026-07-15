@@ -1,51 +1,40 @@
 ;;; init.el --- Init file -*- lexical-binding: t -*-
 
-;;; Load and configure `use-package'
+(defun +echo-startup-time-info-h ()
+  "Echoes in the minibuffer information about startup time."
+  (message "window-setup: %.3fs, after-init: %.3fs"
+           (float-time (time-subtract nil before-init-time))
+           (float-time (time-subtract after-init-time before-init-time))))
+(add-hook 'window-setup-hook #'+echo-startup-time-info-h)
 
+;; Load and configure `use-package'
 (eval-when-compile
   (require 'use-package))
-(require 'bind-key)
-
 (use-package use-package
   :custom
+  (use-package-enable-imenu-support t)
   (use-package-verbose init-file-debug)
   (use-package-expand-minimally (not init-file-debug))
   (use-package-compute-statistics init-file-debug)
   (debug-on-error init-file-debug)
   (debug-on-quit init-file-debug))
 
-;;; Basic settings
-
+;; Basic settings
 (use-package emacs
-  :hook (emacs-startup . (lambda ()
-                           (setq gc-cons-threshold (* 800000 2)
-                                 gc-cons-percentage 0.1)
-                           (garbage-collect)))
   :custom
-  ;; Speed up startup
-  (gc-cons-threshold most-positive-fixnum)
-  (gc-cons-percentage 0.6)
   ;; Frame settings
-  (frame-resize-pixelwise t)       ; Resize the frame pixelwise
-  (frame-inhibit-implied-resize t) ; Do not resize the frame at this early stage.
-  (frame-title-format "%b")        ; Frame title
+  (frame-resize-pixelwise t)    ; Resize the frame pixelwise
+  (frame-title-format "Emacs")  ; Frame title
   ;; GUI elements
-  (tool-bar-mode nil)
-  (menu-bar-mode nil)
-  (scroll-bar-mode nil)
   (use-dialog-box t)
   (use-file-dialog nil)
   (use-short-answers t)
-  (inhibit-startup-screen t)
-  (initial-buffer-choice t) ; Always start with *scratch* buffer
   (blink-cursor-mode nil)
   ;; Send custom.el file to oblivion
   (custom-file (make-temp-file "emacs-custom-"))
   ;; Backup settings
   (make-backup-files nil)
   (create-lockfiles nil)
-  ;; Silence native compilation warning messages
-  (native-comp-async-report-warnings-errors 'silent)
   ;; Enable all commands
   (disabled-command-function nil))
 
@@ -77,27 +66,26 @@
               (daemonp)))
     (exec-path-from-shell-initialize)))
 
-(require 'init-meow)
-(require 'init-completion)
-(require 'init-dired)
-(require 'init-emacs)
-(require 'init-email)
-(require 'init-latex)
-(require 'init-org)
-(require 'init-prog)
-(require 'init-search)
-(require 'init-term)
-(require 'init-ui)
-(require 'init-vc)
-(require 'init-window)
+(defvar +init-files (list
+                     'init-basic
+                     'init-meow
+                     'init-completion
+                     'init-dired
+                     'init-email
+                     'init-latex
+                     (when (eq system-type 'darwin) 'init-mac)
+                     'init-org
+                     'init-prog
+                     'init-search
+                     'init-term
+                     'init-ui
+                     'init-vc
+                     'init-window)
+  "List of init files to be loaded by init.el.")
 
-
-;;; System specific settings
-
-(use-package emacs
-  :if (eq system-type 'darwin)
-  :custom
-  (ns-command-modifier 'meta))
+(dolist (file +init-files)
+  (when file
+    (require file)))
 
 (provide 'init)
 ;;; init.el ends here
