@@ -1,7 +1,5 @@
 ;;; init-basic.el --- General configurations for Emacs -*- lexical-binding: t -*-
 
-;;; General settings
-
 (use-package emacs
   :bind (("C-z" . nil)
          ("C-x C-z" . nil)
@@ -17,12 +15,10 @@
          ("M-l" . downcase-dwim)
          ("M-u" . upcase-dwim))
   :config
-  (setopt
+  (setq-default
+   ;; Select help window after opening it
    help-window-select t
    kill-do-not-save-duplicates t
-   next-error-recenter '(nil)
-   mode-require-final-newline 'visit-save
-   scroll-error-top-bottom t
    ;; Backup settings
    create-lockfiles nil
    backup-directory-alist `(("." . ,(locate-user-emacs-file "backups/")))
@@ -31,28 +27,30 @@
    backup-by-copying t
    delete-old-versions t
    kept-new-versions 5
-   tramp-backup-directory-alist backup-directory-alist
    ;; Auto-save
    auto-save-default t
    auto-save-include-big-deletions t
    auto-save-list-file-prefix (locate-user-emacs-file "autosaves/")
-   auto-save-file-name-transforms (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                                              ;; Prefix tramp autosaves to prevent conflicts with local ones
-                                              (concat auto-save-list-file-prefix "tramp-\\2") t)
-                                        (list ".*" auto-save-list-file-prefix t))
+   auto-save-file-name-transforms `(".*" ,auto-save-list-file-prefix t)
+   ;; Disable [bidirectional text] scanning for a modest performance boost
+   ;; Will improve long line display performance
+   bidi-inhibit-bpa t
+   bidi-paragraph-direction 'left-to-right
+   bidi-display-reordering 'left-to-right
+   ;; Smaller threshold to improve long line performance
+   long-line-threshold 10000
+   large-hscroll-threshold 10000
+   syntax-wholeline-max 2000
    ;; Send custom.el to oblivion
    custom-file (make-temp-file "emacs-custom-")
    ;; Always follow links when visiting a [symbolic link]
    find-file-visit-truename t
    vc-follow-symlinks t
    ring-bell-function 'ignore
-   ;; Set `fill-column' indicator to 80 chars
+   ;; Set [fill-column] indicator to 80 chars
    fill-column 80
    ;; Sentence end
    sentence-end-double-space nil
-   ;; Default input method
-   default-input-method "catalan-prefix"
-   default-transient-input-method "catalan-prefix"
    ;; [tab]
    ;; Indent with 4 spaces by default.
    indent-tabs-mode nil
@@ -64,96 +62,115 @@
    ;; Inhibit switching out from `y-or-n-p' and `read-char-choice'
    y-or-n-p-use-read-key t
    read-char-choice-use-read-key t
-   )
-  (setq blink-cursor-mode nil)
+   ;; Disable the "same file" warning, just redirect to the existing buffer
+   find-file-suppress-same-file-warnings t
+   ;; POSIX standard [newline]
+   require-final-newline 'visit-save
+   ;; Don't prompt for confirmation when creating a new file or buffer
+   confirm-nonexistent-file-or-buffer nil
+   ;; What-cursor-position
+   what-cursor-show-names t
+   ;; List only applicable commands
+   read-extended-command-predicate #'command-completion-default-include-p
+   ;; Enable [disabled cmds]
+   disabled-command-function nil)
+  ;; Encoding and locale
+  (prefer-coding-system 'utf-8-unix)
+  (setq default-input-method "catalan-prefix"
+        default-transient-input-method "catalan-prefix")
+  ;; Disable cursor blinking
+  (blink-cursor-mode -1))
 
-  (setq-default
-   ;; Disable [bidirectional text] scanning for a modest performance boost.
-   ;; Will improve long line display performance
-   bidi-inhibit-bpa t
-   bidi-paragraph-direction 'left-to-right
-   bidi-display-reordering 'left-to-right
-   ;; Smaller threshold to improve long line performance
-   long-line-threshold 10000
-   large-hscroll-threshold 10000
-   syntax-wholeline-max 2000)
-  )
-
-;; Handle performance for long lines
-(use-package so-long
+;; History
+;;; [saveplace] save last visited place
+(use-package saveplace
+  :hook (after-init . save-place-mode)
   :config
-  (global-so-long-mode))
+  (setq save-place-file (locate-user-emacs-file "saveplace")
+        save-place-forget-unreadable-files t))
 
-;;; Track recently visited files and directories
-
+;;; [recentf] recently visited files
 (use-package recentf
-  :custom
-  (recentf-save-file (locate-user-emacs-file "recentf"))
-  (recentf-exclude '("/tmp/" "/ssh:" ".gz" ".xz" ".zip"))
+  :bind ("C-x C-r" . recentf-open-files)
+  :hook (after-init . recentf-mode)
   :config
-  (recentf-mode))
+  (setopt recentf-save-file (locate-user-emacs-file "recentf"))
+  (setq recentf-exclude '("/tmp/" "/ssh:" ".gz" ".xz" ".zip")))
 
-;;; Mouse configuration
+;; [so-long] Workaround for long one-line files
+(use-package so-long
+  :hook (after-init . global-so-long-mode))
 
-(use-package mouse
-  :custom
-  (mouse-wheel-scroll-amount
-   '(1
-     ((shift) . 5)
-     ((meta) . 0.5)
-     ((control) . text-scale)))
-  (mouse-wheel-progressive-speed nil)
-  (mouse-wheel-follow-mouse t)
-  :config
-  (mouse-wheel-mode))
-
-;;; Scrolling behaviour
-
+;; Scrolling
 (use-package emacs
-  :custom
-  (scroll-margin 0)
-  (scroll-conservatively 1)
-  (scroll-preserve-screen-position t)
-  (next-screen-context-lines 3))
+  :bind (("C-v" . +scroll-window-down)
+         ("M-v" . +scroll-window)
+         ("C-M-v" . +scroll-other-window)
+         ("C-M-S-v" . +scroll-other-window-down))
+  :config
+  (setq-default
+   ;; Performant and rapid scrolling
+   fast-but-imprecise-scrolling t
+   ;; Keep 3 lines when scrolling
+   scroll-step 0
+   scroll-margin 3
+   scroll-up-aggressively 0.01
+   scroll-down-aggressively 0.01
+   scroll-conservatively 101
+   scroll-preserve-screen-position t
+   next-screen-context-lines 3
+   ;; [hscroll]
+   auto-hscroll-mode t
+   hscroll-step 0
+   hscroll-margin 2)
+  (defvar +scrolling-lines 10
+    "Number of lines to scroll with scroll commands")
+  (defun +scroll-other-window () (interactive) (scroll-up +scrolling-lines))
+  (defun +scroll-other-window-down () (interactive) (scroll-down +scrolling-lines))
+  (defun +scroll-window () (interactive) (scroll-up +scrolling-lines))
+  (defun +scroll-window-down () (interactive) (scroll-down +scrolling-lines)))
 
-;;; `repeat-mode'
-
+;; [repeat] Enable repeatable commands
 (use-package repeat
-  :custom
-  (repeat-exit-timeout 5)
-  (set-mark-command-repeat-pop t)
+  :hook (after-init . repeat-mode)
   :config
-  (repeat-mode))
+  (setq repeat-exit-timeout 5
+        set-mark-command-repeat-pop t))
 
-;;; `auto-revert-mode'
+;; [mouse] Mouse settings
+(use-package mouse
+  :hook (after-init . mouse-wheel-mode)
+  :config
+  (setopt mouse-wheel-scroll-amount
+          '(5
+            ((shift) . 10)
+            ((meta) . 1)
+            ((control) . text-scale)))
+  (setq mouse-wheel-progressive-speed nil
+        mouse-wheel-follow-mouse t))
 
+;; [autorevert] Update changed buffers automatically
 (use-package autorevert
-  :config
-  (global-auto-revert-mode))
+  :hook (after-init . global-auto-revert-mode))
 
-;;; `whitespace-mode'
-
-(use-package whitespace
-  :bind ("C-c z" . delete-trailing-whitespace))
-
-;;; Emacs server
-
+;; [server] Emacs server
 (use-package server
   :hook (emacs-startup . (lambda ()
                            (unless (server-running-p)
                              (server-start)))))
 
-;;; Save cursor position
-
-(use-package saveplace
-  :custom
-  (save-place-file (locate-user-emacs-file "saveplace"))
-  (save-place-forget-unreadable-files t)
+;; [environment variables]
+(use-package exec-path-from-shell
+  :ensure t
+  :when (or (memq window-system '(mac ns x pgtk))
+            (unless (memq system-type '(ms-dos windows-nt))
+              (daemonp)))
+  :hook (after-init . exec-path-from-shell-initialize)
   :config
-  (save-place-mode))
+  (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK"))
 
-;;; Transient menu for toggling modes
-
+;; TODO: maybe remove/reorganize this
+;; Transient menu for toggling modes
 (use-package transient
   :ensure t
   :defines toggle-modes
@@ -164,10 +181,10 @@
     [["Appearance"
       ("t" "toggle dark/light theme" modus-themes-toggle)
       ("p" "prettify symbols" (lambda () (interactive)
-                              (if (derived-mode-p 'org-mode)
-                                  (org-toggle-pretty-entities)
-                                (call-interactively
-                                 #'prettify-symbols-mode))))
+                                (if (derived-mode-p 'org-mode)
+                                    (org-toggle-pretty-entities)
+                                  (call-interactively
+                                   #'prettify-symbols-mode))))
       ("vl" "visual line mode" visual-line-mode)
       ("vt" "truncate lines" toggle-truncate-lines)
       ("vp" "variable pitch" variable-pitch-mode)]

@@ -11,22 +11,13 @@
 (eval-when-compile
   (require 'use-package))
 (use-package use-package
-  :custom
-  (use-package-enable-imenu-support t)
-  (use-package-verbose init-file-debug)
-  (use-package-expand-minimally (not init-file-debug))
-  (use-package-compute-statistics init-file-debug)
-  (debug-on-error init-file-debug)
-  (debug-on-quit init-file-debug))
-
-;; Basic settings
-(use-package emacs
   :config
-  ;; Frame settings
-  (setq frame-resize-pixelwise t    ; Resize the frame pixelwise
-        frame-title-format "Emacs") ; Frame title
-  ;; Enable all commands
-  (setq disabled-command-function nil))
+  (setopt use-package-enable-imenu-support t)
+  (setq use-package-verbose init-file-debug
+        use-package-expand-minimally (not init-file-debug)
+        use-package-compute-statistics init-file-debug
+        debug-on-error init-file-debug
+        debug-on-quit init-file-debug))
 
 ;; `modules' is for emacs configuration modules
 ;; `lisp' is for custom elisp files and third party packages
@@ -36,24 +27,15 @@
  '("lisp" "modules"))
 
 (use-package package
-  :custom
-  (package-archives '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
+  :config
+  (setq
+   package-archives '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
                       ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
                       ("melpa" . "https://melpa.org/packages/")
-                      ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-  (package-archive-priorities '(("gnu-elpa" . 3)
+                      ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+   package-archive-priorities '(("gnu-elpa" . 3)
                                 ("melpa" . 2)
                                 ("nongnu" . 1))))
-
-;; Set up `load-path' and environmental variables correctly
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK")
-  (when (or (memq window-system '(mac ns x pgtk))
-            (unless (memq system-type '(ms-dos windows-nt))
-              (daemonp)))
-    (exec-path-from-shell-initialize)))
 
 (defvar +init-files (list
                      'init-basic
