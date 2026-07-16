@@ -84,11 +84,6 @@
   (eglot-code-action-indications '(margin mode-line))
   :config
   (fset #'jsonrpc--log-event #'ignore)
-  (with-eval-after-load 'orderless
-	(add-to-list 'completion-category-overrides
-				 '(eglot (styles . (orderless basic))))
-	(add-to-list 'completion-category-overrides
-				 '(eglot-capf (styles . (orderless basic)))))
   (with-eval-after-load 'cape
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 

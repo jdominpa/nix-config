@@ -1,31 +1,28 @@
 ;;; init-term.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
 
-;;; Shell
-
+;; [shell]
 (use-package shell
   :defer t
-  :custom
-  (shell-command-prompt-show-cwd t)
-  (shell-input-autoexpand 'input)
-  (shell-highlight-undef-enable t)
-  (shell-kill-buffer-on-exit t)
-  (comint-scroll-to-bottom-on-input t)
-  (comint-input-autoexpand 'input)
-  (comint-prompt-read-only t)
-  (comint-completion-autolist t)
-  (comint-input-ignoredups t))
+  :config
+  (setq shell-command-prompt-show-cwd t
+        shell-input-autoexpand 'input
+        shell-highlight-undef-enable t
+        shell-kill-buffer-on-exit t
+        comint-scroll-to-bottom-on-input t
+        comint-input-autoexpand 'input
+        comint-prompt-read-only t
+        comint-completion-autolist t
+        comint-input-ignoredups t))
 
 ;;; Eshell
 
 (use-package eshell
   :defer t
-  :custom
-  (eshell-cd-on-directory t)
-  (eshell-hist-ignoredups t)
-  (eshell-save-history-on-exit t)
-  (eshell-scroll-to-bottom-on-input t)
-  (password-cache t)
-  (password-cache-expiry 300))
+  :config
+  (setq eshell-cd-on-directory t
+        eshell-hist-ignoredups t
+        eshell-save-history-on-exit t
+        eshell-scroll-to-bottom-on-input t))
 
 ;;; Ghostel (terminal emulator)
 
@@ -39,9 +36,10 @@
          :map project-prefix-map
          ("t" . ghostel-project)
          ("T" . ghostel-project-list-buffers))
-  :custom
-  (ghostel-ignore-cursor-change t)
   :config
+  (setq password-cache t
+        password-cache-expiry 300
+        ghostel-ignore-cursor-change t)
   (defun jdp-ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.  Like normal Emacs `C-k', kill to end of line
 and put content in kill-ring."

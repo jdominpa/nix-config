@@ -1,6 +1,7 @@
 ;;; init-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
 
-;;; Minibuffer configuration and `vertico'
+;;; Minibuffer
+
 (use-package minibuffer
   :hook ((after-init . file-name-shadow-mode)
          (after-init . minibuffer-depth-indicate-mode)
@@ -8,6 +9,7 @@
          (minibuffer-setup . cursor-intangible-mode))
   :config
   (setq
+   completions-sort 'historical
    completion-ignore-case t
    completion-pcm-leading-wildcard t
    read-buffer-completion-ignore-case t
@@ -33,98 +35,46 @@
         history-delete-duplicates t
         savehist-save-minibuffer-history t))
 
+;; [vertico]
 (use-package vertico
   :ensure t
-  :demand t
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
-  :config
-  (vertico-reverse-mode)
-  (vertico-mode))
+  :hook (after-init . vertico-mode))
 
-;;; `marginalia' completion annotations
+(use-package vertico-reverse
+  :after vertico
+  :hook (vertico-mode . vertico-reverse-mode))
 
+(use-package vertico-directory
+  :after vertico
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+(use-package vertico-quick
+  :after vertico
+  :bind (:map vertico-map
+              ("C-," . vertico-quick-jump)))
+
+;; [marginalia] Completion annotations
 (use-package marginalia
   :ensure t
-  :config
-  (marginalia-mode))
+  :after vertico
+  :hook (vertico-mode . marginalia-mode))
 
-;;; `orderless' completion style
+;;; Completion matching styles
 
 (use-package orderless
   :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides
-   '((file (styles . (basic partial-completion))))))
-
-;;; Enhanced minibuffer commands with `consult'
-
-(use-package consult
-  :ensure t
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-  :bind (;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)  ; orig. `repeat-complex-command'
-         ("C-x t b" . consult-buffer-other-tab) ; orig. `switch-to-buffer-other-tab'
-         ("C-x r b" . consult-bookmark)         ; orig. `bookmark-jump'
-         ("C-x M-m" . consult-minor-mode-menu)
-         ("C-x M-k" . consult-kmacro)
-         ([remap switch-to-buffer] . consult-buffer)
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store) ; orig. `abbrev-prefix-mark' (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ([remap yank-pop] . consult-yank-pop)
-         ([remap project-list-buffers] . consult-project-buffer)
-         ;; M-g bindings in `goto-map'
-         ("M-g a" . consult-org-agenda)
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)
-         ([remap goto-line] . consult-goto-line) ; orig. `goto-line'
-         ("M-g o" . consult-outline)
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s f" . consult-find)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s i" . consult-info)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-s e" . consult-isearch-history) ; orig. `isearch-edit-string'
-         ("M-s l" . consult-line)     ; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi) ; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history) ; orig. `next-matching-history-element'
-         ("M-r" . consult-history) ; orig. `previous-matching-history-element'
-         :map consult-narrow-map
-         ("?" . consult-narrow-help))
-  :custom
-  (register-preview-function #'consult-register-format)
-  (xref-show-xrefs-function #'consult-xref)
-  (xref-show-definitions-function #'consult-xref)
-  (consult-narrow-key "<")
   :config
-  (advice-add #'register-preview :override #'consult-register-window))
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles basic partial-completion))
+                                        (eglot (styles orderless))
+                                        (eglot-capf (styles orderless)))))
 
-(use-package consult-dir
-  :ensure t
-  :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
-
-;;; `embark'
+;;; Actions and search commands
 
 (use-package embark
   :ensure t
@@ -132,16 +82,15 @@
          ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
-  :custom
-  (embark-verbose-indicator-display-action
-   `(display-buffer-in-side-window
-     (side . bottom)
-     (window-height . fit-window-to-buffer)
-     (body-function . ,(lambda (win)
-                         (with-selected-window win
-                           (and mode-line-format
-                                (setq-local mode-line-format nil)))))))
   :config
+  (setq embark-verbose-indicator-display-action
+        `(display-buffer-in-side-window
+          (side . bottom)
+          (window-height . fit-window-to-buffer)
+          (body-function . ,(lambda (win)
+                              (with-selected-window win
+                                (and mode-line-format
+                                     (setq-local mode-line-format nil)))))))
   (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*\\*"
                    display-buffer-alist nil nil 'equal)
         '((display-buffer-in-direction)
@@ -159,30 +108,127 @@
 
 (use-package embark-consult
   :ensure t
-  :defer t)
+  :after (embark consult))
 
-;;; In-buffer completion with `corfu'
+(use-package consult
+  :ensure t
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :bind (([remap bookmark-jump] . consult-bookmark)
+         ([remap list-registers] . consult-register)
+         ([remap goto-line] . consult-goto-line)
+         ([remap imenu] . consult-imenu)
+         ([remap load-theme] . consult-theme)
+         ([remap man] . consult-man)
+         ([remap recentf-open-files] . consult-recent-file)
+         ([remap switch-to-buffer] . consult-buffer)
+         ([remap switch-to-buffer-other-tab] . consult-buffer-other-tab)
+         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+         ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
+         ([remap yank-pop] . consult-yank-pop)
+         ([remap repeat-complex-command] . consult-complex-command)
+         ([remap project-list-buffers] . consult-project-buffer)
+         ;; [goto-map] M-g bindings
+         :map goto-map
+         ("a" . consult-org-agenda)
+         ("e" . consult-compile-error)
+         ("f" . consult-flymake)
+         ("i" . consult-imenu)
+         ("I" . consult-imenu-multi)
+         ("o" . consult-outline)
+         ("m" . consult-mark)
+         ("k" . consult-global-mark)
+         ;; [search-map] M-s bindings
+         :map search-map
+         ("e" . consult-isearch-history) ; isearch integration
+         ("f" . consult-fd)
+         ("g" . consult-grep)
+         ("G" . consult-git-grep)
+         ("i" . consult-info)
+         ("k" . consult-keep-lines)
+         ("l" . consult-line)
+         ("L" . consult-line-multi)
+         ("r" . consult-ripgrep)
+         ("u" . consult-focus-lines)
+         :map isearch-mode-map
+         ("M-s e" . consult-isearch-history) ; orig. `isearch-edit-string'
+         ("M-s l" . consult-line)     ; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi) ; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history) ; orig. `next-matching-history-element'
+         ("M-r" . consult-history) ; orig. `previous-matching-history-element'
+         :map consult-narrow-map
+         ("?" . consult-narrow-help))
+  :config
+  (setq consult-narrow-key "<"
+        consult-async-min-input 2)
+  ;; [consult-register] Configure the register formatting
+  (setq register-preview-function #'consult-register-format)
+  ;; This adds thin lines, sorting and hides the mode line of the window
+  (advice-add #'register-preview :override #'consult-register-window)
+  ;; [consult-xref] Use consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  ;; Better preview
+  (consult-customize
+   consult-ripgrep consult-grep consult-git-grep
+   consult-bookmark consult-recent-file consult-buffer
+   :preview-key "M-,")
+  (consult-customize
+   consult-theme
+   :preview-key '("M-," :debounce 0.6 any)))
+
+;; [consult-dir] Insert path quickly in the minibuffer
+(use-package consult-dir
+  :ensure t
+  :bind (([remap list-directory] . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
+;;; In-buffer completion
 
 (use-package corfu
   :ensure t
-  :custom
-  (text-mode-ispell-word-completion nil)
-  (corfu-min-width 20)
-  (corfu-popupinfo-delay '(nil . 1))
+  :hook (after-init . global-corfu-mode)
   :config
-  (corfu-popupinfo-mode)
-  (corfu-history-mode)
-  (global-corfu-mode)
+  (setopt text-mode-ispell-word-completion nil)
+  (setq corfu-min-width 20))
+
+(use-package corfu-history
+  :after corfu
+  :hook (corfu-mode . corfu-history-mode)
+  :config
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
+(use-package corfu-popupinfo
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :config
+  (setq corfu-popupinfo-delay '(nil . 1)))
+
+(use-package corfu-quick
+  :after corfu
+  :bind (:map corfu-map
+              ("C-," . corfu-quick-complete)))
+
 (use-package cape
   :ensure t
-  :after corfu
-  :demand t
-  :config
-  (dolist (backend '(cape-dabbrev cape-abbrev cape-file cape-history))
-    (add-hook 'completion-at-point-functions backend)))
+  :hook ((TeX-mode LaTeX-mode org-mode markdown-mode) . +completion-add-tex-capfs-h)
+  :init
+  (defun +completion-add-capfs (&rest capfs)
+    "Append CAPFS to the buffer-local
+`completion-at-point-functions'."
+    (dolist (capf capfs)
+      (unless (memq capf completion-at-point-functions)
+        (setq-local completion-at-point-functions
+                    (append completion-at-point-functions (list capf))))))
+  (setq-default completion-at-point-functions
+                (append completion-at-point-functions (list #'cape-file #'cape-dabbrev)))
+  (defun +completion-add-tex-capfs-h ()
+    "Add `cape-tex' capf to `completion-at-point-functions'."
+    (+completion-add-capfs #'cape-tex)))
 
 (use-package kind-icon
   :ensure t
@@ -195,25 +241,23 @@
 (use-package tempel
   :ensure t
   :init
-  ;; Setup completion at point
-  (defun tempel-setup-capf ()
-    (setq-local completion-at-point-functions
-                (cons #'tempel-complete
-                      completion-at-point-functions)))
-  :bind (("C-<tab>" . tempel-complete)
-		 ("C-S-<tab>" . tempel-insert)
-         :map tempel-map
-         ("M-{" . nil)
-         ("M-}" )
-         ([remap backward-paragraph] . nil)
-         ([remap forward-paragraph] . nil)
-         ([remap backward-sentence] . tempel-previous)
-         ([remap forward-sentence] . tempel-next))
-  :hook ((conf-mode . tempel-setup-capf)
-		 (prog-mode . tempel-setup-capf)
-		 (text-mode . tempel-setup-capf))
-  :custom
-  (tempel-path (locate-user-emacs-file "templates/*.eld")))
+  (defvar +tempel-trigger-capf nil)
+  (defun +tempel-setup-capf-h ()
+    (unless +tempel-trigger-capf
+      (setq +tempel-trigger-capf (cape-capf-trigger #'tempel-complete ?/)))
+    (unless (memq +tempel-trigger-capf completion-at-point-functions)
+      (setq-local completion-at-point-functions
+                  (cons +tempel-trigger-capf completion-at-point-functions))))
+  :bind (:map tempel-map
+              ("M-{" . nil)
+              ("M-}" . nil)
+              ([remap backward-paragraph] . nil)
+              ([remap forward-paragraph] . nil)
+              ([remap backward-sentence] . tempel-previous)
+              ([remap forward-sentence] . tempel-next))
+  :hook ((prog-mode conf-mode text-mode) . +tempel-setup-capf-h)
+  :config
+  (setq tempel-path (locate-user-emacs-file "templates/*.eld")))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))

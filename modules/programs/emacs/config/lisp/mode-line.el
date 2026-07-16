@@ -13,7 +13,7 @@
        (not (string-blank-p str))
        (> (length str) +mode-line-string-truncate-length)))
 
-(defun +mode-line-string-cut-middle (str)
+(defun +mode-line--string-cut-middle (str)
   "Return truncated STR, if appropriate, else return STR.
 Cut off the middle of STR by counting half of
 `+mode-line-string-truncate-length' both from its beginning
@@ -39,7 +39,7 @@ conjunction with `+mode-line-buffer-name'.")
 
 (defvar-local +mode-line-buffer-identification
     '(:eval
-      (propertize (+mode-line-string-cut-middle (buffer-name))
+      (propertize (+mode-line--string-cut-middle (buffer-name))
                   'face 'mode-line-buffer-id
                   'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"

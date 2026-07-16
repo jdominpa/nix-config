@@ -101,10 +101,10 @@
 
 ;; Scrolling
 (use-package emacs
-  :bind (("C-v" . +scroll-window)
-         ("M-v" . +scroll-window-down)
-         ("C-M-v" . +scroll-other-window)
-         ("C-M-S-v" . +scroll-other-window-down))
+  :bind (("C-v" . +scroll/window)
+         ("M-v" . +scroll/window-down)
+         ("C-M-v" . +scroll/other-window)
+         ("C-M-S-v" . +scroll/other-window-down))
   :config
   (setq-default
    ;; Performant and rapid scrolling
@@ -123,10 +123,10 @@
    hscroll-margin 2)
   (defvar +scrolling-lines (/ (window-height) 3)
     "Number of lines to scroll with scroll commands")
-  (defun +scroll-window () (interactive) (scroll-up +scrolling-lines))
-  (defun +scroll-window-down () (interactive) (scroll-down +scrolling-lines))
-  (defun +scroll-other-window () (interactive) (scroll-other-window +scrolling-lines))
-  (defun +scroll-other-window-down () (interactive) (scroll-other-window-down +scrolling-lines)))
+  (defun +scroll/window () (interactive) (scroll-up +scrolling-lines))
+  (defun +scroll/window-down () (interactive) (scroll-down +scrolling-lines))
+  (defun +scroll/other-window () (interactive) (scroll-other-window +scrolling-lines))
+  (defun +scroll/other-window-down () (interactive) (scroll-other-window-down +scrolling-lines)))
 
 ;; [repeat] Enable repeatable commands
 (use-package repeat

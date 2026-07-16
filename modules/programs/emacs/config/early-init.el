@@ -10,7 +10,7 @@
       gc-cons-percentage 0.6)
 
 (defun +restore-gc-threshold-h ()
-  "Restores sane GC settings after startup."
+  "Restore sane GC settings after startup."
   (setq gc-cons-threshold +gc-cons-threshold
         gc-cons-percentage +gc-cons-percentage))
 
@@ -48,7 +48,7 @@
 (setq-default inhibit-redisplay t
               inhibit-message t)
 (defun +restore-redisplay-and-message-h ()
-  "Restores the value of `inhibit-redisplay' and `inhibit-message' to nil."
+  "Restore the value of `inhibit-redisplay' and `inhibit-message' to nil."
   (setq-default inhibit-redisplay nil
                 inhibit-message nil)
   (unless (daemonp)
