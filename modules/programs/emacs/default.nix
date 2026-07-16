@@ -63,6 +63,7 @@ let
               transient
               treesit-grammars.with-all-grammars
               vertico
+              ws-butler
             ]
           ))
           # Emacs LSP performance booster

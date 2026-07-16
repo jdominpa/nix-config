@@ -18,7 +18,6 @@
   (setq-default
    ;; Select help window after opening it
    help-window-select t
-   kill-do-not-save-duplicates t
    ;; Backup settings
    create-lockfiles nil
    backup-directory-alist `(("." . ,(locate-user-emacs-file "backups/")))
@@ -147,10 +146,6 @@
             ((control) . text-scale)))
   (setq mouse-wheel-progressive-speed nil
         mouse-wheel-follow-mouse t))
-
-;; [autorevert] Update changed buffers automatically
-(use-package autorevert
-  :hook (after-init . global-auto-revert-mode))
 
 ;; [server] Emacs server
 (use-package server

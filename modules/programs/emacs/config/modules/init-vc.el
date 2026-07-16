@@ -4,9 +4,13 @@
 
 (use-package ediff
   :commands (ediff-buffers ediff-files)
-  :custom
-  (ediff-split-window-function 'split-window-horizontally)
-  (ediff-window-setup-function 'ediff-setup-windows-plain))
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+        ediff-split-window-function 'split-window-horizontally
+        ediff-merge-split-window-function 'split-window-horizontally
+        ediff-highlight-all-diffs t
+        ;; Turn off whitespace checking
+        ediff-diff-options "-w"))
 
 ;;; `diff-hl-mode'
 

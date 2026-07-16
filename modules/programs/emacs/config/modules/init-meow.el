@@ -5,7 +5,8 @@
 (use-package meow
   :ensure t
   :config
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty
+        meow-use-clipboard select-enable-clipboard)
   (meow-motion-define-key
    '("k" . meow-next)
    '("l" . meow-prev)

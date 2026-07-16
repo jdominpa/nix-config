@@ -21,7 +21,7 @@
   :config
   ;; only show bad whitespace
   (setopt whitespace-style
-          '(face trailing empty indentation space-before-tab space-after-tab)))
+          '(face trailing tabs spaces empty indentation space-after-tab space-before-tab)))
 
 ;; [display-fill-column-indicator] Show a line at 80 char
 (use-package display-fill-column-indicator

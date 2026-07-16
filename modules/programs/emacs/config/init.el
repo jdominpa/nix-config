@@ -42,6 +42,7 @@
                      'init-meow
                      'init-completion
                      'init-dired
+                     'init-editor
                      'init-email
                      'init-highlight
                      'init-latex

@@ -2,15 +2,6 @@
 
 ;;; General programming settings
 
-;; Configure `electric' behaviour
-(use-package electric
-  :custom
-  (electric-quote-context-sensitive t)
-  (electric-quote-replace-double t)
-  :config
-  (electric-pair-mode)
-  (electric-indent-mode))
-
 ;; Enable automatic completion in `prog-mode' buffers
 (use-package prog-mode
   :hook (prog-mode . (lambda ()
