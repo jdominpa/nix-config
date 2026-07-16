@@ -16,7 +16,6 @@ let
             epkgs: with epkgs; [
               ace-window
               auctex
-              auto-dark
               avy
               cape
               cdlatex

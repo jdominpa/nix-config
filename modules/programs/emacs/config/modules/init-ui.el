@@ -4,6 +4,14 @@
 (use-package emacs
   :config
   (setq
+   ;; Allow [resize] by pixels
+   frame-resize-pixelwise t
+   window-resize-pixelwise t
+   ;; Frame title
+   frame-title-format "Emacs"
+   ;; Suppress GUI features for consistency
+   use-dialog-box nil
+   use-file-dialog nil
    ;; Inhibits fontification while receiving input, which should help a little with scrolling performance
    redisplay-skip-fontification-on-input t
    ;; TODO: test if this affects memory by a lot
@@ -13,15 +21,7 @@
    highlight-nonselected-windows nil)
   (setopt cursor-in-non-selected-windows nil)
   ;; [cursor] Disable blinking
-  (blink-cursor-mode -1)
-  ;; Allow [resize] by pixels
-  (setq frame-resize-pixelwise t
-        window-resize-pixelwise t)
-  ;; Frame title
-  (setq frame-title-format "Emacs")
-  ;; Suppress GUI features for consistency
-  (setq use-dialog-box nil
-        use-file-dialog nil))
+  (blink-cursor-mode -1))
 
 ;; [modus-themes]
 (use-package modus-themes
@@ -32,14 +32,6 @@
         modus-themes-bold-constructs t
         modus-themes-italic-constructs t)
   (load-theme 'modus-vivendi t))
-
-;; [auto-dark] Switch light/dark theme according to system setting
-(use-package auto-dark
-  :ensure t
-  :hook (after-init . auto-dark-mode)
-  :config
-  (setq auto-dark-allow-osascript t)
-  (setopt auto-dark-themes '((modus-vivendi) (modus-operandi))))
 
 ;; [fontaine] Font configuration presets
 (use-package fontaine
@@ -95,38 +87,34 @@
            :right-divider-width 1)
         spacious-padding-subtle-frame-lines t))
 
-;;; Mode line
-
+;; [mode-line] My own modeline config
 (use-package mode-line
-  :custom
-  (mode-line-right-align-edge 'right-margin)
-  (mode-line-position '("%l,%c"))
-  (project-mode-line t)
-  (mode-line-collapse-minor-modes
-   '(not
-     defining-kbd-macro
-     envrc-mode
-     flymake-mode))
   :config
-  (setq-default mode-line-format
-                '("%e" mode-line-front-space
-                  (meow-mode (:eval (meow-indicator)))
-                  " "
-                  mode-line-mule-info
-                  mode-line-client
-                  mode-line-modified
-                  mode-line-remote
-                  mode-line-window-dedicated
-                  mode-line-frame-identification
-                  (project-mode-line +mode-line-project-format)
-                  +mode-line-buffer-identification
-                  "  "
-                  mode-line-position
-                  (vc-mode (" " vc-mode))
-                  "  "
-                  mode-line-modes
-                  mode-line-misc-info
-                  mode-line-end-spaces)))
+  (setq-default
+   mode-line-right-align-edge 'right-margin
+   mode-line-position '("%l,%c")
+   project-mode-line t
+   mode-line-collapse-minor-modes '(not defining-kbd-macro
+                                        envrc-mode
+                                        flymake-mode)
+   mode-line-format '("%e" mode-line-front-space
+                      (meow-mode (:eval (meow-indicator)))
+                      " "
+                      mode-line-mule-info
+                      mode-line-client
+                      mode-line-modified
+                      mode-line-remote
+                      mode-line-window-dedicated
+                      mode-line-frame-identification
+                      (project-mode-line +mode-line-project-format)
+                      +mode-line-buffer-identification
+                      "  "
+                      mode-line-position
+                      (vc-mode (" " vc-mode))
+                      "  "
+                      mode-line-modes
+                      mode-line-misc-info
+                      mode-line-end-spaces)))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
