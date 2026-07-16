@@ -3,8 +3,7 @@
 ;;; Dired file manager
 
 (use-package dired
-  :hook ((dired-mode . hl-line-mode)
-		 (dired-mode . turn-on-gnus-dired-mode))
+  :hook (dired-mode . turn-on-gnus-dired-mode)
   :custom
   (dired-recursive-copies 'always)
   (dired-recursive-deletes 'always)
@@ -38,7 +37,6 @@
 ;;; `ibuffer' (dired-like buffer list manager)
 
 (use-package ibuffer
-  :hook (ibuffer . hl-line-mode)
   :bind ("C-x C-b" . ibuffer)
   :custom
   (ibuffer-expert t)

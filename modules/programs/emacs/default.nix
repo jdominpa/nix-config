@@ -34,6 +34,7 @@ let
               exec-path-from-shell
               fontaine
               ghostel
+              goggles
               hl-todo
               jinx
               just-ts-mode
@@ -55,6 +56,7 @@ let
               pdf-tools
               popper
               rainbow-delimiters
+              rainbow-mode
               rustic
               spacious-padding
               tempel

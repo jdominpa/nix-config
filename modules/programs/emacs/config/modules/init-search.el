@@ -24,9 +24,6 @@
    lazy-count-suffix-format nil
    isearch-yank-on-move 'shift))
 
-(use-package replace
-  :hook (occur-mode . hl-line-mode))
-
 (use-package grep
   :config
   (setq grep-use-headings t))

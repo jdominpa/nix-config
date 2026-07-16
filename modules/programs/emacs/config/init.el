@@ -43,6 +43,7 @@
                      'init-completion
                      'init-dired
                      'init-email
+                     'init-highlight
                      'init-latex
                      (when (eq system-type 'darwin) 'init-mac)
                      'init-org

@@ -2,14 +2,6 @@
 
 ;;; General programming settings
 
-;; [whitespace] Show visualize TAB, (HARD) SPC, newline
-(use-package whitespace
-  :hook ((prog-mode conf-mode) . whitespace-mode)
-  :config
-  ;; only show bad whitespace
-  (setopt whitespace-style
-          '(face trailing empty indentation space-before-tab space-after-tab)))
-
 ;; Configure `electric' behaviour
 (use-package electric
   :custom
@@ -18,14 +10,6 @@
   :config
   (electric-pair-mode)
   (electric-indent-mode))
-
-;; Parentheses
-(use-package paren
-  :custom
-  (show-paren-style 'parenthesis)
-  (show-paren-context-when-offscreen 'child-frame)
-  :config
-  (show-paren-mode))
 
 ;; Enable automatic completion in `prog-mode' buffers
 (use-package prog-mode
@@ -119,16 +103,6 @@
   (flymake-proc-compilation-prevents-syntax-check t)
   (flymake-mode-line-format
    '("" flymake-mode-line-exception flymake-mode-line-counters)))
-
-;; Highlight comment keywords
-(use-package hl-todo
-  :ensure t
-  :hook (prog-mode . hl-todo-mode))
-
-;; Colored delimiters
-(use-package rainbow-delimiters
-  :ensure t
-  :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; Expand lisp macros
 (use-package macrostep
