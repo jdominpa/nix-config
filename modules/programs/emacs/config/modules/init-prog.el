@@ -29,10 +29,9 @@
 
 ;; Enable automatic completion in `prog-mode' buffers
 (use-package prog-mode
-  :hook ((prog-mode . goto-address-prog-mode)
-         (prog-mode . (lambda ()
+  :hook (prog-mode . (lambda ()
                         (with-eval-after-load 'corfu
-                          (setq-local corfu-auto t))))))
+                          (setq-local corfu-auto t)))))
 
 ;; Eldoc
 (use-package eldoc
