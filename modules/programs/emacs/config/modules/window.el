@@ -70,7 +70,7 @@ nil, return current buffer's major mode."
             display-buffer-in-side-window)
            (body-function . select-window)
            (window-height . (lambda (win)
-						      (fit-window-to-buffer win (floor (frame-height) 4) 5)))
+						      (fit-window-to-buffer win (floor (frame-height) 4) 10)))
            (side . top)
            (slot . 0))
           ;; Side windows
@@ -112,7 +112,7 @@ nil, return current buffer's major mode."
           ("[Oo]utput\\*"
            (display-buffer-in-side-window)
            (window-height . (lambda (win)
-                              (fit-window-to-buffer win (floor (frame-height) 4))))
+                              (fit-window-to-buffer win (floor (frame-height) 4) 10)))
            (side . bottom)
            (slot . -2))
           ("\\*\\(?:Org \\(?:Select\\|Note\\)\\|Agenda Commands\\)\\*"
@@ -145,8 +145,7 @@ nil, return current buffer's major mode."
             display-buffer-in-direction
             display-buffer-in-side-window)
            (body-function . select-window)
-           (window-height . (lambda (win)
-                              (fit-window-to-buffer win (floor (frame-height) 4))))
+           (window-height . 0.33)
            (direction . below)
            (side . bottom)
            (slot . 1))
