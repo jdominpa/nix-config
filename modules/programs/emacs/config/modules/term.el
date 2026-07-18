@@ -14,19 +14,35 @@
         comint-completion-autolist t
         comint-input-ignoredups t))
 
-;;; Eshell
-
-(use-package eshell
+;; [eshell] Emacs command shell
+(use-package esh-mode
   :defer t
   :config
-  (setq eshell-cd-on-directory t
-        eshell-hist-ignoredups t
-        eshell-save-history-on-exit t
-        eshell-scroll-to-bottom-on-input t))
+  (setq
+   ;; Banner message
+   eshell-banner-message nil
+   ;; Scrolling
+   eshell-scroll-to-bottom-on-input 'all
+   eshell-scroll-to-bottom-on-output 'all
+   ;; Exiting eshell
+   eshell-kill-processes-on-exit t
+   eshell-hist-ignoredups t
+   eshell-input-filter #'eshell-input-filter-initial-space
+   ;; [em-glob]
+   eshell-glob-case-insensitive t
+   eshell-error-if-no-glob t
+   ;; Prefer eshell functions
+   eshell-prefer-lisp-functions t
+   ;; Visual commands require a proper terminal. Eshell can't handle that
+   eshell-visual-subcommands '(("git" "help" "lg" "log" "diff" "show"))
+   ;; Behave like common shells
+   eshell-cmpl-ignore-case t
+   eshell-cmpl-cycle-completions nil
+   eshell-cd-on-directory t))
 
-;;; Ghostel (terminal emulator)
-
+;; [ghostel] Terminal emulator
 (use-package ghostel
+  :ensure t
   :bind (:map ghostel-semi-char-mode-map
          ("C-s"  . consult-line)
          ("C-k"  . +term/ghostel-send-C-k-and-kill)
