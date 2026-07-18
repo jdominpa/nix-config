@@ -66,19 +66,6 @@
   :config
   (setq wdired-allow-to-change-permissions t))
 
-;; [dired-hacks] Several additional extensions for dired
-(use-package dired-hacks
-  :ensure t
-  :after dired
-  :init
-  (use-package dired-subtree
-    :bind (:map dired-mode-map
-                ("TAB" . dired-subtree-toggle))
-    :config
-    (setq dired-subtree-line-prefix "  |  "))
-  (use-package dired-collapse
-    :hook (dired-mode . dired-collapse-mode)))
-
 ;; [ibuffer] dired-like buffer list manager
 (use-package ibuffer
   :bind ("C-x C-b" . ibuffer)
