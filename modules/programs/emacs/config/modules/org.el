@@ -20,37 +20,65 @@
          (org-mode . turn-on-org-cdlatex))
   :bind (("C-c o l" . org-store-link)
          :map org-mode-map
-         ("$" . math-delimiters-insert)
          ("M-g o" . consult-org-heading)
          :map org-cdlatex-mode-map
          ("`" . nil)
          (";" . cdlatex-math-symbol))
-  :custom
-  ;; General settings
-  (org-directory (expand-file-name "~/Documents/org"))
-  (org-read-date-prefer-future 'time)
-  (org-log-done 'time)
-  (org-log-into-drawer t)
-  (org-log-redeadline 'time)
-  (org-log-reschedule 'time)
-  (org-todo-keywords '((sequence "TODO(t)" "HOLD(h@/!)" "|" "CANCELED(c@)" "DONE(d!)")))
-  (org-enforce-todo-dependencies t)
-  (org-enforce-todo-checkbox-dependencies t)
-  (org-archive-location (expand-file-name "archive/%s::" org-directory))
-  ;; Appearance
-  (org-highlight-latex-and-related '(latex entities))
-  (org-hide-emphasis-markers t)
-  (org-hide-leading-stars t)
-  (org-pretty-entities t)
-  (org-auto-align-tags nil)
-  (org-tags-column 0)
-  ;; Keybinding behavior
-  (org-special-ctrl-a/e t)
-  (org-M-RET-may-split-line '((default . nil)))
-  (org-insert-heading-respect-content t)
   :config
+  (setopt org-enforce-todo-dependencies t
+          org-enforce-todo-checkbox-dependencies t)
+  ;; General settings
+  (setq org-directory (expand-file-name "~/Documents/org")
+        org-read-date-prefer-future 'time
+        org-log-done 'time
+        org-log-into-drawer t
+        org-log-redeadline 'time
+        org-log-reschedule 'time
+        org-todo-keywords '((sequence "TODO(t)" "HOLD(h@/!)" "|" "CANCELED(c@)" "DONE(d!)"))
+        org-archive-location (expand-file-name "archive/%s::" org-directory)
+        ;; Subscript behavior
+        org-use-sub-superscripts '{}
+        org-export-with-sub-superscripts '{}
+        ;; Appearance
+        org-highlight-latex-and-related '(latex)
+        org-hide-emphasis-markers t
+        org-hide-leading-stars t
+        org-pretty-entities t
+        org-auto-align-tags nil
+        org-tags-column 0
+        ;; Keybinding behavior
+        org-special-ctrl-a/e t
+        org-special-ctrl-k t
+        org-M-RET-may-split-line '((default . nil))
+        org-insert-heading-respect-content t)
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+
+(use-package org-entities
+  :config
+  (setq org-entities-user
+        '(("vdash" "\\vdash" t "⊢" "⊢" "⊢" "⊢")
+          ("vDash" "\\vDash" t "⊨" "⊨" "⊨" "⊨")
+          ("Vdash" "\\Vdash" t "⊩" "⊩" "⊩" "⊩")
+          ("Vvdash" "\\Vvdash" t "⊪" "⊪" "⊪" "⊪")
+          ("nvdash" "\\nvdash" t "⊬" "⊬" "⊬" "⊬")
+          ("nvDash" "\\nvDash" t "⊭" "⊭" "⊭" "⊭")
+          ("nVdash" "\\nVdash" t "⊮" "⊮" "⊮" "⊮")
+          ("nVDash" "\\nVDash" t "⊯" "⊯" "⊯" "⊯")
+          ("subseteq" "\\subseteq" t "⊆" "⊆" "⊆" "⊆")
+          ("supseteq" "\\supseteq" t "⊇" "⊇" "⊇" "⊇")
+          ("subsetneq" "\\subsetneq" t "⊊" "⊊" "⊊" "⊊")
+          ("supsetneq" "\\supsetneq" t "⊋" "⊋" "⊋" "⊋")
+          ("nsubseteq" "\\nsubseteq" t "⊈" "⊈" "⊈" "⊈")
+          ("nsupseteq" "\\nsupseteq" t "⊉" "⊉" "⊉" "⊉")
+          ("nsubseteqq" "\\nsubseteqq" t "⊈" "⊈" "⊈" "⊈")
+          ("nsupseteqq" "\\nsupseteqq" t "⊉" "⊉" "⊉" "⊉")
+          ("subsetneqq" "\\subsetneqq" t "⊊" "⊊" "⊊" "⊊")
+          ("supsetneqq" "\\supsetneqq" t "⊋" "⊋" "⊋" "⊋")
+          ("nsubset" "\\nsubset" t "⊄" "⊄" "⊄" "⊄")
+          ("nsupset" "\\nsupset" t "⊅" "⊅" "⊅" "⊅")
+          ("nsubseteq" "\\nsubseteq" t "⊈" "⊈" "⊈" "⊈")
+          ("nsupseteq" "\\nsupseteq" t "⊉" "⊉" "⊉" "⊉"))))
 
 (use-package org-capture
   :bind (("C-c o c" . org-capture)
@@ -151,6 +179,7 @@
     :ensure t
     :hook (org-mode . org-pdftools-setup-link)))
 
+;; [org-appear] Make invisible parts of org elements appear visible
 (use-package org-appear
   :ensure t
   :after org
@@ -164,20 +193,19 @@
                                 #'org-appear-manual-stop
                                 nil
                                 t))))
-  :custom
-  (org-appear-trigger 'manual)
-  (org-appear-autoemphasis t)
-  (org-appear-autolinks t)
-  (org-appear-autosubmarkers t)
-  (org-appear-autoentities t)
-  (org-appear-autokeywords nil)
-  (org-appear-inside-latex t))
+  :config
+  (setq org-appear-trigger 'manual
+        org-appear-autoemphasis t
+        org-appear-autolinks t
+        org-appear-autosubmarkers t
+        org-appear-autoentities t
+        org-appear-autokeywords nil
+        org-appear-inside-latex t))
 
 (use-package org-modern
   :ensure t
   :after org
   :hook ((org-mode . org-modern-mode)
          (org-agenda-finalize . org-modern-agenda))
-  :custom
-  (org-modern-hide-stars nil) ; org-indent-mode doesn't behave well with other values
-  (org-modern-block-indent t))
+  :config
+  (setq org-modern-hide-stars nil)) ; org-indent-mode doesn't behave well with other values
