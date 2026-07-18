@@ -38,7 +38,6 @@
                   'editor
                   'email
                   'highlight
-                  'latex
                   (when (eq system-type 'darwin) 'macos)
                   'org
                   'prog
@@ -46,7 +45,8 @@
                   'term
                   'ui
                   'vc
-                  'window)
+                  'window
+                  'writing)
   "List of modules to be loaded by init.el.")
 
 (let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
