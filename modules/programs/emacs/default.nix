@@ -24,6 +24,7 @@ let
               consult-dir
               consult-eglot
               corfu
+              dape
               denote
               diff-hl
               eglot-tempel
@@ -36,14 +37,13 @@ let
               ghostel
               goggles
               hl-todo
+              indent-bars
               jinx
               just-ts-mode
               kind-icon
-              macrostep
               magit
               magit-todos
               marginalia
-              markdown-mode
               meow
               modus-themes
               mu4e
@@ -66,8 +66,6 @@ let
               ws-butler
             ]
           ))
-          # Emacs LSP performance booster
-          emacs-lsp-booster
           # Spellchecking backend for jinx
           hunspell
           hunspellDicts.en-us-large
