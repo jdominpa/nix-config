@@ -1,4 +1,4 @@
-;;; init-prog.el --- Configurations for `prog-mode' and programming languages -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; General programming settings
 
@@ -160,15 +160,10 @@
 
 (use-package rustic
   :ensure t
-  :init
-  (remove-hook 'rustic-mode-hook 'flycheck-mode)
   :after rust-mode
   :custom
   (rustic-lsp-client 'eglot)
+  :init
+  (remove-hook 'rustic-mode-hook 'flycheck-mode)
   :config
   (setq rustic-format-on-save t))
-
-(provide 'init-prog)
-;;; init-prog.el ends here
-
-

@@ -1,4 +1,4 @@
-;;; init-term.el --- Configurations for Emacs' terminal and shell packages -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; [shell]
 (use-package shell
@@ -29,7 +29,7 @@
 (use-package ghostel
   :bind (:map ghostel-semi-char-mode-map
          ("C-s"  . consult-line)
-         ("C-k"  . jdp-ghostel-send-C-k-and-kill)
+         ("C-k"  . +term/ghostel-send-C-k-and-kill)
          ;; Use M-n/p to go up/down in the shell history
          ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
          ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
@@ -40,7 +40,7 @@
   (setq password-cache t
         password-cache-expiry 300
         ghostel-ignore-cursor-change t)
-  (defun jdp-ghostel-send-C-k-and-kill ()
+  (defun +term/ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.  Like normal Emacs `C-k', kill to end of line
 and put content in kill-ring."
     (interactive)
@@ -49,6 +49,3 @@ and put content in kill-ring."
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
-
-(provide 'init-term)
-;;; init-term.el ends here

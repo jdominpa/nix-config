@@ -1,4 +1,4 @@
-;;; init-latex.el --- Configurations for `LaTeX-mode' -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; Spellchecking
 
@@ -130,6 +130,3 @@
      ("remark"      ?R "rem:"  "~\\ref{%s}" t ("remark")      -3)
      ("definition"  ?D "defn:" "~\\ref{%s}" t ("definition")  -3)
      AMSTeX)))
-
-(provide 'init-latex)
-;;; init-latex.el ends here

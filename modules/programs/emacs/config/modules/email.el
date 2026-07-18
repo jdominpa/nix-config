@@ -1,4 +1,4 @@
-;;; init-email.el --- Configurations for email -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 (use-package message
   :hook (message-setup . message-sort-headers)
@@ -48,6 +48,3 @@ english locale is used to format the time/date."
 	 (:maildir "/mail/Sent" :key ?s)
 	 (:maildir "/mail/Archive" :key ?a)
 	 (:maildir "/mail/Trash" :key ?t))))
-
-(provide 'init-email)
-;;; init-email.el ends here

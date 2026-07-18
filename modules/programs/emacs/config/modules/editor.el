@@ -1,4 +1,4 @@
-;;; init-editor.el --- General settings for editing text -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 (use-package emacs
   :hook (after-save . executable-make-buffer-file-executable-if-script-p)
@@ -12,7 +12,7 @@
 ;; [autorevert] Update changed buffers automatically
 (use-package autorevert
   ;; TODO: change this to an advice like in doom
-  :hook ((find-file dired-initial-position-hook) . +auto-revert-mode)
+  :hook ((find-file dired-initial-position-hook) . +editor-auto-revert-mode)
   :config
   (setopt auto-revert-use-notify nil)
   (setq auto-revert-verbose t
@@ -20,15 +20,29 @@
         ;; Only prompt for confirmation when buffer is unsaved
         revert-without-query '("."))
 
-  (defun +auto-revert-visible-buffers ()
-    "Return visible buffers across all frames."
+  (define-minor-mode +editor-auto-revert-mode
+    "A lazy and more performant alternative to `global-auto-revert-mode'."
+    :global t
+    (when global-auto-revert-mode
+      (setq +editor-auto-revert-mode nil))
+    (let ((fn (if +editor-auto-revert-mode #'add-hook #'remove-hook)))
+      (funcall fn 'window-buffer-change-functions #'+editor-auto-revert-buffer-h)
+      (funcall fn 'window-selection-change-functions #'+editor-auto-revert-buffer-h)
+      (if +editor-auto-revert-mode
+          (add-function :after after-focus-change-function #'+editor-auto-revert-buffers-h)
+        (remove-function after-focus-change-function #'+editor-auto-revert-buffers-h))
+      (funcall fn 'after-save-hook #'+editor-auto-revert-buffers-h)
+      (funcall fn 'server-switch-hook #'+editor-auto-revert-buffer-h)))
+
+  (defun +editor--visible-buffers ()
+    "Return a list of visible buffers across all visible frames (not buried)."
     (let (buffers)
       (walk-windows (lambda (window)
                       (push (window-buffer window) buffers))
-                    'no-minibuf t)
+                    'no-minibuf 'visible)
       (delete-dups buffers)))
 
-  (defun +auto-revert-buffer-h (&rest _)
+  (defun +editor-auto-revert-buffer-h (&rest _)
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode
                 (active-minibuffer-window)
@@ -38,23 +52,11 @@
       (dlet ((auto-revert-mode t))
         (auto-revert-handler))))
 
-  (defun +auto-revert-buffers-h (&rest _)
+  (defun +editor-auto-revert-buffers-h (&rest _)
     "Auto revert stale buffers in visible windows, if necessary."
-    (dolist (buf (+auto-revert-visible-buffers))
+    (dolist (buf (+editor--visible-buffers))
       (with-current-buffer buf
-        (+auto-revert-buffer-h))))
-
-  (define-minor-mode +auto-revert-mode
-    "A lazy and more performant alternative to `global-auto-revert-mode'."
-    :global t
-    (when global-auto-revert-mode
-      (setq +auto-revert-mode nil))
-    (let ((fn (if +auto-revert-mode #'add-hook #'remove-hook)))
-      (funcall fn 'window-buffer-change-functions #'+auto-revert-buffer-h)
-      (funcall fn 'window-selection-change-functions #'+auto-revert-buffer-h)
-      (funcall fn 'after-focus-change-function #'+auto-revert-buffers-h)
-      (funcall fn 'after-save-hook #'+auto-revert-buffers-h)
-      (funcall fn 'server-switch-hook #'+auto-revert-buffer-h))))
+        (+editor-auto-revert-buffer-h)))))
 
 ;; [ws-butler] Remove trailing whitespace on edited lines
 (use-package ws-butler
@@ -82,6 +84,3 @@
 ;; [subword] Handle camelCase
 (use-package subword
   :hook ((prog-mode minibuffer-setup) . subword-mode))
-
-(provide 'init-editor)
-;;; init-editor.el ends here

@@ -1,4 +1,4 @@
-;;; init-search.el --- Configurations for searching buffer/file contents -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; [isearch]
 (use-package isearch
@@ -42,7 +42,7 @@
          ("C-," . avy-isearch))
   :config
   (with-eval-after-load 'embark
-    (defun avy-embark-act (pt)
+    (defun +search-avy-embark-act (pt)
       "Use Embark to act on the item at PT."
       (unwind-protect
           (save-excursion
@@ -51,7 +51,4 @@
         (select-window
          (cdr (ring-ref avy-ring 0)))
         t))
-    (add-to-list 'avy-dispatch-alist '(?\. . avy-embark-act))))
-
-(provide 'init-search)
-;;; init-search.el ends here
+    (add-to-list 'avy-dispatch-alist '(?\. . +search-avy-embark-act))))

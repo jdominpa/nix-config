@@ -1,4 +1,4 @@
-;;; early-init.el --- Early init file -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; Defer GC during startup, then restore sane runtime defaults later
 (defvar +gc-cons-threshold (* 2 1024 1024)
@@ -76,5 +76,3 @@
 
 ;; Case-insensitive pass over `auto-mode-alist' is time wasted
 (setq auto-mode-case-fold nil)
-
-;;; early-init.el ends here

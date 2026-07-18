@@ -1,4 +1,4 @@
-;;; init-basic.el --- General configurations for Emacs -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 (use-package emacs
   :bind (("C-z" . nil)
@@ -100,10 +100,10 @@
 
 ;; Scrolling
 (use-package emacs
-  :bind (("C-v" . +scroll/window)
-         ("M-v" . +scroll/window-down)
-         ("C-M-v" . +scroll/other-window)
-         ("C-M-S-v" . +scroll/other-window-down))
+  :bind (("C-v" . +basic/scroll-window)
+         ("M-v" . +basic/scroll-window-down)
+         ("C-M-v" . +basic/scroll-other-window)
+         ("C-M-S-v" . +basic/scroll-other-window-down))
   :config
   (setq-default
    ;; Performant and rapid scrolling
@@ -120,12 +120,12 @@
    auto-hscroll-mode t
    hscroll-step 0
    hscroll-margin 2)
-  (defvar +scrolling-lines (/ (window-height) 3)
+  (defvar +basic-scroll-lines 15
     "Number of lines to scroll with scroll commands")
-  (defun +scroll/window () (interactive) (scroll-up +scrolling-lines))
-  (defun +scroll/window-down () (interactive) (scroll-down +scrolling-lines))
-  (defun +scroll/other-window () (interactive) (scroll-other-window +scrolling-lines))
-  (defun +scroll/other-window-down () (interactive) (scroll-other-window-down +scrolling-lines)))
+  (defun +basic/scroll-window () (interactive) (scroll-up +basic-scroll-lines))
+  (defun +basic/scroll-window-down () (interactive) (scroll-down +basic-scroll-lines))
+  (defun +basic/scroll-other-window () (interactive) (scroll-other-window +basic-scroll-lines))
+  (defun +basic/scroll-other-window-down () (interactive) (scroll-other-window-down +basic-scroll-lines)))
 
 ;; [repeat] Enable repeatable commands
 (use-package repeat
@@ -230,6 +230,3 @@
                               (remove-hook 'flymake-diagnostic-functions
                                            (intern-soft linter) :local))
                             (call-interactively #'flymake-mode)))))]]))
-
-(provide 'init-basic)
-;;; init-basic.el ends here

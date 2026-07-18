@@ -1,4 +1,4 @@
-;;; init-completion.el --- Configurations for minibuffer and in-buffer completions -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; Minibuffer
 
@@ -215,20 +215,13 @@
 
 (use-package cape
   :ensure t
-  :hook ((TeX-mode LaTeX-mode org-mode markdown-mode) . +completion-add-tex-capfs-h)
+  :hook ((TeX-mode LaTeX-mode org-mode markdown-mode) . +completion-add-tex-capf-h)
   :init
-  (defun +completion-add-capfs (&rest capfs)
-    "Append CAPFS to the buffer-local
-`completion-at-point-functions'."
-    (dolist (capf capfs)
-      (unless (memq capf completion-at-point-functions)
-        (setq-local completion-at-point-functions
-                    (append completion-at-point-functions (list capf))))))
   (setq-default completion-at-point-functions
                 (append completion-at-point-functions (list #'cape-file #'cape-dabbrev)))
-  (defun +completion-add-tex-capfs-h ()
-    "Add `cape-tex' capf to `completion-at-point-functions'."
-    (+completion-add-capfs #'cape-tex)))
+  (defun +completion-add-tex-capf-h ()
+    "Add `cape-tex' Capf to `completion-at-point-functions'."
+    (add-hook 'completion-at-point-functions #'cape-tex nil t)))
 
 (use-package kind-icon
   :ensure t
@@ -240,14 +233,6 @@
 
 (use-package tempel
   :ensure t
-  :init
-  (defvar +tempel-trigger-capf nil)
-  (defun +tempel-setup-capf-h ()
-    (unless +tempel-trigger-capf
-      (setq +tempel-trigger-capf (cape-capf-trigger #'tempel-complete ?/)))
-    (unless (memq +tempel-trigger-capf completion-at-point-functions)
-      (setq-local completion-at-point-functions
-                  (cons +tempel-trigger-capf completion-at-point-functions))))
   :bind (:map tempel-map
               ("M-{" . nil)
               ("M-}" . nil)
@@ -255,12 +240,14 @@
               ([remap forward-paragraph] . nil)
               ([remap backward-sentence] . tempel-previous)
               ([remap forward-sentence] . tempel-next))
-  :hook ((prog-mode conf-mode text-mode) . +tempel-setup-capf-h)
+  :hook ((prog-mode conf-mode text-mode) . +completion-add-tempel-capf-h)
+  :init
+  (defun +completion-add-tempel-capf-h ()
+    "Add trigger Capf calls `tempel-complete' with trigger key / to
+`completion-at-point-functions'."
+    (add-hook 'completion-at-point-functions (cape-capf-trigger #'tempel-complete ?/) nil t))
   :config
   (setq tempel-path (locate-user-emacs-file "templates/*.eld")))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))
-
-(provide 'init-completion)
-;;; init-completion.el ends here

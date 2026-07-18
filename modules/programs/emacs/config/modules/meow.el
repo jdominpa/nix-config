@@ -1,4 +1,4 @@
-;;; init-meow.el --- Configurations for modal editing with `meow' -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; Meow setup
 
@@ -159,6 +159,3 @@
   (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
 
   (meow-global-mode))
-
-(provide 'init-meow)
-;;; init-meow.el ends here

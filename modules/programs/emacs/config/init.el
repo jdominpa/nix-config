@@ -1,4 +1,4 @@
-;;; init.el --- Init file -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 (defun +echo-startup-time-info-h ()
   "Echoes in the minibuffer information about startup time."
@@ -19,13 +19,6 @@
         debug-on-error init-file-debug
         debug-on-quit init-file-debug))
 
-;; `modules' is for emacs configuration modules
-;; `lisp' is for custom elisp files and third party packages
-(mapc
- (lambda (string)
-   (add-to-list 'load-path (locate-user-emacs-file string)))
- '("lisp" "modules"))
-
 (use-package package
   :config
   (setq
@@ -37,28 +30,28 @@
                                 ("melpa" . 2)
                                 ("nongnu" . 1))))
 
-(defvar +init-files (list
-                     'init-basic
-                     'init-meow
-                     'init-completion
-                     'init-dired
-                     'init-editor
-                     'init-email
-                     'init-highlight
-                     'init-latex
-                     (when (eq system-type 'darwin) 'init-mac)
-                     'init-org
-                     'init-prog
-                     'init-search
-                     'init-term
-                     'init-ui
-                     'init-vc
-                     'init-window)
-  "List of init files to be loaded by init.el.")
+(defvar +modules (list
+                  'basic
+                  'meow
+                  'completion
+                  'dired
+                  'editor
+                  'email
+                  'highlight
+                  'latex
+                  (when (eq system-type 'darwin) 'macos)
+                  'org
+                  'prog
+                  'search
+                  'term
+                  'ui
+                  'vc
+                  'window)
+  "List of modules to be loaded by init.el.")
 
-(dolist (file +init-files)
-  (when file
-    (require file)))
-
-(provide 'init)
-;;; init.el ends here
+(let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
+  (dolist (module +modules)
+    (when module
+      (load-file (concat modules-directory
+                         (symbol-name module)
+                         ".el")))))

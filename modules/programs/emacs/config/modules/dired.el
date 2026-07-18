@@ -1,4 +1,4 @@
-;;; init-dired.el --- Configurations for `dired' and `ibuffer' -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; Dired file manager
 
@@ -46,6 +46,3 @@
   (ibuffer-movement-cycle nil)
   (ibuffer-default-sorting-mode 'filename/process)
   (ibuffer-old-time 48))
-
-(provide 'init-dired)
-;;; init-dired.el ends here

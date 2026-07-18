@@ -1,4 +1,4 @@
-;;; init-highlight.el --- Configurations related with highlighting text, lines, etc. -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; [hl-line] Highlight current line
 (use-package hl-line
@@ -62,34 +62,31 @@
   :init
   (setq pulse-delay 0.1
         pulse-iterations 2)
-  (defun +pulse-momentary (&rest _)
+  ;; FIXME: don't pulse when switching to/from the minibuffer
+  (defun +highlight-pulse-momentary-line-a (&rest _)
+    "Pulse the current line."
+    (pulse-momentary-highlight-one-line (point)))
+  (defun +highlight--pulse-momentary (&rest _)
     "Pulse the region or the current line."
     (if (fboundp 'xref-pulse-momentarily)
         (xref-pulse-momentarily)
-      (pulse-momentary-highlight-one-line (point))))
-  ;; FIXME: don't pulse when switching to/from the minibuffer
-  (defun +pulse-momentary-line-a (&rest _)
-    "Pulse the current line."
-    (pulse-momentary-highlight-one-line (point)))
-  (defun +recenter-and-pulse-a (&rest _)
+      (+highlight-pulse-momentary-line-a)))
+  (defun +highlight-recenter-and-pulse-a (&rest _)
     "Recenter and pulse the region or the current line."
     (recenter)
-    (+pulse-momentary))
-  (defun +recenter-and-pulse-line-a (&rest _)
+    (+highlight--pulse-momentary))
+  (defun +highlight-recenter-and-pulse-line-a (&rest _)
     "Recenter and pulse the current line."
     (recenter)
-    (pulse-momentary-highlight-one-line (point)))
+    (+highlight-pulse-momentary-line-a))
   (dolist (cmd '(recenter-top-bottom
                  other-window switch-to-buffer aw-select
                  tab-bar-select-tab
                  delete-window delete-other-windows
                  delete-frame delete-other-frames))
-    (advice-add cmd :after #'+pulse-momentary-line-a))
+    (advice-add cmd :after #'+highlight-pulse-momentary-line-a))
   (dolist (cmd '(pop-to-mark-command
                  pop-global-mark))
-    (advice-add cmd :after #'+recenter-and-pulse-a))
+    (advice-add cmd :after #'+highlight-recenter-and-pulse-a))
   (dolist (cmd '(compile-goto-error))
-    (advice-add cmd :after #'+recenter-and-pulse-line-a)))
-
-(provide 'init-highlight)
-;;; init-highlight.el ends here
+    (advice-add cmd :after #'+highlight-recenter-and-pulse-line-a)))

@@ -1,4 +1,4 @@
-;;; init-vc.el --- Configurations for version control frameworks -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; `ediff'
 
@@ -35,6 +35,3 @@
   :after magit
   :config
   (magit-todos-mode))
-
-(provide 'init-vc)
-;;; init-vc.el ends here

@@ -1,4 +1,4 @@
-;;; init-org.el --- Configurations for `org-mode' -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;;; Calendar
 
@@ -181,6 +181,3 @@
   :custom
   (org-modern-hide-stars nil) ; org-indent-mode doesn't behave well with other values
   (org-modern-block-indent t))
-
-(provide 'init-org)
-;;; init-org.el ends here
