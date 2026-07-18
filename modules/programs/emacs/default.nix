@@ -17,6 +17,7 @@ let
               ace-window
               auctex
               avy
+              browse-at-remote
               cape
               cdlatex
               consult

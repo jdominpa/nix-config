@@ -1,7 +1,13 @@
 ;;; -*- lexical-binding: t -*-
 
-;;; `ediff'
+;; [vc-mode] Version control interface
+(use-package vc
+  :config
+  (setq vc-allow-async-diff t
+        vc-allow-rewriting-published-history t
+        vc-dir-auto-hide-up-to-date 'revert))
 
+;; [ediff]
 (use-package ediff
   :commands (ediff-buffers ediff-files)
   :config
@@ -12,26 +18,49 @@
         ;; Turn off whitespace checking
         ediff-diff-options "-w"))
 
-;;; `diff-hl-mode'
-
+;; [diff-hl] Highlight uncommitted changes using vc
 (use-package diff-hl
   :ensure t
-  :custom
-  (diff-hl-draw-borders nil)
+  :hook ((after-init . global-diff-hl-mode)
+         (vc-dir-mode . diff-hl-dir-mode)
+         (dired-mode . diff-hl-dired-mode))
+  ;; :bind (:map diff-hl-mode-map
+  ;;             ("C-c v v" . diff-hl-show-hunk)
+  ;;             ("C-c v r" . diff-hl-revert-hunk)
+  ;;             ("C-c v [" . diff-hl-previous-hunk)
+  ;;             ("C-c v ]" . diff-hl-next-hunk)
+  ;;             ("C-c v s" . diff-hl-stage-current-hunk)
+  ;;             ("C-c v u" . diff-hl-undo-revert-hunk))
   :config
-  (global-diff-hl-mode))
+  (setq
+   ;; Reduce load on remote
+   diff-hl-disable-on-remote t
+   ;; A slightly faster algorithm for diffing
+   vc-git-diff-switches '("--histogram")
+   ;; Use margins in terminal frames where fringes don't exist
+   diff-hl-fallback-to-margin t)
+  (with-eval-after-load 'magit
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 
-;;; `magit' (interactive git front-end)
-
+;; [magit] Interactive git front-end
 (use-package magit
   :ensure t
   :hook (git-commit-mode . goto-address-mode)
   :bind ("C-x g" . magit-status)
-  :custom
-  (magit-diff-refine-hunk t))
+  :config
+  (setq
+   magit-diff-refine-hunk t
+   ;; Don't autosave repo buffers, it's too magical
+   magit-save-repository-buffers nil))
 
+;; [magit-todos] Show TODOs in magit
 (use-package magit-todos
   :ensure t
   :after magit
-  :config
-  (magit-todos-mode))
+  :hook (magit-mode . magit-todos-mode))
+
+;; [browser-at-remote] Open github/gitlab/bitbucket page
+(use-package browse-at-remote
+  :ensure t
+  :bind (:map vc-prefix-map
+              ("B" . browse-at-remote)))
