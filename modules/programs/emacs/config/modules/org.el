@@ -129,7 +129,7 @@
 (use-package org-refile
   :after org
   :custom
-  (org-refile-targets '(("agenda.org" . (:level . 2))))
+  (org-refile-targets `((,(expand-file-name "agenda.org" org-directory) . (:level . 2))))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-refile-allow-creating-parent-nodes 'confirm))

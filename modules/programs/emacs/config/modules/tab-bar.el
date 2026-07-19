@@ -2,7 +2,7 @@
 
 ;; [tab-bar]
 (use-package tab-bar
-  :bind (:map tab-bar-mode-map)
+  :defer t
   :config
   (setq tab-bar-separator ""
         tab-bar-new-tab-choice t

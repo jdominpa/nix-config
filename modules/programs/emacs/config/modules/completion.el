@@ -30,7 +30,7 @@
 (use-package savehist
   :hook (after-init . savehist-mode)
   :config
-  (setq savehist-file (locate-user-emacs-file "savehist")
+  (setq savehist-file (expand-file-name "savehist" user-emacs-directory)
         history-length 100
         history-delete-duplicates t
         savehist-save-minibuffer-history t))
@@ -247,7 +247,7 @@
 `completion-at-point-functions'."
     (add-hook 'completion-at-point-functions (cape-capf-trigger #'tempel-complete ?/) nil t))
   :config
-  (setq tempel-path (locate-user-emacs-file "templates/*.eld")))
+  (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory)))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode))

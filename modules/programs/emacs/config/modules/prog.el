@@ -134,7 +134,7 @@
       (flymake-mode 1)))
   :config
   (setq flymake-show-diagnostics-at-end-of-line 'short
-        flymake-mode-line-format '(""flymake-mode-line-exception flymake-mode-line-counters)))
+        flymake-mode-line-format '("" flymake-mode-line-exception flymake-mode-line-counters)))
 
 ;; [treesit]
 (use-package treesit
@@ -163,7 +163,7 @@
    indent-bars-display-on-blank-lines nil
    indent-bars-no-descend-lists 'skip
    indent-bars-treesit-support t
-   indent-bars-treesit-wrap '((c argument_lis
+   indent-bars-treesit-wrap '((c argument_list
                                  parameter_list
                                  init_declarator
                                  parenthesized_expression)

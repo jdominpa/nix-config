@@ -58,7 +58,7 @@
    dired-omit-files "^\\..*\\'"
    dired-clean-up-buffers-too t
    ;; Disable the prompt about killing a Dired buffer of a deleted directory
-   dired-clean-confirm-killing-deleted-buffers t))
+   dired-clean-confirm-killing-deleted-buffers nil))
 
 ;; [wdired] Editable dired buffers
 (use-package wdired

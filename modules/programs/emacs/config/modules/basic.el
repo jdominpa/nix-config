@@ -21,7 +21,7 @@
    help-window-select t
    ;; Backup settings
    create-lockfiles nil
-   backup-directory-alist `(("." . ,(locate-user-emacs-file "backups/")))
+   backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory)))
    vc-make-backup-files t
    version-control t
    backup-by-copying t
@@ -30,7 +30,7 @@
    ;; Auto-save
    auto-save-default t
    auto-save-include-big-deletions t
-   auto-save-list-file-prefix (locate-user-emacs-file "autosaves/")
+   auto-save-list-file-prefix (expand-file-name "autosaves/" user-emacs-directory)
    auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
    ;; Disable [bidirectional text] scanning for a modest performance boost
    ;; Will improve long line display performance
@@ -84,7 +84,7 @@
 (use-package saveplace
   :hook (after-init . save-place-mode)
   :config
-  (setq save-place-file (locate-user-emacs-file "saveplace")
+  (setq save-place-file (expand-file-name "saveplace" user-emacs-directory)
         save-place-forget-unreadable-files t))
 
 ;;; [recentf] recently visited files
@@ -92,7 +92,7 @@
   :bind ("C-x C-r" . recentf-open-files)
   :hook (after-init . recentf-mode)
   :config
-  (setopt recentf-save-file (locate-user-emacs-file "recentf"))
+  (setopt recentf-save-file (expand-file-name "recentf" user-emacs-directory))
   (setq recentf-exclude '("/tmp/" "/ssh:" ".gz" ".xz" ".zip")))
 
 ;; [so-long] Workaround for long one-line files
