@@ -32,13 +32,13 @@
 
 (defvar +modules (list
                   'basic
-                  'meow
                   'completion
                   'dired
                   'editor
                   'email
                   'highlight
                   (when (eq system-type 'darwin) 'macos)
+                  'meow
                   'org
                   'prog
                   'search

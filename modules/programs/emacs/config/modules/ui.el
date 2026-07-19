@@ -83,6 +83,7 @@
   (setq spacious-padding-widths
         '( :internal-border-width 0
            :mode-line-width 1
+           :tab-width 1
            :right-divider-width 1
            :fringe-width 4)
         spacious-padding-subtle-frame-lines t))

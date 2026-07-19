@@ -4,8 +4,6 @@
 
 (use-package meow-core
   :ensure meow
-  :demand t
-  :hook (after-init . +meow-turn-on-meow-mode-h)
   :config
   (defun +meow-turn-on-meow-mode-h ()
     "Enable `meow-global-mode' after a usable frame exists."
@@ -125,6 +123,10 @@
      '("\\" . meow-indent)
      '("'" . repeat)
      '("<escape>" . ignore)))
+  ;; NOTE: Depth -95 makes sure that `meow-mode' turns on before every other
+  ;; mode in `after-init-hook'. This guarantees that all the shims are properly
+  ;; activated
+  (add-hook 'after-init-hook #'+meow-turn-on-meow-mode-h -95)
 
   ;; Angle bracket
   (meow-thing-register 'angle

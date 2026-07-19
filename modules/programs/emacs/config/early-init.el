@@ -14,7 +14,7 @@
   (setq gc-cons-threshold +gc-cons-threshold
         gc-cons-percentage +gc-cons-percentage))
 
-(add-hook 'emacs-startup-hook #'+restore-gc-threshold-h 100)
+(add-hook 'emacs-startup-hook #'+restore-gc-threshold-h 95)
 
 ;; Keep early startup quiet unless we're debugging init
 (setq ad-redefinition-action 'accept
@@ -48,7 +48,8 @@
 (setq-default inhibit-redisplay t
               inhibit-message t)
 (defun +restore-redisplay-and-message-h ()
-  "Restore the value of `inhibit-redisplay' and `inhibit-message' to nil."
+  "Restore the value of the variables `inhibit-redisplay' and
+`inhibit-message' to nil."
   (setq-default inhibit-redisplay nil
                 inhibit-message nil)
   (unless (daemonp)
