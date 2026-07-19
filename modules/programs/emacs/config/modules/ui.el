@@ -81,10 +81,10 @@
   :hook (after-init . spacious-padding-mode)
   :config
   (setq spacious-padding-widths
-        '( :fringe-width 4
-           :internal-border-width 0
+        '( :internal-border-width 0
            :mode-line-width 1
-           :right-divider-width 1)
+           :right-divider-width 1
+           :fringe-width 4)
         spacious-padding-subtle-frame-lines t))
 
 (defcustom +mode-line-string-truncate-length 33
