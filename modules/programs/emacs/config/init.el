@@ -42,6 +42,7 @@
                   'org
                   'prog
                   'search
+                  'tab-bar
                   'term
                   'ui
                   'vc
