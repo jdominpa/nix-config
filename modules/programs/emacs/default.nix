@@ -61,7 +61,6 @@ let
               rustic
               spacious-padding
               tempel
-              transient
               treesit-grammars.with-all-grammars
               vertico
               ws-butler
