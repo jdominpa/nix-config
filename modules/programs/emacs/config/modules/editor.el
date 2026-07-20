@@ -11,14 +11,20 @@
 
 ;; [autorevert] Update changed buffers automatically
 (use-package autorevert
-  ;; TODO: change this to an advice like in doom
-  :hook ((find-file dired-initial-position-hook) . +editor-auto-revert-mode)
+  :hook ((find-file dired-initial-position-hook) . +editor-auto-revert-mode-init-h)
   :config
   (setopt auto-revert-use-notify nil)
   (setq auto-revert-verbose t
         auto-revert-stop-on-user-input nil
         ;; Only prompt for confirmation when buffer is unsaved
         revert-without-query '("."))
+
+  (defun +editor-auto-revert-mode-init-h (&rest _)
+    "Enable `+editor-auto-revert-mode' exactly once. This function is meant
+to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
+    (+editor-auto-revert-mode 1)
+    (remove-hook 'find-file-hook #'+editor-auto-revert-mode-init-h)
+    (remove-hook 'dired-initial-position-hook #'+editor-auto-revert-mode-init-h))
 
   (define-minor-mode +editor-auto-revert-mode
     "A lazy and more performant alternative to `global-auto-revert-mode'."
