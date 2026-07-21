@@ -101,9 +101,9 @@
 
 ;; Scrolling
 (use-package emacs
-  :bind (("C-v" . +basic/scroll-window)
+  :bind (("C-v" . +basic/scroll-window-up)
          ("M-v" . +basic/scroll-window-down)
-         ("C-M-v" . +basic/scroll-other-window)
+         ("C-M-v" . +basic/scroll-other-window-up)
          ("C-M-S-v" . +basic/scroll-other-window-down))
   :config
   (setq-default
@@ -121,12 +121,33 @@
    auto-hscroll-mode t
    hscroll-step 0
    hscroll-margin 2)
-  (defvar +basic-scroll-lines 15
-    "Number of lines to scroll with scroll commands")
-  (defun +basic/scroll-window () (interactive) (scroll-up +basic-scroll-lines))
-  (defun +basic/scroll-window-down () (interactive) (scroll-down +basic-scroll-lines))
-  (defun +basic/scroll-other-window () (interactive) (scroll-other-window +basic-scroll-lines))
-  (defun +basic/scroll-other-window-down () (interactive) (scroll-other-window-down +basic-scroll-lines)))
+  (defun +basic/scroll-window-up (&optional arg)
+    "Scroll window up ARG lines; or half the window height if ARG is nil."
+    (interactive "^P")
+    (scroll-up-command (or arg
+                           (floor (window-body-height) 2))))
+  (defun +basic/scroll-window-down (&optional arg)
+    "Scroll window down ARG lines; or half the window height if ARG is nil."
+    (interactive "^P")
+    (scroll-down-command (or arg
+                             (floor (window-body-height) 2))))
+  (defun +basic/scroll-other-window-up (&optional arg)
+    "Scroll the next window up ARG lines; or half the window height if ARG is
+nil."
+    (interactive "^P")
+    (with-selected-window (other-window-for-scrolling)
+      (+basic/scroll-window-up arg)))
+  (defun +basic/scroll-other-window-down (&optional arg)
+    "Scroll the next window down ARG lines; or half the window height if ARG
+is nil."
+    (interactive "^P")
+    (with-selected-window (other-window-for-scrolling)
+      (+basic/scroll-window-down arg)))
+  (dolist (cmd '(+basic/scroll-window-up
+                 +basic/scroll-window-down
+                 +basic/scroll-other-window-up
+                 +basic/scroll-other-window-down))
+    (put cmd 'scroll-command t)))
 
 ;; [repeat] Enable repeatable commands
 (use-package repeat
