@@ -171,6 +171,7 @@ is nil."
 
 ;; [server] Emacs server
 (use-package server
+  :commands (server-running-p server-start)
   :hook (emacs-startup . (lambda ()
                            (unless (server-running-p)
                              (server-start)))))
