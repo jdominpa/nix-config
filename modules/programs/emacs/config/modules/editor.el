@@ -11,7 +11,7 @@
 
 ;; [autorevert] Update changed buffers automatically
 (use-package autorevert
-  :hook ((find-file dired-initial-position-hook) . +editor-auto-revert-mode-init-h)
+  :hook ((find-file dired-initial-position) . +editor-auto-revert-mode-init-h)
   :config
   (setopt auto-revert-use-notify nil)
   (setq auto-revert-verbose t
