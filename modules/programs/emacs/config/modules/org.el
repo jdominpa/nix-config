@@ -82,7 +82,7 @@
 
 (use-package org-capture
   :bind (("C-c o c" . org-capture)
-         ("C-c o i" . org-capture-inbox))
+         ("C-c o i" . +org/capture-inbox))
   :custom
   (org-capture-templates
    `(("i" "Inbox" entry (file "inbox.org")
@@ -120,7 +120,7 @@
                ":END:\n"
                "%?"))))
   :config
-  (defun org-capture-inbox ()
+  (defun +org/capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
     (interactive)
     (call-interactively 'org-store-link)
