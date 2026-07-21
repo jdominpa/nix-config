@@ -32,13 +32,13 @@ to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
     (when global-auto-revert-mode
       (setq +editor-auto-revert-mode nil))
     (let ((fn (if +editor-auto-revert-mode #'add-hook #'remove-hook)))
-      (funcall fn 'window-buffer-change-functions #'+editor-auto-revert-buffer-h)
-      (funcall fn 'window-selection-change-functions #'+editor-auto-revert-buffer-h)
+      (funcall fn 'window-buffer-change-functions #'+editor-auto-revert-current-buffer-h)
+      (funcall fn 'window-selection-change-functions #'+editor-auto-revert-current-buffer-h)
       (if +editor-auto-revert-mode
-          (add-function :after after-focus-change-function #'+editor-auto-revert-buffers-h)
-        (remove-function after-focus-change-function #'+editor-auto-revert-buffers-h))
-      (funcall fn 'after-save-hook #'+editor-auto-revert-buffers-h)
-      (funcall fn 'server-switch-hook #'+editor-auto-revert-buffer-h)))
+          (add-function :after after-focus-change-function #'+editor-auto-revert-visible-buffers-h)
+        (remove-function after-focus-change-function #'+editor-auto-revert-visible-buffers-h))
+      (funcall fn 'after-save-hook #'+editor-auto-revert-visible-buffers-h)
+      (funcall fn 'server-switch-hook #'+editor-auto-revert-current-buffer-h)))
 
   (defun +editor--visible-buffers ()
     "Return a list of visible buffers across all visible frames (not buried)."
@@ -48,7 +48,7 @@ to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
                     'no-minibuf 'visible)
       (delete-dups buffers)))
 
-  (defun +editor-auto-revert-buffer-h (&rest _)
+  (defun +editor-auto-revert-current-buffer-h (&rest _)
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode
                 (active-minibuffer-window)
@@ -58,11 +58,11 @@ to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
       (dlet ((auto-revert-mode t))
         (auto-revert-handler))))
 
-  (defun +editor-auto-revert-buffers-h (&rest _)
+  (defun +editor-auto-revert-visible-buffers-h (&rest _)
     "Auto revert stale buffers in visible windows, if necessary."
     (dolist (buf (+editor--visible-buffers))
       (with-current-buffer buf
-        (+editor-auto-revert-buffer-h)))))
+        (+editor-auto-revert-current-buffer-h)))))
 
 ;; [ws-butler] Remove trailing whitespace on edited lines
 (use-package ws-butler

@@ -1,20 +1,21 @@
 ;;; -*- lexical-binding: t -*-
 
 ;; Defer GC during startup, then restore sane runtime defaults later
-(defvar +gc-cons-threshold (* 2 1024 1024)
+(defvar +core-gc-cons-threshold (* 2 1024 1024)
   "Default `gc-cons-threshold' after startup.")
-(defvar +gc-cons-percentage 0.2
+(defvar +core-gc-cons-percentage 0.2
   "Default `gc-cons-percentage' after startup.")
 
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
-(defun +restore-gc-threshold-h ()
-  "Restore sane GC settings after startup."
-  (setq gc-cons-threshold +gc-cons-threshold
-        gc-cons-percentage +gc-cons-percentage))
+(defun +core-gc-restore-defaults-h ()
+  "Restore sane GC settings (`gc-cons-threshold' and `gc-cons-percentage')
+after startup."
+  (setq gc-cons-threshold +core-gc-cons-threshold
+        gc-cons-percentage +core-gc-cons-percentage))
 
-(add-hook 'emacs-startup-hook #'+restore-gc-threshold-h 95)
+(add-hook 'emacs-startup-hook #'+core-gc-restore-defaults-h 95)
 
 ;; Keep early startup quiet unless we're debugging init
 (setq ad-redefinition-action 'accept
@@ -47,14 +48,14 @@
 ;; Suppress flashing at startup
 (setq-default inhibit-redisplay t
               inhibit-message t)
-(defun +restore-redisplay-and-message-h ()
+(defun +core-inhibit-restore-defaults-h ()
   "Restore the value of the variables `inhibit-redisplay' and
-`inhibit-message' to nil."
+`inhibit-message' to nil (default)."
   (setq-default inhibit-redisplay nil
                 inhibit-message nil)
   (unless (daemonp)
     (redraw-frame)))
-(add-hook 'window-setup-hook #'+restore-redisplay-and-message-h)
+(add-hook 'window-setup-hook #'+core-inhibit-restore-defaults-h)
 
 ;; Disable toolbars and menu bars
 (push '(tab-bar-lines . 1) default-frame-alist)

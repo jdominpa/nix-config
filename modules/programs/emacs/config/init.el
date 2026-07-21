@@ -1,6 +1,16 @@
 ;;; -*- lexical-binding: t -*-
 
-(defun +echo-startup-time-info-h ()
+;; Naming conventions:
+;;   +core                     core namespace (init.el/early-init.el)
+;;   +MODULE                   module namespace for variables/functions defined in modules/module.el
+;;   +NAMESPACE-SYMBOLNAME     public variable or function
+;;   +NAMESPACE--SYMBOLNAME    private/internal variable or function
+;;   +MODULE/NAME              interactive command (invoked through a keybind or M-x)
+;;   +MODULE-NAME-h            non-interactive function meant to be used as a hook
+;;   +MODULE-NAME-a            function designed to be used as advice to other functions
+;;   +MODULE-NAME-p            predicate function
+
+(defun +core-echo-startup-time-info-h ()
   "Echoes in the minibuffer information about startup time."
   (message "window-setup: %.3fs, after-init: %.3fs"
            (float-time (time-subtract nil before-init-time))
@@ -30,28 +40,28 @@
                                 ("melpa" . 2)
                                 ("nongnu" . 1))))
 
-(defvar +modules (list
-                  'basic
-                  'completion
-                  'dired
-                  'editor
-                  'email
-                  'highlight
-                  (when (eq system-type 'darwin) 'macos)
-                  'meow
-                  'org
-                  'prog
-                  'search
-                  'tab-bar
-                  'term
-                  'ui
-                  'vc
-                  'window
-                  'writing)
+(defvar +core-modules (list
+                       'basic
+                       'completion
+                       'dired
+                       'editor
+                       'email
+                       'highlight
+                       (when (eq system-type 'darwin) 'macos)
+                       'meow
+                       'org
+                       'prog
+                       'search
+                       'tab-bar
+                       'term
+                       'ui
+                       'vc
+                       'window
+                       'writing)
   "List of modules to be loaded by init.el.")
 
 (let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
-  (dolist (module +modules)
+  (dolist (module +core-modules)
     (when module
       (load-file (concat modules-directory
                          (symbol-name module)
