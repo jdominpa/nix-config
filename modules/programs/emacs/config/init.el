@@ -15,7 +15,7 @@
   (message "window-setup: %.3fs, after-init: %.3fs"
            (float-time (time-subtract nil before-init-time))
            (float-time (time-subtract after-init-time before-init-time))))
-(add-hook 'window-setup-hook #'+echo-startup-time-info-h)
+(add-hook 'window-setup-hook #'+core-echo-startup-time-info-h)
 
 ;; Load and configure `use-package'
 (eval-when-compile
