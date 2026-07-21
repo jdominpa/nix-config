@@ -2,7 +2,7 @@
 
 ;; [hl-line] Highlight current line
 (use-package hl-line
-  :hook ((dired-mode ibuffer occur-mode) . hl-line-mode)
+  :hook (after-init . global-hl-line-mode)
   :config
   (setopt hl-line-sticky-flag nil))
 
@@ -55,14 +55,13 @@
   :ensure t
   :hook ((prog-mode text-mode) . goggles-mode)
   :config
-  (setq-default goggles-pulse t))
+  (setq goggles-pulse t))
 
 ;; [pulse] Highlight line at cursor after switching window
 (use-package pulse
-  :init
+  :config
   (setq pulse-delay 0.1
         pulse-iterations 2)
-  ;; FIXME: don't pulse when switching to/from the minibuffer
   (defun +highlight-pulse-momentary-line-a (&rest _)
     "Pulse the current line."
     (pulse-momentary-highlight-one-line (point)))
@@ -79,14 +78,29 @@
     "Recenter and pulse the current line."
     (recenter)
     (+highlight-pulse-momentary-line-a))
-  (dolist (cmd '(recenter-top-bottom
-                 other-window switch-to-buffer aw-select
+  (dolist (cmd '(aw-select
+                 bookmark-jump
+                 delete-frame
+                 delete-other-frames
+                 delete-window
+                 delete-other-windows
+                 dired-goto-file
+                 dired-maybe-insert-subdir
+                 dired-up-directory
+                 other-window
+                 quit-window
+                 recenter-top-bottom
+                 switch-to-buffer
                  tab-bar-select-tab
-                 delete-window delete-other-windows
-                 delete-frame delete-other-frames))
+                 tab-close
+                 tab-new
+                 tab-next
+                 tab-previous))
     (advice-add cmd :after #'+highlight-pulse-momentary-line-a))
   (dolist (cmd '(pop-to-mark-command
                  pop-global-mark))
     (advice-add cmd :after #'+highlight-recenter-and-pulse-a))
-  (dolist (cmd '(compile-goto-error))
+  (dolist (cmd '(compile-goto-error
+                 occur-mode-goto-occurrence
+                 occur-mode-goto-occurrence-other-window))
     (advice-add cmd :after #'+highlight-recenter-and-pulse-line-a)))

@@ -43,6 +43,7 @@
 ;; [ghostel] Terminal emulator
 (use-package ghostel
   :ensure t
+  :hook (ghostel-mode-hook . (lambda () (hl-line-mode -1)))
   :bind (:map ghostel-semi-char-mode-map
          ("C-s"  . consult-line)
          ("C-k"  . +term/ghostel-send-C-k-and-kill)
