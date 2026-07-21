@@ -33,6 +33,8 @@
   ;;             ("C-c v u" . diff-hl-undo-revert-hunk))
   :config
   (setq
+   ;; Don't draw borders around fringe indicators
+   diff-hl-draw-borders nil
    ;; Reduce load on remote
    diff-hl-disable-on-remote t
    ;; A slightly faster algorithm for diffing
