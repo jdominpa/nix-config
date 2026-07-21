@@ -221,9 +221,7 @@
 ;; [nix]
 (use-package nix-ts-mode
   :ensure t
-  :mode "\\.nix\\'"
-  :config
-  (setq treesit-font-lock-level 4))
+  :mode "\\.nix\\'")
 
 ;; [rust]
 (use-package rust-mode
@@ -235,8 +233,6 @@
 (use-package rustic
   :ensure t
   :after rust-mode
-  :init
-  (remove-hook 'rustic-mode-hook 'flycheck-mode)
   :config
   (setq rustic-lsp-client 'eglot
         rustic-format-on-save t))

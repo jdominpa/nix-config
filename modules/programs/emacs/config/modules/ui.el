@@ -37,9 +37,10 @@
   :ensure t
   :when (display-graphic-p)
   :demand t
-  :hook (after-init . (lambda ()
-                        (fontaine-set-preset (or (fontaine-restore-latest-preset)
-                                                 'default))))
+  :hook ((after-init . fontaine-mode)
+         (after-init . (lambda ()
+                         (fontaine-set-preset (or (fontaine-restore-latest-preset)
+                                                  'default)))))
   :config
   (setq fontaine-presets
         '((default)
@@ -52,9 +53,7 @@
            :default-weight regular
            :default-height 130
            :fixed-pitch-family "Aporetic Sans Mono"
-           :variable-pitch-family "Aporetic Serif")))
-  :config
-  (fontaine-mode 1))
+           :variable-pitch-family "Aporetic Serif"))))
 
 (use-package face-remap
   :bind (("C-x C-0" . global-text-scale-adjust) ; swap the default keybinds
@@ -87,6 +86,7 @@
            :fringe-width 4)
         spacious-padding-subtle-frame-lines t))
 
+;; TODO: fix naming with `+ui` or moving to `mode-line.el`
 (defcustom +mode-line-string-truncate-length 33
   "String length after which truncation should be done in small windows."
   :type 'natnum)
@@ -116,7 +116,7 @@ and end."
         (propertize (concat (string-trim project-name) "/")
                     'face 'mode-line-buffer-id)))
   "Mode line construct to display the current project.  Meant to be used in
-conjunction with `+mode-line-buffer-name'.")
+conjunction with `+mode-line-buffer-identification'.")
 
 (defvar-local +mode-line-buffer-identification
     '(:eval

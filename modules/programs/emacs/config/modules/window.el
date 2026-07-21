@@ -195,12 +195,6 @@ nil, return current buffer's major mode."
                   "\\*TeX Help\\*")))
   :config
   (setq popper-display-control 'user)
-  (defvar popper-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "`") #'popper-cycle)
-      (define-key map (kbd "~") #'popper-cycle-backwards)
-      map)
-    "Repeat map used for popper commands.")
   (put 'popper-toggle 'repeat-map 'popper-repeat-map)
   (put 'popper-cycle 'repeat-map 'popper-repeat-map)
   (put 'popper-cycle-backwards 'repeat-map 'popper-repeat-map))

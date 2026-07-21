@@ -36,7 +36,6 @@ after startup."
 
 ;; Inhibit startup screen and message
 (setq inhibit-startup-screen t
-      inhibit-startup-echo-area-message t
       inhibit-startup-buffer-menu t
       inhibit-x-resources t
       inhibit-default-init t
