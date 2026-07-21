@@ -14,7 +14,6 @@
    use-file-dialog nil
    ;; Inhibits fontification while receiving input, which should help a little with scrolling performance
    redisplay-skip-fontification-on-input t
-   ;; TODO: test if this affects memory by a lot
    ;; Font compacting can be terribly expensive, but may increase memory use
    inhibit-compacting-font-caches t
    ;; Don't show cursor or region in other windows
