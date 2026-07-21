@@ -40,9 +40,11 @@
               "spacer_0"
               "clock"
             ];
-            margin_edge = 5;
-            margin_ends = 5;
+            margin_edge = 0;
+            margin_ends = 0;
             padding = 10;
+            radius = 4;
+            thickness = 30;
           };
         };
         idle = {
@@ -80,7 +82,7 @@
         };
         widget = {
           bluetooth.hide_when_no_connected_device = true;
-          clock.format = "{:%H:%M %d-%m-%Y}";
+          clock.format = "{:%H:%M | %d-%m-%Y}";
           spacer_0 = {
             length = 15;
             type = "spacer";

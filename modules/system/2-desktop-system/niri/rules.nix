@@ -22,7 +22,7 @@
           open-maximized = true;
         }
         {
-          matches = [ { app-id = "dev.noctalia.Noctalia.Settings"; } ];
+          matches = [ { app-id = "dev.noctalia.Noctalia"; } ];
           open-floating = true;
           default-column-width.fixed = 1080;
           default-window-height.fixed = 920;
