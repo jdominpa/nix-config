@@ -4,14 +4,13 @@
 
 (use-package calendar
   :commands calendar
-  :custom
-  (calendar-mark-holidays-flag t)
-  (calendar-time-display-form
-   '( 24-hours ":" minutes
-      (when time-zone (format "(%s)" time-zone))))
-  (calendar-week-start-day 1)           ; Monday
-  (calendar-date-style 'iso)
-  (calendar-time-zone-style 'numeric))  ; Emacs 28.1
+  :config
+  (setq calendar-mark-holidays-flag t
+        calendar-time-display-form '( 24-hours ":" minutes
+                                      (when time-zone (format "(%s)" time-zone)))
+        calendar-time-zone-style 'numeric)
+  (setopt calendar-week-start-day 1     ; Monday
+          calendar-date-style 'iso))
 
 ;;; Org
 
@@ -83,43 +82,42 @@
 (use-package org-capture
   :bind (("C-c o c" . org-capture)
          ("C-c o i" . +org/capture-inbox))
-  :custom
-  (org-capture-templates
-   `(("i" "Inbox" entry (file "inbox.org")
-      ,(concat "* TODO %^{Task}\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":END:\n"
-               "%?"))
-     ("e" "Event" entry (file+headline "agenda.org" "Events")
-      ,(concat "* %^{Event}\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":END:\n"
-               "%^{Scheduled}T\n"
-               "%?"))
-     ("s" "Scheduled" entry (file+headline "agenda.org" "Scheduled")
-      ,(concat "* TODO %^{Task}\n"
-               "SCHEDULED: %^{Scheduled}T\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":END:\n"
-               "%?"))
-     ("d" "Deadline" entry (file+headline "agenda.org" "Deadlines")
-      ,(concat "* TODO %^{Task}\n"
-               "DEADLINE: %^{Deadline}T\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":END:\n"
-               "%?"))
-     ("r" "Recurring task" entry (file+headline "agenda.org" "Recurring")
-      ,(concat "* TODO %^{Task}\n"
-               "SCHEDULED: %^{Scheduled}T\n"
-               ":PROPERTIES:\n"
-               ":CREATED: %U\n"
-               ":END:\n"
-               "%?"))))
   :config
+  (setopt org-capture-templates
+          `(("i" "Inbox" entry (file "inbox.org")
+             ,(concat "* TODO %^{Task}\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "%?"))
+            ("e" "Event" entry (file+headline "agenda.org" "Events")
+             ,(concat "* %^{Event}\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "%^{Scheduled}T\n"
+                      "%?"))
+            ("s" "Scheduled" entry (file+headline "agenda.org" "Scheduled")
+             ,(concat "* TODO %^{Task}\n"
+                      "SCHEDULED: %^{Scheduled}T\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "%?"))
+            ("d" "Deadline" entry (file+headline "agenda.org" "Deadlines")
+             ,(concat "* TODO %^{Task}\n"
+                      "DEADLINE: %^{Deadline}T\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "%?"))
+            ("r" "Recurring task" entry (file+headline "agenda.org" "Recurring")
+             ,(concat "* TODO %^{Task}\n"
+                      "SCHEDULED: %^{Scheduled}T\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "%?"))))
   (defun +org/capture-inbox ()
     "Store a link of the current location and create an inbox `org-capture'."
     (interactive)
@@ -128,24 +126,24 @@
 
 (use-package org-refile
   :after org
-  :custom
-  (org-refile-targets `((,(expand-file-name "agenda.org" org-directory) . (:level . 2))))
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-allow-creating-parent-nodes 'confirm))
+  :config
+  (setq org-refile-targets `((,(expand-file-name "agenda.org" org-directory) . (:level . 2)))
+        org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil
+        org-refile-allow-creating-parent-nodes 'confirm))
 
 (use-package org-agenda
   :bind ("C-c o a" . org-agenda)
-  :custom
-  (org-agenda-files
-   (mapcar (lambda (file) (expand-file-name file org-directory))
-           '("agenda.org" "inbox.org")))
-  (org-agenda-window-setup 'current-window)
-  (org-deadline-past-days 365)
-  (org-scheduled-past-days 365)
-  (org-agenda-skip-timestamp-if-done t)
-  (org-agenda-skip-deadline-if-done t)
-  (org-agenda-skip-scheduled-if-done t))
+  :config
+  (setq org-agenda-files (mapcar
+                          (lambda (file) (expand-file-name file org-directory))
+                          '("agenda.org" "inbox.org"))
+        org-agenda-window-setup 'current-window
+        org-deadline-past-days 365
+        org-scheduled-past-days 365
+        org-agenda-skip-timestamp-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-agenda-skip-scheduled-if-done t))
 
 (use-package denote
   :ensure t
@@ -168,11 +166,9 @@
 
 (use-package consult-denote
   :ensure t
-  :demand t
+  :hook (after-init . consult-denote-mode)
   :bind (("C-c n f" . consult-denote-find)
-         ("C-c n g" . consult-denote-grep))
-  :config
-  (consult-denote-mode))
+         ("C-c n g" . consult-denote-grep)))
 
 (when (package-installed-p 'pdf-tools)
   (use-package org-pdftools
