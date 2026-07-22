@@ -4,8 +4,7 @@
 (use-package prog-mode
   :hook ((prog-mode . prettify-symbols-mode)
          (prog-mode . (lambda ()
-                        (with-eval-after-load 'corfu
-                          (setq-local corfu-auto t))))))
+                        (setq-local corfu-auto t)))))
 
 ;; [compile]
 (use-package compile
@@ -130,7 +129,7 @@
   (defun +prog-flymake-mode-unless-eglot-h ()
     "Enable `flymake-mode' unless the major mode of the current buffer is in
 `+prog-eglot-auto-start-modes'."
-    (unless (memq major-mode +prog-eglot-auto-start-modes)
+    (unless (derived-mode-p +prog-eglot-auto-start-modes)
       (flymake-mode 1)))
   :config
   (setq flymake-show-diagnostics-at-end-of-line 'short

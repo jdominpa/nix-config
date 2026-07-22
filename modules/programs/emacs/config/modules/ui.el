@@ -35,8 +35,6 @@
 ;; [fontaine] Font configuration presets
 (use-package fontaine
   :ensure t
-  :when (display-graphic-p)
-  :demand t
   :hook ((after-init . fontaine-mode)
          (after-init . (lambda ()
                          (fontaine-set-preset (or (fontaine-restore-latest-preset)

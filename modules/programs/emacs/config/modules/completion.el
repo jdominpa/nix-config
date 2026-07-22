@@ -215,7 +215,7 @@
 
 (use-package cape
   :ensure t
-  :hook ((TeX-mode LaTeX-mode org-mode markdown-mode) . +completion-add-tex-capf-h)
+  :hook ((TeX-mode LaTeX-mode org-mode markdown-ts-mode) . +completion-add-tex-capf-h)
   :init
   (setq-default completion-at-point-functions
                 (append completion-at-point-functions (list #'cape-file #'cape-dabbrev)))

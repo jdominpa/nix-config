@@ -67,11 +67,11 @@ to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
 ;; [ws-butler] Remove trailing whitespace on edited lines
 (use-package ws-butler
   :ensure t
-  :hook ((prog-mode markdown-mode) . ws-butler-mode))
+  :hook ((prog-mode markdown-ts-mode) . ws-butler-mode))
 
 ;; [editorconfig] Respect project-local formatting rules
 (use-package editorconfig
-  :hook (find-file . editorconfig-mode))
+  :hook (after-init . editorconfig-mode))
 
 ;; [elec-pair] Automatic delimiter pairing
 (use-package elec-pair

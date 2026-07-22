@@ -40,28 +40,28 @@
                                 ("melpa" . 2)
                                 ("nongnu" . 1))))
 
-(defvar +core-modules (list
-                       'basic
-                       'completion
-                       'dired
-                       'editor
-                       'email
-                       'highlight
-                       (when (eq system-type 'darwin) 'macos)
-                       'meow
-                       'org
-                       'prog
-                       'search
-                       'tab-bar
-                       'term
-                       'ui
-                       'vc
-                       'window
-                       'writing)
+(defvar +core-module-list (list
+                           'basic
+                           'completion
+                           'dired
+                           'editor
+                           'email
+                           'highlight
+                           (when (eq system-type 'darwin) 'macos)
+                           'meow
+                           'org
+                           'prog
+                           'search
+                           'tab-bar
+                           'term
+                           'ui
+                           'vc
+                           'window
+                           'writing)
   "List of modules to be loaded by init.el.")
 
 (let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
-  (dolist (module +core-modules)
+  (dolist (module +core-module-list)
     (when module
       (load-file (concat modules-directory
                          (symbol-name module)

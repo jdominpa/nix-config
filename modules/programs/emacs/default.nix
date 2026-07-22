@@ -59,6 +59,7 @@ let
               rainbow-delimiters
               rainbow-mode
               rustic
+              rust-mode
               spacious-padding
               tempel
               treesit-grammars.with-all-grammars

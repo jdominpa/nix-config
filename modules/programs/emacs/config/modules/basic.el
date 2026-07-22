@@ -42,7 +42,7 @@
    large-hscroll-threshold 10000
    syntax-wholeline-max 2000
    ;; Send custom.el to oblivion
-   custom-file (make-temp-file "emacs-custom-")
+   custom-file null-device
    ;; Always follow links when visiting a [symbolic link]
    find-file-visit-truename t
    vc-follow-symlinks t
@@ -157,9 +157,8 @@ is nil."
         set-mark-command-repeat-pop t))
 
 ;; [mouse] Mouse settings
-(use-package mouse
-  :when (display-graphic-p)
-  :hook (after-init . mouse-wheel-mode)
+(use-package mwheel
+  :defer t
   :config
   (setopt mouse-wheel-scroll-amount
           '(2
