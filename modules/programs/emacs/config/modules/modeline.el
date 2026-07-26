@@ -2,9 +2,6 @@
 
 (require 'let-alist)
 (require 'project)
-(eval-when-compile
-  (require 'cl-seq)
-  (require 'seq))
 
 
 ;;; Customization
@@ -124,11 +121,6 @@ Call `+modeline-refresh' after changing this."
   "Face for the keypad state tag in meow indicator."
   :group '+modeline-faces)
 
-(defface +modeline-eglot-running
-  '((t (:inherit compilation-mode-line-run :weight normal :slant normal)))
-  "Face for LSP running state."
-  :group '+modeline-faces)
-
 (defface +modeline-compilation
   '((t (:inherit +modeline-warning :slant italic :height 0.9)))
   "Face for ongoing compilation process."
@@ -181,9 +173,8 @@ Otherwise, leave TEXT as is."
       text
     (propertize text 'face 'mode-line-inactive)))
 
-(defsubst +modeline--vspc ()
-  "Single thin space."
-  (propertize " " 'display '((space :relative-width 0.5))))
+(defconst +modeline--vspc (propertize " " 'display '((space :relative-width 0.5)))
+  "Single thin space.")
 
 (defsubst +modeline--truncate-file-name (str)
   "Return STR's first character or first two characters if hidden."
@@ -275,9 +266,9 @@ run on every redisplay, so interpreted ones are noticeable."
                   ('beacon '+modeline-meow-beacon-state)
                   ('keypad '+modeline-meow-keypad-state)
                   ('motion nil)
-                  (_ '+modeline-meow-normal-state))))
+                  (_ nil))))
       (propertize
-       (concat " " (substring-no-properties meow--indicator))
+       (substring-no-properties meow--indicator)
        'face (+modeline--face face)))))
 
 ;; Macro segment
@@ -343,7 +334,7 @@ name.  Both are %-escaped and free of text properties."
                   (propertize "><" 'face (+modeline--face '+modeline-warning))))))
     (unless (string-empty-p state)
       (concat state
-              (+modeline--vspc)))))
+              +modeline--vspc))))
 
 (defun +modeline--buffer-name ()
   "Propertized buffer identification, project-relative where possible."
@@ -502,7 +493,7 @@ mouse-3: Describe current input method")
 ;; Buffer encoding segment
 
 (+modeline-def-segment buffer-encoding
-  "End-of-line style and coding system, shown only when not UTF-8/LF."
+  "End-of-line style and coding system."
   (let* (;; eol type
          (eol (coding-system-eol-type buffer-file-coding-system))
          ;; coding system
@@ -513,17 +504,16 @@ mouse-3: Describe current input method")
                 (plist-get sys :name)))
          (parts (delq nil
                       (list (pcase eol
-                              (0 "LR")
+                              (0 "LF")
                               (1 "CRLF")
                               (2 "CR")
                               (_ nil))
                             (upcase (symbol-name sym))))))
-    (when parts
-      (propertize (concat " " (string-join parts " ") " ")
-                  'face (+modeline--face)
-                  'help-echo 'mode-line-mule-info-help-echo
-                  'mouse-face 'mode-line-highlight
-                  'local-map mode-line-coding-system-map))))
+    (propertize (concat " " (string-join parts " ") " ")
+                'face (+modeline--face)
+                'help-echo 'mode-line-mule-info-help-echo
+                'mouse-face 'mode-line-highlight
+                'local-map mode-line-coding-system-map)))
 
 ;; Major mode segment
 
@@ -551,12 +541,14 @@ mouse-3: Toggle minor modes"
 
 (+modeline-def-segment process
   "Process info."
-  (+modeline--display-text (format-mode-line mode-line-process)))
+  (when-let* ((seg (format-mode-line mode-line-process))
+              ((not (string-empty-p seg))))
+    (+modeline--display-text seg)))
 
 ;; Version control segment
 
 (defvar-local +modeline--vcs nil
-  "Cached alist of vcs information with keys ICON, TEXT and IN-GIT-WORKTREE.")
+  "Cached alist of vcs information with keys ICON, TEXT, HELP-ECHO, LOCAL-MAP and IN-GIT-WORKTREE.")
 
 (defun +modeline-update-vcs-h (&rest _)
   "Update vcs cached state for the mode-line."
@@ -602,7 +594,6 @@ mouse-3: Toggle minor modes"
               (help-echo . ,help-echo)
               (local-map . ,local-map)
               (in-git-worktree . ,in-git-worktree))))))
-(add-hook 'find-file-hook  #'+modeline-update-vcs-h)
 (add-hook 'after-save-hook #'+modeline-update-vcs-h)
 (advice-add #'vc-refresh-state :after #'+modeline-update-vcs-h)
 
@@ -610,8 +601,7 @@ mouse-3: Toggle minor modes"
   "Current VC branch."
   (when +modeline--vcs
     (let-alist +modeline--vcs
-      (let ((vsep (+modeline--vspc))
-            (worktree-indicator (when .in-git-worktree
+      (let ((worktree-indicator (when .in-git-worktree
                                   (propertize "WT" 'face '+modeline-warning))))
         (concat
          " "
@@ -619,11 +609,11 @@ mouse-3: Toggle minor modes"
                       (+modeline--display-text .icon)
                       (when worktree-indicator
                         (concat
-                         vsep
+                         +modeline--vspc
                          (+modeline--display-text worktree-indicator)))
                       (unless (+modeline--limited-window-width-p)
                         (concat
-                         vsep
+                         +modeline--vspc
                          (+modeline--display-text .text))))
                      'help-echo .help-echo
                      'mouse-face 'mode-line-highlight
@@ -633,116 +623,102 @@ mouse-3: Toggle minor modes"
 ;; Flymake state segment
 
 (defun +modeline--flymake-count-errors ()
-  "Count the number of ERRORS, grouped by level."
+  "Return an alist of diagnostic counts for the current buffer."
   (let ((warning-level (warning-numeric-level :warning))
         (note-level (warning-numeric-level :debug))
         (note 0) (warning 0) (error 0))
     (maphash (lambda (_b state)
-               (cl-loop
-                with diags = (flymake--state-diags state)
-                for diag in diags do
-                (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-                                                               (warning-numeric-level :error))))
-                  (cond ((> severity warning-level) (cl-incf error))
-                        ((> severity note-level) (cl-incf warning))
-                        (t (cl-incf note))))))
+               (dolist (diag (flymake--state-diags state))
+                 (let ((severity (flymake--lookup-type-property
+                                  (flymake--diag-type diag) 'severity
+                                  (warning-numeric-level :error))))
+                   (cond ((> severity warning-level) (incf error))
+                         ((> severity note-level) (incf warning))
+                         (t (incf note))))))
              flymake--state)
     `((note . ,note) (warning . ,warning) (error . ,error))))
 
+(defvar +modeline--flymake-keymap nil
+  "Keymap used by the flymake segment.")
+(with-eval-after-load 'flymake
+  (setq +modeline--flymake-keymap
+        (let ((map (make-sparse-keymap)))
+          (define-key map [mode-line down-mouse-1] flymake-menu)
+          (define-key map [mode-line mouse-2]
+                      (lambda () (interactive) (describe-function 'flymake-mode)))
+          map)))
+
 (defvar-local +modeline--flymake nil
-  "Cached state of flymake errors count.")
+  "Cached state of flymake errors count.
+An alist with keys NOTE, WARNING, ERROR, KNOWN, RUNNING, ALL-DISABLED
+and SOME-WAITING, or nil when flymake is inactive.")
 
 (defun +modeline-update-flymake-h (&rest _)
   "Update flymake cached data for the mode-line."
   (setq +modeline--flymake
         (when (and (bound-and-true-p flymake-mode)
                    (bound-and-true-p flymake--state))
-          (let* ((known (hash-table-keys flymake--state))
-                 (running (flymake-running-backends))
-                 (disabled (flymake-disabled-backends))
-                 (reported (flymake-reporting-backends))
-                 (all-disabled (and disabled (null running)))
-                 (some-waiting (cl-set-difference running reported)))
-            (let-alist (+modeline--flymake-count-errors)
-              (let* ((vsep (+modeline--vspc))
-                     (seg (if (+modeline--limited-window-width-p)
-                              (let ((count (+ .error .warning .note)))
-                                (cond
-                                 (some-waiting
-                                  (concat
-                                   (propertize "*" 'face '+modeline-debug)
-                                   (when (> count 0)
-                                     (concat
-                                      vsep
-                                      (propertize (number-to-string count) 'face '+modeline-debug)))))
-                                 ((null known)
-                                  (propertize "!" 'face '+modeline-urgent))
-                                 (all-disabled
-                                  (propertize "!" 'face '+modeline-warning))
-                                 (t
-                                  (if (> count 0)
-                                      (let ((face (cond ((> .error 0) '+modeline-urgent)
-                                                        ((> .warning 0) '+modeline-warning)
-                                                        (t '+modeline-info))))
-                                        (concat
-                                         (propertize "!" 'face face)
-                                         vsep
-                                         (propertize (number-to-string count) 'face face)))
-                                    (propertize "*" 'face '+modeline-info)))))
-                            (concat
-                             (propertize "!" 'face '+modeline-urgent)
-                             vsep
-                             (propertize (number-to-string .error) 'face '+modeline-urgent)
-                             vsep
-                             (propertize "!" 'face '+modeline-warning)
-                             vsep
-                             (propertize (number-to-string .warning) 'face '+modeline-warning)
-                             vsep
-                             (propertize "!" 'face '+modeline-info)
-                             vsep
-                             (propertize (number-to-string .note) 'face '+modeline-info)))))
-                (propertize
-                 seg
-                 'help-echo (concat
-                             "Flymake\n"
-                             (cond (some-waiting "Checking...")
-                                   ((null known) "No Checker")
-                                   (all-disabled "All Checkers Disabled")
-                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
-                                              (length running) (length known) .error .warning .note)))
-                             "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
-                 'mouse-face 'mode-line-highlight
-                 'local-map (let ((map (make-sparse-keymap)))
-                              (define-key map [mode-line down-mouse-1]
-                                          flymake-menu)
-                              (define-key map [mode-line mouse-2]
-                                          (lambda ()
-                                            (interactive)
-                                            (describe-function 'flymake-mode)))
-                              map))))))))
+          (let ((running (flymake-running-backends))
+                (disabled (flymake-disabled-backends))
+                (reported (flymake-reporting-backends)))
+            (append (+modeline--flymake-count-errors)
+                    `((known . ,(hash-table-count flymake--state))
+                      (running . ,(length running))
+                      (all-disabled . ,(and disabled (null running) t))
+                      (some-waiting . ,(and (seq-difference running reported) t))))))))
 (advice-add #'flymake--handle-report :after #'+modeline-update-flymake-h)
 (add-hook 'window-state-change-functions #'+modeline-update-flymake-h)
 
 (+modeline-def-segment flymake
   "Flymake diagnostic counters, when `flymake-mode' is enabled."
-  (when-let* ((vsep (+modeline--vspc))
-              (seg +modeline--flymake))
-    (concat
-     " "
-     (let ((str))
-       (dolist (s (split-string seg " "))
-         (setq str
-               (concat str
-                       (if (string-match-p "^[0-9]+$" s)
-                           (concat vsep
-                                   (+modeline--display-text s)
-                                   vsep)
-                         (+modeline--display-text s)))))
-       (propertize str
-                   'help-echo (get-text-property 0 'help-echo seg)
-                   'mouse-face 'mode-line-highlight
-                   'local-map (get-text-property 0 'local-map seg)))
-     " ")))
+  (when +modeline--flymake
+    (let-alist +modeline--flymake
+      (let* ((count (+ .error .warning .note))
+             (seg (cond
+                   ((zerop .known)
+                    (propertize "!" 'face '+modeline-urgent))
+                   (.all-disabled
+                    (propertize "!" 'face '+modeline-warning))
+                   (t
+                    (concat
+                     (when .some-waiting
+                       (concat (propertize "*" 'face '+modeline-debug)
+                               +modeline--vspc))
+                     (if (+modeline--limited-window-width-p)
+                         (let ((face (cond ((> .error 0) '+modeline-urgent)
+                                           ((> .warning 0) '+modeline-warning)
+                                           (t '+modeline-info))))
+                           (concat
+                            (propertize "!" 'face face)
+                            +modeline--vspc
+                            (propertize (number-to-string count) 'face face)))
+                       (concat
+                        (propertize "!" 'face '+modeline-urgent)
+                        +modeline--vspc
+                        (propertize (number-to-string .error) 'face '+modeline-urgent)
+                        +modeline--vspc
+                        (propertize "!" 'face '+modeline-warning)
+                        +modeline--vspc
+                        (propertize (number-to-string .warning) 'face '+modeline-warning)
+                        +modeline--vspc
+                        (propertize "!" 'face '+modeline-info)
+                        +modeline--vspc
+                        (propertize (number-to-string .note) 'face '+modeline-info))))))))
+        (concat
+         " "
+         (propertize
+          (+modeline--display-text seg)
+          'help-echo (concat "Flymake\n"
+                             (cond
+                              (.some-waiting "Checking...")
+                              ((zerop .known) "No Checker")
+                              (.all-disabled "All Checkers Disabled")
+                              (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                         .running .known .error .warning .note)))
+                             "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+          'mouse-face 'mode-line-highlight
+          'local-map +modeline--flymake-keymap)
+         " ")))))
 
 
 ;;; Assembly of segments
