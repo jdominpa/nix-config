@@ -158,7 +158,6 @@ is nil."
 
 ;; [mouse] Mouse settings
 (use-package mwheel
-  :defer t
   :config
   (setopt mouse-wheel-scroll-amount
           '(2

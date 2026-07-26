@@ -170,7 +170,7 @@ nil, return current buffer's major mode."
   :bind (("C-`" . popper-toggle)
          ("M-`" . popper-cycle)
          ("C-M-`" . popper-toggle-type)
-         :repeat-map popper-repeat-map
+         :repeat-map +window-popper-repeat-map
          ("`" . popper-cycle)
          ("~" . popper-cycle-backwards))
   :hook (after-init . popper-mode)
@@ -195,9 +195,7 @@ nil, return current buffer's major mode."
                   "\\*TeX Help\\*")))
   :config
   (setq popper-display-control 'user)
-  (put 'popper-toggle 'repeat-map 'popper-repeat-map)
-  (put 'popper-cycle 'repeat-map 'popper-repeat-map)
-  (put 'popper-cycle-backwards 'repeat-map 'popper-repeat-map))
+  (put 'popper-toggle 'repeat-map '+window-popper-repeat-map))
 
 (use-package popper-echo
   :after popper

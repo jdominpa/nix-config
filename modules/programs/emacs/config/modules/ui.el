@@ -53,16 +53,6 @@
            :fixed-pitch-family "Aporetic Sans Mono"
            :variable-pitch-family "Aporetic Serif"))))
 
-(use-package face-remap
-  :bind (("C-x C-0" . global-text-scale-adjust) ; swap the default keybinds
-         ("C-x C--" . global-text-scale-adjust)
-         ("C-x C-+" . global-text-scale-adjust)
-         ("C-x C-=" . global-text-scale-adjust)
-         ("C-x C-M-0" . text-scale-adjust)
-         ("C-x C-M--" . text-scale-adjust)
-         ("C-x C-M-+" . text-scale-adjust)
-         ("C-x C-M-=" . text-scale-adjust)))
-
 ;; [which-key]
 (use-package which-key
   :hook (after-init . which-key-mode)

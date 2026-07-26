@@ -53,7 +53,6 @@ let
               orderless
               org-appear
               org-modern
-              org-pdftools
               pdf-tools
               popper
               rainbow-delimiters

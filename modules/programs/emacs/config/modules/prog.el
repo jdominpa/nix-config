@@ -52,7 +52,6 @@
               ("C-c l a" . eglot-code-actions)
               ("C-c l d" . flymake-show-buffer-diagnostics)
               ("C-c l D" . flymake-show-project-diagnostics))
-  :custom-face (eglot-highlight-symbol-face ((t (:underline t)))) ; TODO: testing this
   :preface
   (defconst +prog-eglot-auto-start-modes
     '( c-mode c++-mode c-ts-mode c++-ts-mode
@@ -65,9 +64,7 @@
   (setq eglot-events-buffer-config '(:size 0 :format full)
         eglot-autoshutdown t
         eglot-documentation-renderer 'markdown-ts-view-mode
-        ;; eglot-ignored-server-capabilities '(:documentHighlightProvider)
         eglot-code-action-indications nil)
-  ;; (fset #'jsonrpc--log-event #'ignore)
   (with-eval-after-load 'cape
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
@@ -120,11 +117,15 @@
 (use-package flymake
   :hook (prog-mode . +prog-flymake-mode-unless-eglot-h)
   :bind (:map flymake-mode-map
-              ;; TODO: review these keybinds
-              ("M-n" . flymake-goto-next-error)
-              ("M-p" . flymake-goto-prev-error)
-              ("C-c ! d" . flymake-show-buffer-diagnostics)
-              ("C-c ! D" . flymake-show-project-diagnostics))
+         ("M-n" . flymake-goto-next-error)
+         ("M-p" . flymake-goto-prev-error)
+         ("C-c ! n" . flymake-goto-next-error)
+         ("C-c ! p" . flymake-goto-prev-error)
+         ("C-c ! d" . flymake-show-buffer-diagnostics)
+         ("C-c ! D" . flymake-show-project-diagnostics)
+         :repeat-map +prog-flymake-repeat-map
+         ("n" . flymake-goto-next-error)
+         ("p" . flymake-goto-prev-error))
   :preface
   (defun +prog-flymake-mode-unless-eglot-h ()
     "Enable `flymake-mode' unless the major mode of the current buffer is in

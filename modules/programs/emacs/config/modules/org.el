@@ -170,11 +170,6 @@
   :bind (("C-c n f" . consult-denote-find)
          ("C-c n g" . consult-denote-grep)))
 
-(when (package-installed-p 'pdf-tools)
-  (use-package org-pdftools
-    :ensure t
-    :hook (org-mode . org-pdftools-setup-link)))
-
 ;; [org-appear] Make invisible parts of org elements appear visible
 (use-package org-appear
   :ensure t
