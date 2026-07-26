@@ -49,6 +49,7 @@
                            'highlight
                            (when (eq system-type 'darwin) 'macos)
                            'meow
+                           'modeline
                            'org
                            'prog
                            'search
