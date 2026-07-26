@@ -94,10 +94,10 @@ nil, return current buffer's major mode."
              (member (+window--buffer-major-mode buf) +window--message-modes-list))
            (display-buffer-at-bottom
             display-buffer-in-side-window)
-           (window-height . (lambda (win)
-                              (fit-window-to-buffer win (floor (frame-height) 4))))
+           (window-height . 0.33)
            (side . bottom)
-           (slot . -4))
+           (slot . -4)
+           (bump-use-time . t))
           ("\\*\\(?:Messages\\|Warnings\\|Compile-Log\\)\\*"
            (display-buffer-at-bottom
             display-buffer-in-side-window
