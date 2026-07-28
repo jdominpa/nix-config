@@ -25,6 +25,7 @@
    isearch-yank-on-move 'shift))
 
 (use-package grep
+  :defer t
   :config
   (setq grep-use-headings t))
 

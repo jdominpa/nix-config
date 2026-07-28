@@ -2,6 +2,7 @@
 
 ;; [vc-mode] Version control interface
 (use-package vc
+  :defer t
   :config
   (setq vc-allow-async-diff t
         vc-allow-rewriting-published-history t

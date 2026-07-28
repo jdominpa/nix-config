@@ -54,6 +54,7 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
 (use-package org-entities
+  :after org
   :config
   (setq org-entities-user
         '(("vdash" "\\vdash" t "⊢" "⊢" "⊢" "⊢")
@@ -75,9 +76,7 @@
           ("subsetneqq" "\\subsetneqq" t "⊊" "⊊" "⊊" "⊊")
           ("supsetneqq" "\\supsetneqq" t "⊋" "⊋" "⊋" "⊋")
           ("nsubset" "\\nsubset" t "⊄" "⊄" "⊄" "⊄")
-          ("nsupset" "\\nsupset" t "⊅" "⊅" "⊅" "⊅")
-          ("nsubseteq" "\\nsubseteq" t "⊈" "⊈" "⊈" "⊈")
-          ("nsupseteq" "\\nsupseteq" t "⊉" "⊉" "⊉" "⊉"))))
+          ("nsupset" "\\nsupset" t "⊅" "⊅" "⊅" "⊅"))))
 
 (use-package org-capture
   :bind (("C-c o c" . org-capture)

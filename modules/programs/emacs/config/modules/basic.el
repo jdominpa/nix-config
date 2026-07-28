@@ -93,7 +93,7 @@
   :hook (after-init . recentf-mode)
   :config
   (setopt recentf-save-file (expand-file-name "recentf" user-emacs-directory))
-  (setq recentf-exclude '("/tmp/" "/ssh:" ".gz" ".xz" ".zip")))
+  (setq recentf-exclude '("/tmp/" "/ssh:" "\\.gz\\'" "\\.xz\\'" "\\.zip\\'")))
 
 ;; [so-long] Workaround for long one-line files
 (use-package so-long

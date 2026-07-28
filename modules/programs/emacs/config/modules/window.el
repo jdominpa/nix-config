@@ -55,17 +55,30 @@ nil, return current buffer's major mode."
                         (if buffer-or-name
                             (get-buffer buffer-or-name)
                           (current-buffer))))
+
+  (defmacro +window--major-mode-list-predicate (mode-type)
+    "Create a predicate that checks whether the major mode of a buffer is in the list of MODE-TYPE.
+Meant to be used in `display-buffer-alist'."
+    (let ((fn-name (intern (format "+window--%s-modes-p" mode-type)))
+          (list-name (intern (format "+window--%s-modes-list" mode-type))))
+      `(defun ,fn-name (buf act)
+         ,(format "Return non-nil when the major mode of BUF is a member of `%s'." list-name)
+         (provided-mode-derived-p (+window--buffer-major-mode buf) ,list-name))))
+  (+window--major-mode-list-predicate "help")
+  (+window--major-mode-list-predicate "man")
+  (+window--major-mode-list-predicate "message")
+  (+window--major-mode-list-predicate "repl")
+  (+window--major-mode-list-predicate "occur")
+
   (setq fit-window-to-buffer-horizontally t
         window-combination-resize t
         switch-to-buffer-in-dedicated-window 'pop
         display-buffer-alist
-        '(((lambda (buf act)
-             (member (+window--buffer-major-mode buf) +window--man-modes-list))
+        '((+window--man-modes-p
            (display-buffer-reuse-mode-window)
            (body-function . select-window))
           ;; Top windows
-          ((lambda (buf act)
-             (member (+window--buffer-major-mode buf) +window--occur-modes-list))
+          (+window--occur-modes-p
            (display-buffer-reuse-mode-window
             display-buffer-in-side-window)
            (body-function . select-window)
@@ -74,8 +87,7 @@ nil, return current buffer's major mode."
            (side . top)
            (slot . 0))
           ;; Side windows
-          ((lambda (buf act)
-             (member (+window--buffer-major-mode buf) +window--help-modes-list))
+          (+window--help-modes-p
            (display-buffer-reuse-mode-window
             display-buffer-in-side-window)
            (body-function . select-window)
@@ -83,15 +95,14 @@ nil, return current buffer's major mode."
                              (fit-window-to-buffer win (floor (frame-width) 4))))
            (side . right)
            (slot . 0)
-           (window-parameters . ((split-window . #'ignore))))
+           (window-parameters . ((split-window . ignore))))
           ;; Bottom windows
           ("\\*RefTex"
            (display-buffer-in-side-window)
            (window-height . 0.25)
            (side . bottom)
            (slot . -5))
-          ((lambda (buf act)
-             (member (+window--buffer-major-mode buf) +window--message-modes-list))
+          (+window--message-modes-p
            (display-buffer-at-bottom
             display-buffer-in-side-window)
            (window-height . 0.33)
@@ -108,7 +119,7 @@ nil, return current buffer's major mode."
            (side . bottom)
            (slot . -3)
            (body-function . select-window)
-           (window-parameters . ((split-window . #'ignore))))
+           (window-parameters . ((split-window . ignore))))
           ("[Oo]utput\\*"
            (display-buffer-in-side-window)
            (window-height . (lambda (win)
@@ -139,8 +150,7 @@ nil, return current buffer's major mode."
            (side . bottom)
            (slot . -1)
            (preserve-size . (nil . t)))
-          ((lambda (buf act)
-             (member (+window--buffer-major-mode buf) +window--repl-modes-list))
+          (+window--repl-modes-p
            (display-buffer-reuse-mode-window
             display-buffer-in-direction
             display-buffer-in-side-window)

@@ -96,7 +96,7 @@
         '((display-buffer-in-direction)
           (window-height . (lambda (win) (fit-window-to-buffer win (floor (frame-height) 3))))
           (direction . below)
-          (window-parameters . ((split-window . #'ignore)))))
+          (window-parameters . ((split-window . ignore)))))
   (setf (alist-get "^\\*Embark \\(?:Export\\|Collect\\).*Variables\\*"
                    display-buffer-alist nil nil 'equal)
         '((display-buffer-in-side-window)
@@ -104,7 +104,7 @@
           (window-width . 74)
           (side . right)
           (slot . 5)
-          (window-parameters . ((split-window . #'ignore))))))
+          (window-parameters . ((split-window . ignore))))))
 
 (use-package embark-consult
   :ensure t
@@ -250,4 +250,6 @@
   (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory)))
 
 (use-package abbrev
-  :hook ((text-mode prog-mode) . abbrev-mode))
+  :hook ((text-mode prog-mode) . abbrev-mode)
+  :config
+  (setq save-abbrevs nil))

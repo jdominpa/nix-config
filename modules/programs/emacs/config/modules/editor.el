@@ -33,7 +33,6 @@ to be added as a hook to `find-file-hook' and `dired-initial-position-hook'."
       (setq +editor-auto-revert-mode nil))
     (let ((fn (if +editor-auto-revert-mode #'add-hook #'remove-hook)))
       (funcall fn 'window-buffer-change-functions #'+editor-auto-revert-current-buffer-h)
-      (funcall fn 'window-selection-change-functions #'+editor-auto-revert-current-buffer-h)
       (if +editor-auto-revert-mode
           (add-function :after after-focus-change-function #'+editor-auto-revert-visible-buffers-h)
         (remove-function after-focus-change-function #'+editor-auto-revert-visible-buffers-h))

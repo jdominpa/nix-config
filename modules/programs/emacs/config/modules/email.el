@@ -42,7 +42,7 @@ english locale is used to format the time/date."
         mu4e-refile-folder "/mail/Archive"
         mu4e-trash-folder "/mail/Trash"
         mu4e-maildir-shortcuts '((:maildir "/mail/Inbox" :key ?i)
-	                             (:maildir "/mail/Drafts" :key ?d)
-	                             (:maildir "/mail/Sent" :key ?s)
-	                             (:maildir "/mail/Archive" :key ?a)
-	                             (:maildir "/mail/Trash" :key ?t))))
+                                 (:maildir "/mail/Drafts" :key ?d)
+                                 (:maildir "/mail/Sent" :key ?s)
+                                 (:maildir "/mail/Archive" :key ?a)
+                                 (:maildir "/mail/Trash" :key ?t))))

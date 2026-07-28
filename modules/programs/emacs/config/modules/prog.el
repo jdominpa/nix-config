@@ -34,6 +34,7 @@
 
 ;; [xref] Cross reference
 (use-package xref
+  :defer t
   :config
   (setq xref-search-program 'ripgrep
         xref-history-storage 'xref-window-local-history))
@@ -141,7 +142,7 @@
   :when (treesit-available-p)
   :config
   (setopt treesit-enabled-modes t)
-  (setq treesit-auto-install-grammar 'always
+  (setq treesit-auto-install-grammar 'ask
         treesit-font-lock-level 4))
 
 ;; [envrc] Direnv integration
@@ -184,6 +185,7 @@
 
 ;; C/C++
 (use-package cc-mode
+  :defer t
   :config
   (setq c-basic-offset 4)
   (c-set-offset 'case-label '+))
