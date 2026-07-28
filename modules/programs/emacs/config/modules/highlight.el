@@ -20,11 +20,11 @@
   :hook ((prog-mode conf-mode) . whitespace-mode)
   :config
   ;; only show bad whitespace
-  (setopt whitespace-style
-          '(face
-            trailing                    ; trailing whitespace
-            tabs tab-mark               ; » glyph for tabs
-            missing-newline-at-eof)))   ; newline at end-of-file
+  (setq whitespace-style
+        '(face
+          trailing                    ; trailing whitespace
+          tabs tab-mark               ; » glyph for tabs
+          missing-newline-at-eof)))   ; newline at end-of-file
 
 ;; [display-fill-column-indicator] Show a line at 80 char
 (use-package display-fill-column-indicator

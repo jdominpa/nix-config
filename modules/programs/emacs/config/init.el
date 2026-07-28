@@ -64,6 +64,6 @@
 (let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
   (dolist (module +core-module-list)
     (when module
-      (load-file (concat modules-directory
-                         (symbol-name module)
-                         ".el")))))
+      (condition-case err
+          (load-file (concat modules-directory (symbol-name module) ".el"))
+        (error (display-warning '+core (format "Failed to load `%s': %S" module err) :error))))))

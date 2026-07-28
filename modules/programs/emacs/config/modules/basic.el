@@ -182,4 +182,5 @@ is nil."
               (daemonp)))
   :hook (after-init . exec-path-from-shell-initialize)
   :config
+  (setq exec-path-from-shell-arguments '("-l"))
   (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK"))

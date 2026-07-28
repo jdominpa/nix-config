@@ -61,7 +61,7 @@ nil, return current buffer's major mode."
 Meant to be used in `display-buffer-alist'."
     (let ((fn-name (intern (format "+window--%s-modes-p" mode-type)))
           (list-name (intern (format "+window--%s-modes-list" mode-type))))
-      `(defun ,fn-name (buf act)
+      `(defun ,fn-name (buf _act)
          ,(format "Return non-nil when the major mode of BUF is a member of `%s'." list-name)
          (provided-mode-derived-p (+window--buffer-major-mode buf) ,list-name))))
   (+window--major-mode-list-predicate "help")
@@ -83,7 +83,7 @@ Meant to be used in `display-buffer-alist'."
             display-buffer-in-side-window)
            (body-function . select-window)
            (window-height . (lambda (win)
-						      (fit-window-to-buffer win (floor (frame-height) 4) 10)))
+                              (fit-window-to-buffer win (floor (frame-height) 4) 10)))
            (side . top)
            (slot . 0))
           ;; Side windows
