@@ -61,6 +61,41 @@ Call `+modeline-refresh' after changing this."
   :group '+modeline
   :group 'faces)
 
+(defface +modeline-notice
+  '((t (:inherit mode-line-emphasis :slant normal)))
+  "Face for factual state indicators that are not warnings."
+  :group '+modeline-faces)
+
+(defface +modeline-info
+  '((t (:inherit success)))
+  "Face for info-level messages in the mode-line."
+  :group '+modeline-faces)
+
+(defface +modeline-warning
+  '((t (:inherit compilation-mode-line-run)))
+  "Face for warnings in the mode-line."
+  :group '+modeline-faces)
+
+(defface +modeline-urgent
+  '((t (:inherit compilation-mode-line-fail)))
+  "Face for errors in the mode-line."
+  :group '+modeline-faces)
+
+(defface +modeline-debug
+  '((t (:inherit shadow :slant italic)))
+  "Face for debug-level messages."
+  :group '+modeline-faces)
+
+(defface +modeline-panel
+  '((t (:inherit highlight)))
+  "Face for highlighted background segments."
+  :group '+modeline-faces)
+
+(defface +modeline-macro
+  '((t (:inherit (bold +modeline-panel))))
+  "Face for the macro recording indicator."
+  :group '+modeline-faces)
+
 (defface +modeline-buffer-name
   '((t (:inherit (mode-line-buffer-id bold))))
   "Face for the file name portion of the buffer identification."
@@ -72,13 +107,8 @@ Call `+modeline-refresh' after changing this."
   :group '+modeline-faces)
 
 (defface +modeline-buffer-major-mode
-  '((t (:inherit (mode-line-emphasis bold))))
-  "Face used for the major-mode segment in the mode-line."
-  :group '+modeline-faces)
-
-(defface +modeline-panel
-  '((t (:inherit mode-line-highlight)))
-  "Face for \\='X out of Y\\=' segments."
+  '((t (:inherit bold)))
+  "Face for the major-mode segment in the mode-line."
   :group '+modeline-faces)
 
 (defface +modeline-host
@@ -86,43 +116,28 @@ Call `+modeline-refresh' after changing this."
   "Face for remote host segment in the mode-line."
   :group '+modeline-faces)
 
-(defface +modeline-debug
-  '((t (:inherit font-lock-doc-face :slant normal)))
-  "Face for debug-level messages."
-  :group '+modeline-faces)
-
-(defface +modeline-info
-  '((t (:inherit success)))
-  "Face for info-level messages in the mode-line."
-  :group '+modeline-faces)
-
-(defface +modeline-warning
-  '((t (:inherit warning)))
-  "Face for warnings in the mode-line."
-  :group '+modeline-faces)
-
-(defface +modeline-urgent
-  '((t (:inherit error)))
-  "Face for errors in the mode-line."
-  :group '+modeline-faces)
-
 (defface +modeline-meow-insert-state
-  '((t (:inherit font-lock-keyword-face :weight normal)))
+  '((t (:inherit +modeline-info :weight normal)))
   "Face for the insert state tag in meow indicator."
   :group '+modeline-faces)
 
 (defface +modeline-meow-beacon-state
-  '((t (:inherit font-lock-doc-face :slant normal)))
+  '((t (:inherit +modeline-urgent :weight normal)))
   "Face for the beacon state tag in meow indicator."
   :group '+modeline-faces)
 
 (defface +modeline-meow-keypad-state
-  '((t (:inherit +modeline-info :weight normal)))
+  '((t (:inherit +modeline-warning :weight normal)))
   "Face for the keypad state tag in meow indicator."
   :group '+modeline-faces)
 
+(defface +modeline-meow-motion-state
+  '((t (:inherit +modeline-debug :weight normal)))
+  "Face for the motion state tag in meow indicator."
+  :group '+modeline-faces)
+
 (defface +modeline-compilation
-  '((t (:inherit +modeline-warning :slant italic :height 0.9)))
+  '((t (:inherit compilation-mode-line-run :slant italic)))
   "Face for ongoing compilation process."
   :group '+modeline-faces)
 
@@ -156,7 +171,7 @@ Call `+modeline-refresh' after changing this."
   (cond ((integerp +modeline-window-width-limit)
          (<= (window-total-width) +modeline-window-width-limit))
         ((floatp +modeline-window-width-limit)
-         (<= (/ (window-total-width) (frame-width) 1.0)
+         (<= (/ (window-total-width) (float (frame-width)))
              +modeline-window-width-limit))))
 
 (defsubst +modeline--face (&optional face)
@@ -236,23 +251,20 @@ run on every redisplay, so interpreted ones are noticeable."
 
 (+modeline-def-segment window-state
   "Indicator for whether the window is a (strongly) dedicated window."
-  (let ((face 'mode-line-emphasis))
-    (cond
-     ((eq (window-dedicated-p) t)
-      (propertize
-       " D "
-       'face (+modeline--face face)
-       'help-echo "Window strongly dedicated to its buffer\nmouse-1: Toggle"
-       'local-map mode-line-window-dedicated-keymap
-       'mouse-face 'mode-line-highlight))
-     ((window-dedicated-p)
-      (propertize
-       " d "
-       'face (+modeline--face face)
-       'help-echo "Window dedicated to its buffer\nmouse-1: Toggle"
-       'local-map mode-line-window-dedicated-keymap
-       'mouse-face 'mode-line-highlight))
-     (t ""))))
+  (when (window-dedicated-p)
+    (let ((text (if (eq (window-dedicated-p) t) "D" "d"))
+          (help-echo (if (eq (window-dedicated-p) t)
+                         "Window strongly dedicated to its buffer\nmouse-1: Toggle"
+                       "Window dedicated to its buffer\nmouse-1: Toggle")))
+      (concat
+       " "
+       (propertize
+        text
+        'face (+modeline--face '+modeline-notice)
+        'help-echo help-echo
+        'mouse-face 'mode-line-highlight
+        'local-map mode-line-window-dedicated-keymap)
+       " "))))
 
 ;; Meow mode segment
 
@@ -265,7 +277,7 @@ run on every redisplay, so interpreted ones are noticeable."
                   ('insert '+modeline-meow-insert-state)
                   ('beacon '+modeline-meow-beacon-state)
                   ('keypad '+modeline-meow-keypad-state)
-                  ('motion nil)
+                  ('motion '+modeline-meow-motion-state)
                   (_ nil))))
       (propertize
        (substring-no-properties meow--indicator)
@@ -278,12 +290,11 @@ run on every redisplay, so interpreted ones are noticeable."
   (when (and (+modeline--active-window-p)
              (or defining-kbd-macro executing-kbd-macro))
     (let ((sep (propertize " " 'face '+modeline-panel))
-          (vsep (propertize " "
-                            'face '(:inherit (+modeline-panel variable-pitch)))))
+          (vsep (propertize +modeline--vspc 'face '+modeline-panel)))
       (concat
        sep
        (propertize "Macro"
-                   'face '(:inherit (+modeline-urgent +modeline-panel)))
+                   'face '+modeline-macro)
        vsep
        (propertize ">" 'face '+modeline-panel)
        sep))))
@@ -294,8 +305,26 @@ run on every redisplay, so interpreted ones are noticeable."
   "Escape %-constructs in STR.
 Strings returned from an `:eval' form are still scanned for
 %-constructs, so any text taken from a buffer or file name has to be
-escaped or a buffer called \"100%.txt\" will corrupt the mode-line."
+escaped."
   (string-replace "%" "%%" str))
+
+(defsubst +modeline--unescape (str)
+  "Undo `+modeline--escape' on STR.
+Tooltips are not scanned for %-constructs, so escaped text has to be
+restored before it is handed to `help-echo'."
+  (string-replace "%%" "%" str))
+
+(defsubst +modeline--escape-propertized (str)
+  "Escape %-constructs in STR, preserving its text properties.
+`string-replace' returns a bare string, which would discard the faces
+that `format-mode-line' produces, so this is the variant to use on text
+that has already been propertized by someone else.
+
+The replacement is built from the match rather than written literally,
+so that the escaped \"%%\" inherits the properties of the \"%\" it stands
+for: the mode-line reads the face of a %-construct from the position of
+its leading \"%\", and a literal replacement would land there bare."
+  (replace-regexp-in-string "%" (lambda (m) (concat m m)) str t t))
 
 (defvar-local +modeline--buffer-id nil
   "Cached (PREFIX . NAME) for the current buffer.")
@@ -329,9 +358,9 @@ name.  Both are %-escaped and free of text properties."
   "Read-only and narrowing indicators, when they apply."
   (let ((state (concat
                 (when buffer-read-only
-                  (propertize "%1*" 'face (+modeline--face '+modeline-warning)))
+                  (propertize "%1*" 'face (+modeline--face '+modeline-notice)))
                 (when (buffer-narrowed-p)
-                  (propertize "><" 'face (+modeline--face '+modeline-warning))))))
+                  (propertize "><" 'face (+modeline--face '+modeline-notice))))))
     (unless (string-empty-p state)
       (concat state
               +modeline--vspc))))
@@ -351,7 +380,8 @@ name.  Both are %-escaped and free of text properties."
                                                          (buffer-modified-p))
                                                     '+modeline-buffer-modified
                                                   '+modeline-buffer-name))))
-     'help-echo (concat name "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
+     'help-echo (concat (+modeline--unescape name)
+                        "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
      'mouse-face 'mode-line-highlight
      'local-map mode-line-buffer-identification-keymap)))
 
@@ -404,14 +434,17 @@ mouse-1: Display Line and Column Mode Menu"))
 (+modeline-def-segment compilation
   "Indicator for ongoing compilation."
   (when (bound-and-true-p compilation-in-progress)
-    (propertize "[Compiling] "
-                'face (+modeline--face '+modeline-compilation)
-                'help-echo "Compiling\nmouse-2: Goto Buffer"
-                'mouse-face 'mode-line-highlight
-                'local-map (when (fboundp 'compilation-goto-in-progress-buffer)
-                             (make-mode-line-mouse-map
-                              'mouse-2
-                              #'compilation-goto-in-progress-buffer)))))
+    (concat
+     " "
+     (propertize "[Compiling]"
+                 'face (+modeline--face '+modeline-compilation)
+                 'help-echo "Ongoing compilation\nmouse-1: Goto Buffer"
+                 'mouse-face 'mode-line-highlight
+                 'local-map (when (fboundp 'compilation-goto-in-progress-buffer)
+                              (make-mode-line-mouse-map
+                               'mouse-1
+                               #'compilation-goto-in-progress-buffer)))
+     " ")))
 
 ;; Misc. info segment
 
@@ -419,9 +452,40 @@ mouse-1: Display Line and Column Mode Menu"))
   "Mode-line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
   (when (not (+modeline--limited-window-width-p))
-    (+modeline--display-text (format-mode-line mode-line-misc-info))))
+    ;; `format-mode-line' has already turned "%%" into a literal "%", which the
+    ;; scan of this segment's own return value would read as a construct again.
+    (+modeline--display-text
+     (+modeline--escape-propertized (format-mode-line mode-line-misc-info)))))
 
 ;; Eglot state segment
+
+(defvar-local +modeline--eglot nil
+  "Cached alist of eglot state with keys SERVER, NICK, HELP-ECHO and LOCAL-MAP.
+Only what cannot change while a server is managing the buffer is cached
+here; the pending-request count and the last error are read live by the
+segment.")
+
+(defun +modeline-update-eglot-h ()
+  "Update eglot cached state for the mode-line."
+  (setq +modeline--eglot
+        (when-let* ((server (and (eglot-managed-p) (eglot-current-server))))
+          (let* ((nick (eglot-project-nickname server))
+                 (server-info (eglot--server-info server))
+                 (server-name (or (plist-get server-info :name)
+                                  (jsonrpc-name server)
+                                  ""))
+                 (major-modes (or (eglot--major-modes server) "")))
+            `((server . ,server)
+              (nick . ,nick)
+              (help-echo . ,(format "Eglot connected [%s]\n%s %s
+mouse-1: Display minor mode menu
+mouse-3: LSP server control menu"
+                                    nick server-name major-modes))
+              (local-map . ,(let ((map (make-sparse-keymap)))
+                              (define-key map [mode-line mouse-1] eglot-menu)
+                              (define-key map [mode-line mouse-3] eglot-server-menu)
+                              map)))))))
+(add-hook 'eglot-managed-mode-hook #'+modeline-update-eglot-h)
 
 (defun +modeline--eglot-pending-count (server)
   "Get count of pending eglot requests to SERVER."
@@ -429,49 +493,34 @@ By default, this shows the information specified by `global-mode-string'."
       (jsonrpc-continuation-count server)
     (hash-table-count (jsonrpc--request-continuations server))))
 
-(defvar-local +modeline--eglot nil
-  "Cached state of eglot lsp client.")
+(defun +modeline--eglot-face (server nick)
+  "Return the face for SERVER, whose project nickname is NICK.
+This is evaluated on redisplay rather than cached: at the moment eglot
+starts managing a buffer there is by definition no error and nothing
+pending, so a cached face could only ever report a healthy server."
+  (cond ((jsonrpc-last-error server) '+modeline-urgent)
+        ((plusp (+modeline--eglot-pending-count server)) '+modeline-warning)
+        (nick '+modeline-info)
+        (t '+modeline-notice)))
 
-(defun +modeline-update-eglot-h ()
-  "Update eglot cached state for the mode-line."
-  (setq +modeline--eglot
-        (let* ((server (and (eglot-managed-p) (eglot-current-server)))
-               (nick (and server (eglot-project-nickname server)))
-               (pending (and server (+modeline--eglot-pending-count server)))
-               (last-error (and server (jsonrpc-last-error server)))
-               (face (cond (last-error '+modeline-urgent)
-                           ((and pending (plusp pending)) '+modeline-warning)
-                           (nick '+modeline-info)
-                           (t '+modeline-warning)))
-               (server-info (and server (eglot--server-info server)))
-               (server-name (or (plist-get server-info :name)
-                                (and server (jsonrpc-name server)) ""))
-               (major-modes (or (and server (eglot--major-modes server)) "")))
-          (propertize eglot-menu-string
-                      'face face
-                      'help-echo (format "Eglot connected [%s]\n%s %s
-mouse-1: Display minor mode menu
-mouse-3: LSP server control menu"
-                                         nick server-name major-modes)
-                      'mouse-face 'mode-line-highlight
-                      'local-map (let ((map (make-sparse-keymap)))
-                                   (define-key map [mode-line mouse-1] eglot-menu)
-                                   (define-key map [mode-line mouse-3] eglot-server-menu)
-                                   map)))))
-(add-hook 'eglot-managed-mode-hook #'+modeline-update-eglot-h)
-
-(defun +modeline--override-eglot ()
-  "Override `eglot' mode-line."
-  (setq mode-line-misc-info
-        (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info)))
 (with-eval-after-load 'eglot
-  (+modeline--override-eglot))
+  (setq mode-line-misc-info
+        (delq (assq 'eglot--managed-mode mode-line-misc-info)
+              mode-line-misc-info)))
 
 (+modeline-def-segment eglot
   "The lsp server and eglot state."
   (when (and (bound-and-true-p eglot--managed-mode)
              +modeline--eglot)
-    (concat " " (+modeline--display-text +modeline--eglot) " ")))
+    (let-alist +modeline--eglot
+      (concat
+       " "
+       (propertize eglot-menu-string
+                   'face (+modeline--face (+modeline--eglot-face .server .nick))
+                   'help-echo .help-echo
+                   'mouse-face 'mode-line-highlight
+                   'local-map .local-map)
+       " "))))
 
 ;; Input method segment
 
@@ -480,7 +529,7 @@ mouse-3: LSP server control menu"
   (when current-input-method
     (concat " "
             (propertize current-input-method-title
-                        'face (+modeline--face 'mode-line-emphasis)
+                        'face (+modeline--face '+modeline-notice)
                         'help-echo (concat "Current input method: "
                                            current-input-method
                                            "\n\
@@ -492,28 +541,45 @@ mouse-3: Describe current input method")
 
 ;; Buffer encoding segment
 
+(defvar-local +modeline--buffer-encoding nil
+  "Cached end-of-line style and coding system of the current buffer.")
+
+(defun +modeline-update-buffer-encoding-h (&rest _)
+  "Compute and cache the buffer's eol style and coding system."
+  (setq +modeline--buffer-encoding
+        (let* (;; eol type
+               (eol (coding-system-eol-type buffer-file-coding-system))
+               ;; coding system
+               (sys (coding-system-plist buffer-file-coding-system))
+               (sym (if (memq (plist-get sys :category)
+                              '(coding-category-undecided coding-category-utf-8))
+                        'utf-8
+                      (plist-get sys :name)))
+               (parts (delq nil
+                            (list (pcase eol
+                                    (0 "LF")
+                                    (1 "CRLF")
+                                    (2 "CR")
+                                    (_ nil))
+                                  (upcase (symbol-name sym))))))
+          (string-join parts " "))))
+(add-hook 'find-file-hook #'+modeline-update-buffer-encoding-h)
+(add-hook 'after-save-hook #'+modeline-update-buffer-encoding-h)
+(add-hook 'after-revert-hook #'+modeline-update-buffer-encoding-h)
+(add-hook 'after-change-major-mode-hook #'+modeline-update-buffer-encoding-h)
+(advice-add 'set-buffer-file-coding-system :after #'+modeline-update-buffer-encoding-h)
+
 (+modeline-def-segment buffer-encoding
   "End-of-line style and coding system."
-  (let* (;; eol type
-         (eol (coding-system-eol-type buffer-file-coding-system))
-         ;; coding system
-         (sys (coding-system-plist buffer-file-coding-system))
-         (sym (if (memq (plist-get sys :category)
-                        '(coding-category-undecided coding-category-utf-8))
-                  'utf-8
-                (plist-get sys :name)))
-         (parts (delq nil
-                      (list (pcase eol
-                              (0 "LF")
-                              (1 "CRLF")
-                              (2 "CR")
-                              (_ nil))
-                            (upcase (symbol-name sym))))))
-    (propertize (concat " " (string-join parts " ") " ")
-                'face (+modeline--face)
-                'help-echo 'mode-line-mule-info-help-echo
-                'mouse-face 'mode-line-highlight
-                'local-map mode-line-coding-system-map)))
+  (concat
+   " "
+   (propertize (or +modeline--buffer-encoding
+                   (+modeline-update-buffer-encoding-h))
+               'face (+modeline--face)
+               'help-echo 'mode-line-mule-info-help-echo
+               'mouse-face 'mode-line-highlight
+               'local-map mode-line-coding-system-map)
+   " "))
 
 ;; Major mode segment
 
@@ -521,7 +587,7 @@ mouse-3: Describe current input method")
   "Major mode, including environment and text-scale info."
   (concat
    " "
-   (propertize (format-mode-line mode-name)
+   (propertize (+modeline--escape-propertized (format-mode-line mode-name))
                'face (+modeline--face '+modeline-buffer-major-mode)
                'mouse-face 'mode-line-highlight
                'help-echo "Major mode\n\
@@ -532,7 +598,7 @@ mouse-3: Toggle minor modes"
    (and (boundp 'text-scale-mode-amount)
         (/= text-scale-mode-amount 0)
         (propertize
-         (format (if (> text-scale-mode-amount 0) " (%+d)" " (%-d)")
+         (format (if (> text-scale-mode-amount 0) " (%+d)" " (%d)")
                  text-scale-mode-amount)
          'face (+modeline--face '+modeline-buffer-major-mode)))
    " "))
@@ -541,14 +607,41 @@ mouse-3: Toggle minor modes"
 
 (+modeline-def-segment process
   "Process info."
-  (when-let* ((seg (format-mode-line mode-line-process))
+  (when-let* ((seg (string-trim (format-mode-line mode-line-process)))
               ((not (string-empty-p seg))))
-    (+modeline--display-text seg)))
+    (concat " "
+            (+modeline--display-text (+modeline--escape-propertized seg))
+            " ")))
 
 ;; Version control segment
 
 (defvar-local +modeline--vcs nil
   "Cached alist of vcs information with keys ICON, TEXT, HELP-ECHO, LOCAL-MAP and IN-GIT-WORKTREE.")
+
+(defvar +modeline--git-worktree-cache (make-hash-table :test 'equal)
+  "Cache mapping a \".git\" file name to whether it belongs to a linked worktree.
+A checkout cannot stop being a worktree while it exists, so the answer is
+read from disk once per repository instead of on every save.")
+
+(defun +modeline--git-worktree-p (git-dir)
+  "Return non-nil if the checkout rooted at GIT-DIR is a linked git worktree.
+In a worktree \".git\" is a file rather than a directory, but the same
+happens in a submodule, whose gitdir points into \".git/modules/\"
+instead."
+  (let* ((dot-git (expand-file-name ".git" git-dir))
+         (cached (gethash dot-git +modeline--git-worktree-cache 'unknown)))
+    (if (eq cached 'unknown)
+        (puthash dot-git
+                 (and (file-regular-p dot-git)
+                      ;; Read defensively: this runs from `after-save-hook',
+                      ;; where a signal would reach the user.
+                      (ignore-errors
+                        (with-temp-buffer
+                          (insert-file-contents dot-git nil 0 512)
+                          (goto-char (point-min))
+                          (looking-at-p "gitdir:.*/worktrees/"))))
+                 +modeline--git-worktree-cache)
+      cached)))
 
 (defun +modeline-update-vcs-h (&rest _)
   "Update vcs cached state for the mode-line."
@@ -557,9 +650,9 @@ mouse-3: Toggle minor modes"
           (let* ((backend (vc-backend buffer-file-name))
                  (state (vc-state buffer-file-name backend))
                  (icon (cond ((memq state '(edited added))
-                              (propertize "*" 'face '+modeline-info))
+                              (propertize "*" 'face '+modeline-warning))
                              ((eq state 'needs-merge)
-                              (propertize "?" 'face '+modeline-info))
+                              (propertize "?" 'face '+modeline-warning))
                              ((eq state 'needs-update)
                               (propertize "!" 'face '+modeline-warning))
                              ((memq state '(removed conflict unregistered))
@@ -570,16 +663,22 @@ mouse-3: Toggle minor modes"
                                (cadr (split-string (string-trim vc-mode) "^[A-Z]+[-:]+")))
                           ""))
                  (face (or (cdr (assq state
-                                      '((needs-update . (+modeline-warning bold))
+                                      '((edited . (+modeline-warning bold))
+                                        (added . (+modeline-warning bold))
+                                        (needs-merge . (+modeline-warning bold))
+                                        (needs-update . (+modeline-warning bold))
                                         (removed . (+modeline-urgent bold))
                                         (conflict . (+modeline-urgent bold))
                                         (unregistered . (+modeline-urgent bold)))))
                            '(+modeline-info bold)))
-                 (text (propertize (if (length> str +modeline-vcs-max-length)
-                                       (concat
-                                        (substring str 0 (- +modeline-vcs-max-length 3))
-                                        (if (char-displayable-p ?…) "…" "..."))
-                                     str)
+                 ;; Escaped after truncating, so that a "%" in a branch name
+                 ;; still counts as one character against the length limit.
+                 (text (propertize (+modeline--escape
+                                    (if (length> str +modeline-vcs-max-length)
+                                        (concat
+                                         (substring str 0 (- +modeline-vcs-max-length 3))
+                                         (if (char-displayable-p ?…) "…" "..."))
+                                      str))
                                    'face face))
                  (help-echo (get-text-property 1 'help-echo vc-mode))
                  (local-map (get-text-property 1 'local-map vc-mode))
@@ -587,8 +686,7 @@ mouse-3: Toggle minor modes"
                                               (git-dir (and buffer-file-name
                                                             (not (file-remote-p buffer-file-name)) ; avoid tramp hangs
                                                             (locate-dominating-file buffer-file-name ".git"))))
-                                    ;; In a worktree, .git is a file (not a directory)
-                                    (file-regular-p (expand-file-name ".git" git-dir)))))
+                                    (+modeline--git-worktree-p git-dir))))
             `((icon . ,icon)
               (text . ,text)
               (help-echo . ,help-echo)
@@ -602,7 +700,7 @@ mouse-3: Toggle minor modes"
   (when +modeline--vcs
     (let-alist +modeline--vcs
       (let ((worktree-indicator (when .in-git-worktree
-                                  (propertize "WT" 'face '+modeline-warning))))
+                                  (propertize "WT" 'face '+modeline-notice))))
         (concat
          " "
          (propertize (concat
@@ -667,7 +765,8 @@ and SOME-WAITING, or nil when flymake is inactive.")
                       (all-disabled . ,(and disabled (null running) t))
                       (some-waiting . ,(and (seq-difference running reported) t))))))))
 (advice-add #'flymake--handle-report :after #'+modeline-update-flymake-h)
-(add-hook 'window-state-change-functions #'+modeline-update-flymake-h)
+(add-hook 'flymake-mode-hook #'+modeline-update-flymake-h)
+(add-hook 'window-buffer-change-functions #'+modeline-update-flymake-h)
 
 (+modeline-def-segment flymake
   "Flymake diagnostic counters, when `flymake-mode' is enabled."
@@ -753,6 +852,4 @@ command should be run after changing any of the two lists."
 
 ;;; Enable the mode-line
 
-(use-package emacs
-  :config
-  (+modeline-refresh))
+(+modeline-refresh)
