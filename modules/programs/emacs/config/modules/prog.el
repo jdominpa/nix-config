@@ -193,8 +193,8 @@
          ;; electric-indent-mode and clangd
          (c-ts-mode . (lambda ()
                         (setq-local eglot-ignored-server-capabilities
-                                    (append eglot-ignored-server-capabilities
-                                            '(:documentOnTypeFormattingProvider))))))
+                                    (cons :documentOnTypeFormattingProvider
+                                          (bound-and-true-p eglot-ignored-server-capabilities))))))
   :config
   (setopt c-ts-mode-indent-style 'k&r)
   (setq c-ts-indent-offset 4))
