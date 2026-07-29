@@ -1,9 +1,5 @@
-{
-  self,
-  ...
-}:
 let
-  basicPackages =
+  sharedPackages =
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
@@ -11,6 +7,7 @@ let
         btop
         coreutils
         curl
+        devenv
         fd
         fzf
         gawk
@@ -34,14 +31,14 @@ let
         which
         zip
       ];
-      home-manager.sharedModules = [ self.modules.homeManager.basic-cli-tools ];
+      programs.direnv.enable = true;
     };
 in
 {
   flake.modules.nixos.basic-cli-tools =
     { pkgs, ... }:
     {
-      imports = [ basicPackages ];
+      imports = [ sharedPackages ];
       environment.systemPackages = with pkgs; [
         exfat
         hfsprogs
@@ -53,20 +50,6 @@ in
     };
 
   flake.modules.darwin.basic-cli-tools = {
-    imports = [ basicPackages ];
-  };
-
-  flake.modules.homeManager.basic-cli-tools = {
-    programs = {
-      btop.enable = true;
-      direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
-      fzf = {
-        enable = true;
-        enableZshIntegration = true;
-      };
-    };
+    imports = [ sharedPackages ];
   };
 }
