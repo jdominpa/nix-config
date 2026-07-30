@@ -27,11 +27,6 @@
         ./_layout.nix
         ./_rules.nix
       ];
-      # niri-flake's NixOS module reads these off programs.niri.package to
-      # decide whether it needs the gnome screencast portal.
-      passthru = {
-        inherit (pkgs.niri) cargoBuildFeatures cargoBuildNoDefaultFeatures;
-      };
       runtimePkgs = [
         self'.packages.kitty
         pkgs.brightnessctl

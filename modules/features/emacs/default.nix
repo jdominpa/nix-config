@@ -28,16 +28,10 @@ in
 
   flake.darwinModules.emacs = sharedSettings;
 
-  perSystem = { lib, pkgs, self', ... }: {
+  perSystem = { pkgs, self', ... }: {
     packages.emacs = inputs.wrappers.wrappers.emacs.wrap {
       inherit pkgs;
-      package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs-git else pkgs.emacs-git-pgtk;
-      # The wrapper module adds a variant wrapping `bin/emacs-${package.emacs.version}`.
-      # That name only exists for nixpkgs' releases, where the derivation version
-      # matches emacs' own version; emacs-overlay versions its builds by date, so
-      # the variant looks for a `bin/emacs-20260707.0` that was never built.
-      # `bin/emacs` and `bin/emacsclient` are wrapped either way.
-      wrapperVariants = lib.mkForce { };
+      package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs31 else pkgs.emacs31-pgtk;
       emacsPackages =
         epkgs: with epkgs; [
           ace-window
