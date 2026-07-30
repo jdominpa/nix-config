@@ -33,7 +33,6 @@ in
         jdominpa
         kitty
         latex
-        nix
         syncthing
         zsh
       ]);

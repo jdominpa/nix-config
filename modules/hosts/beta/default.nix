@@ -23,13 +23,11 @@ in
       desktop
       emacs
       git
-      homebrew
       home-manager
       jdominpa
       kanata
       kitty
       latex
-      nix
       syncthing
       zsh
     ];

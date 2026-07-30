@@ -8,6 +8,7 @@
       core
       desktop-tools
       login-manager
+      niri
       noctalia
     ];
   };
