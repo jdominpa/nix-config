@@ -115,7 +115,7 @@
           ll = "ls -l";
           la = "ls -la";
         };
-        # Bitwarden ssh auth socket symlink
+        # Bitwarden ssh auth socket environment variable
         zshenv.content = ''
           [[ -S $HOME/.bitwarden-ssh-agent.sock ]] && export SSH_AUTH_SOCK=$HOME/.bitwarden-ssh-agent.sock
         '';
@@ -129,8 +129,8 @@
           # recent directories) has to be given a writable location explicitly.
           zsh_cache_dir=''${XDG_CACHE_HOME:-$HOME/.cache}/zsh
           zsh_data_dir=''${XDG_DATA_HOME:-$HOME/.local/share}/zsh
-          [[ -d $zsh_cache_dir && -d $zsh_data_dir && -d $zsh_state_dir ]] ||
-            mkdir -p $zsh_cache_dir $zsh_data_dir $zsh_state_dir
+          [[ -d $zsh_cache_dir && -d $zsh_data_dir ]] ||
+            mkdir -p $zsh_cache_dir $zsh_data_dir
 
           #
           # History

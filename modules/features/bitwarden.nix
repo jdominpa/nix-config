@@ -1,11 +1,8 @@
 {
-  # NOTE: the ssh auth socket symlink is setup in the zsh module, since
-  # otherwise using `environment.sessionVariables` doesn't work because it gets
-  # overwritten by the gnome-keyring niri config.
-
   flake.nixosModules.bitwarden = { pkgs, ... }: {
     environment = {
       systemPackages = [ pkgs.bitwarden-desktop ];
+      sessionVariables.SSH_AUTH_SOCK = "/home/jdominpa/.bitwarden-ssh-auth.sock";
     };
   };
 
@@ -13,5 +10,6 @@
     homebrew.masApps = {
       Bitwarden = 1352778147;
     };
+    environment.sessionVariables.SSH_AUTH_SOCK = "/Users/jdominpa/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
   };
 }

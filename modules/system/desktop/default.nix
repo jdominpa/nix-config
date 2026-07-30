@@ -9,9 +9,7 @@
       desktop-tools
       login-manager
       noctalia
-    ] ++ (with self.nixosModules; [
-      niri
-    ]);
+    ];
   };
 
   flake.darwinModules.desktop = {

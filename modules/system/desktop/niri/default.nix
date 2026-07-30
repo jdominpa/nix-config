@@ -15,6 +15,8 @@
         config.niri."org.freedesktop.impl.portal.Screencast" = [ "gnome" ];
         extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
       };
+      # Disable gnome-keyring ssh agent since we use bitwarden's ssh agent
+      systemd.user.sockets.gcr-ssh-agent.enable = false;
     }
   );
 

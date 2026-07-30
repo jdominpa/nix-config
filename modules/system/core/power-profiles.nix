@@ -1,12 +1,12 @@
 {
-  flake.nixosModules.powerProfiles = {
+  flake.nixosModules.power-profiles = {
     services = {
       power-profiles-daemon.enable = true;
       upower.enable = true;
     };
   };
 
-  flake.darwinModules.powerProfiles = {
+  flake.darwinModules.power-profiles = {
     power = {
       restartAfterFreeze = true;
       sleep.display = 15;

@@ -16,36 +16,23 @@ in
   };
 
   flake.darwinModules.beta = {
-    imports =
-      with self.darwinModules;
-      [
-        basic-cli-tools
-        bitwarden
-        browser
-        desktop-system
-        emacs
-        homebrew
-        home-manager
-        jdominpa
-        kanata
-        latex
-        nix
-        nix-index
-        shell
-        terminal
-      ]
-      ++ [
-        {
-          home-manager.users.jdominpa = {
-            imports = with self.modules.homeManager; [
-              bitwarden
-              emacs
-              git
-              syncthing
-            ];
-          };
-        }
-      ];
+    imports = with self.darwinModules; [
+      bitwarden
+      brave
+      cli-tools
+      desktop
+      emacs
+      git
+      homebrew
+      home-manager
+      jdominpa
+      kanata
+      kitty
+      latex
+      nix
+      syncthing
+      zsh
+    ];
 
     networking = {
       inherit hostName;

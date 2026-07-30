@@ -9,7 +9,7 @@
       fonts
       locale
       pipewire
-      powerProfiles
+      power-profiles
       printing
       ssh
     ];
@@ -20,7 +20,7 @@
       base-settings
       fonts
       locale
-      powerProfiles
+      power-profiles
       ssh
     ];
   };
