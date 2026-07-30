@@ -1,11 +1,11 @@
 {
-  flake.modules.nixos.browser =
+  flake.nixosModules.brave =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.brave ];
     };
 
-  flake.modules.darwin.browser =
+  flake.darwinModules.brave =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.brave ];

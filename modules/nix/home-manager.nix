@@ -11,14 +11,14 @@ let
   };
 in
 {
-  flake.modules.nixos.home-manager = {
+  flake.nixosModules.home-manager = {
     imports = [
       inputs.home-manager.nixosModules.home-manager
       sharedSettings
     ];
   };
 
-  flake.modules.darwin.home-manager = {
+  flake.darwinModules.home-manager = {
     imports = [
       inputs.home-manager.darwinModules.home-manager
       sharedSettings

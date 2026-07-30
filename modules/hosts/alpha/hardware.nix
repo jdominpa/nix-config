@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.alpha =
+  flake.nixosModules.alpha =
     {
       config,
       lib,

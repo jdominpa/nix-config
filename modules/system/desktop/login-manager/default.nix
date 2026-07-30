@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.login-manager = {
+  flake.nixosModules.login-manager = {
     services.displayManager.gdm.enable = true;
   };
 }

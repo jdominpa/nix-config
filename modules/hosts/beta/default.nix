@@ -11,13 +11,13 @@ in
     system = "aarch64-darwin";
     modules = [
       { nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "aarch64-darwin"; }
-      self.modules.darwin.${hostName}
+      self.darwinModules.${hostName}
     ];
   };
 
-  flake.modules.darwin.beta = {
+  flake.darwinModules.beta = {
     imports =
-      with self.modules.darwin;
+      with self.darwinModules;
       [
         basic-cli-tools
         bitwarden
@@ -32,7 +32,6 @@ in
         nix
         nix-index
         shell
-        stylix
         terminal
       ]
       ++ [

@@ -1,5 +1,5 @@
 {
-  flake.modules.darwin.base-settings = {
+  flake.darwinModules.base-settings = {
     security.pam.services.sudo_local.touchIdAuth = true;
     system.defaults = {
       finder = {

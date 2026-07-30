@@ -1,5 +1,5 @@
 {
-  flake.modules.darwin.kanata =
+  flake.darwinModules.kanata =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.kanata ];

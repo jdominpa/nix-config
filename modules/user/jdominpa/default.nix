@@ -17,7 +17,7 @@ let
   );
 in
 {
-  flake.modules.nixos.${username} = {
+  flake.nixosModules.${username} = {
     imports = [ sharedSettings ];
     users.users.${username} = {
       isNormalUser = true;
@@ -29,7 +29,7 @@ in
     };
   };
 
-  flake.modules.darwin.${username} = {
+  flake.darwinModules.${username} = {
     imports = [ sharedSettings ];
     users.users.${username} = {
       isHidden = false;

@@ -9,37 +9,32 @@ in
 {
   flake.nixosConfigurations.${hostName} = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [
-      self.modules.nixos.${hostName}
-    ] ++ (with self.nixosModules; [
-      bitwarden
-      emacs
-      git
-      kitty
-      nix
-      zsh
-    ]);
+    modules = [ self.nixosModules.${hostName} ];
   };
 
-  flake.modules.nixos.${hostName} =
+  flake.nixosModules.${hostName} =
     { pkgs, ... }:
     {
       imports = [
         inputs.nixos-hardware.nixosModules.common-cpu-intel
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
-      ++ (with self.modules.nixos; [
-        cli-tools
-        browser
+      ++ (with self.nixosModules; [
+        bitwarden
+        brave
         btrbk
-        desktop-system
+        cli-tools
+        desktop
         discord
+        emacs
         gaming
+        git
         home-manager
         jdominpa
+        kitty
         latex
-        nix-index
-        stylix
+        nix
+        zsh
       ])
       ++ [
         {

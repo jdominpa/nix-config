@@ -4,7 +4,7 @@
   ...
 }:
 {
-  flake.modules.nixos.noctalia = {
+  flake.nixosModules.noctalia = {
     imports = [ inputs.noctalia.nixosModules.default ];
     home-manager.sharedModules = [ self.modules.homeManager.noctalia ];
   };
@@ -40,10 +40,10 @@
               "spacer_0"
               "clock"
             ];
-            margin_edge = 0;
-            margin_ends = 0;
+            margin_edge = 4;
+            margin_ends = 4;
             padding = 10;
-            radius = 4;
+            radius = 10;
             thickness = 30;
           };
         };
@@ -78,7 +78,17 @@
         nightlight.enabled = true;
         shell = {
           clipboard_history_max_entries = 10;
+          font_family = "Aporetic Sans";
           panel.open_near_click_control_center = true;
+        };
+        theme = {
+          mode = "dark";
+          source = "builtin";
+          builtin = "Catppuccin";
+        };
+        wallpaper = {
+          enabled = true;
+          directory = "~/Imatges/Wallpapers";
         };
         widget = {
           bluetooth.hide_when_no_connected_device = true;

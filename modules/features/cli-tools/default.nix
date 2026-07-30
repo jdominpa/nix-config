@@ -3,7 +3,6 @@ let
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
-        bat
         btop
         coreutils
         curl
@@ -34,7 +33,7 @@ let
     };
 in
 {
-  flake.modules.nixos.cli-tools =
+  flake.nixosModules.cli-tools =
     { pkgs, ... }:
     {
       imports = [ sharedPackages ];
@@ -48,7 +47,7 @@ in
       ];
     };
 
-  flake.modules.darwin.cli-tools = {
+  flake.darwinModules.cli-tools = {
     imports = [ sharedPackages ];
   };
 }

@@ -3,8 +3,8 @@
   ...
 }:
 {
-  flake.modules.nixos.base-system = {
-    imports = with self.modules.nixos; [
+  flake.nixosModules.core = {
+    imports = with self.nixosModules; [
       bluetooth
       fonts
       locale
@@ -15,8 +15,8 @@
     ];
   };
 
-  flake.modules.darwin.base-system = {
-    imports = with self.modules.darwin; [
+  flake.darwinModules.core = {
+    imports = with self.darwinModules; [
       base-settings
       fonts
       locale
