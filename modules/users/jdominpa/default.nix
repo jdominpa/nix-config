@@ -1,18 +1,20 @@
 {
+  moduleWithSystem,
   self,
   ...
 }:
 let
   username = "jdominpa";
-  sharedSettings =
-    { pkgs, ... }:
+  sharedSettings = moduleWithSystem (
+    { self', ... }:
     {
       nix.settings.trusted-users = [ username ];
-      users.users.${username}.shell = pkgs.zsh;
+      users.users.${username}.shell = self'.packages.zsh;
       home-manager.users.${username} = {
         imports = [ self.modules.homeManager.${username} ];
       };
-    };
+    }
+  );
 in
 {
   flake.modules.nixos.${username} = {
