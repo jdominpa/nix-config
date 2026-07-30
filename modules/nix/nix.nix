@@ -1,21 +1,12 @@
 {
   inputs,
+  withSystem,
   ...
 }:
 let
-  sharedSettings = {
-    nixpkgs = {
-      config.allowUnfree = true;
-      # FIXME: temporary fix, remove eventually
-      config.permittedInsecurePackages = [
-        "electron-39.8.10"
-      ];
-      overlays = [
-        (final: _prev: {
-          stable = inputs.nixpkgs-stable.legacyPackages.${final.stdenv.hostPlatform.system};
-        })
-      ];
-    };
+  sharedSettings = { config, ... }: {
+    # Use the configured pkgs from perSystem
+    nixpkgs.pkgs = withSystem config.nixpkgs.hostPlatform.system ({ pkgs, ... }: pkgs);
     nix.settings = {
       experimental-features = [
         "nix-command"
@@ -31,7 +22,7 @@ let
   };
 in
 {
-  flake.modules.nixos.nix = {
+  flake.nixosModules.nix = {
     imports = [ sharedSettings ];
     nix = {
       settings.auto-optimise-store = true;
@@ -43,7 +34,7 @@ in
     };
   };
 
-  flake.modules.darwin.nix = {
+  flake.darwinModules.nix = {
     imports = [ sharedSettings ];
     nix = {
       gc = {
@@ -69,4 +60,29 @@ in
       };
     };
   };
+
+  perSystem =
+    { system, ... }:
+    let
+      nixpkgsConfig = {
+        allowUnfree = true;
+        # FIXME: temporary fix, remove eventually
+        permittedInsecurePackages = [
+          "electron-39.8.10"
+        ];
+      };
+      nixpkgsOverlays = [
+        inputs.emacs-overlay.overlays.default
+        (final: _prev: {
+          stable = inputs.nixpkgs-stable.legacyPackages.${final.stdenv.hostPlatform.system};
+        })
+      ];
+    in
+    {
+      _module.args.pkgs = import inputs.nixpkgs {
+        inherit system;
+        config = nixpkgsConfig;
+        overlays = nixpkgsOverlays;
+      };
+    };
 }

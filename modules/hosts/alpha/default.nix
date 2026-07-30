@@ -9,7 +9,15 @@ in
 {
   flake.nixosConfigurations.${hostName} = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [ self.modules.nixos.${hostName} ];
+    modules = [
+      self.modules.nixos.${hostName}
+    ] ++ (with self.nixosModules; [
+      emacs
+      git
+      kitty
+      nix
+      zsh
+    ]);
   };
 
   flake.modules.nixos.${hostName} =
@@ -20,29 +28,23 @@ in
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
       ++ (with self.modules.nixos; [
-        basic-cli-tools
+        cli-tools
         browser
         btrbk
         desktop-system
-        emacs
+        discord
         gaming
         home-manager
         jdominpa
-        nix
+        latex
         nix-index
-        shell
         stylix
-        terminal
       ])
       ++ [
         {
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
               bitwarden
-              discord
-              emacs
-              git
-              latex
               syncthing
             ];
           };
@@ -69,35 +71,6 @@ in
         nvidia = {
           open = true;
           modesetting.enable = true;
-        };
-      };
-
-      # Niri output monitors
-      home-manager.users.jdominpa = {
-        programs.niri.settings = {
-          outputs = {
-            "DP-1" = {
-              enable = true;
-              mode.width = 1920;
-              mode.height = 1080;
-              mode.refresh = 143.855;
-              position.x = 0;
-              position.y = 0;
-              scale = 1.0;
-              variable-refresh-rate = true;
-            };
-            "DP-2" = {
-              enable = true;
-              focus-at-startup = true;
-              mode.width = 2560;
-              mode.height = 1440;
-              mode.refresh = 240.001;
-              position.x = 1920;
-              position.y = 0;
-              scale = 1.0;
-              variable-refresh-rate = true;
-            };
-          };
         };
       };
 

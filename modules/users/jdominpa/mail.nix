@@ -1,9 +1,8 @@
 {
   flake.modules.homeManager.jdominpa =
-    { config, pkgs, ... }:
+    { config, ... }:
     let
       mailDir = "${config.home.homeDirectory}/Mail";
-      inherit (pkgs.stdenv.hostPlatform) isLinux;
     in
     {
       accounts.email = {

@@ -247,9 +247,10 @@
 `completion-at-point-functions'."
     (add-hook 'completion-at-point-functions (cape-capf-trigger #'tempel-complete ?/) nil t))
   :config
-  (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory)))
+  (setq tempel-path (expand-file-name "templates/*.eld" +core-config-directory)))
 
 (use-package abbrev
   :hook ((text-mode prog-mode) . abbrev-mode)
   :config
-  (setq save-abbrevs nil))
+  (setq abbrev-file-name (expand-file-name "abbrev_defs" +core-config-directory)
+	save-abbrevs nil))

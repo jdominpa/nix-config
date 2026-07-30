@@ -8,9 +8,10 @@
       base-system
       desktop-tools
       login-manager
-      niri
       noctalia
-    ];
+    ] ++ (with self.nixosModules; [
+      niri
+    ]);
   };
 
   flake.modules.darwin.desktop-system = {

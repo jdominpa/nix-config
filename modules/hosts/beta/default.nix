@@ -28,6 +28,7 @@ in
         home-manager
         jdominpa
         kanata
+        latex
         nix
         nix-index
         shell
@@ -41,7 +42,6 @@ in
               bitwarden
               emacs
               git
-              latex
               syncthing
             ];
           };

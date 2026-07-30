@@ -1,5 +1,9 @@
 ;;; -*- lexical-binding: t -*-
 
+(defconst +core-config-directory
+  (file-name-directory (or load-file-name buffer-file-name user-emacs-directory))
+  "Directory holding the read-only parts of the emacs configuration."
+
 ;; Defer GC during startup, then restore sane runtime defaults later
 (defvar +core-gc-cons-threshold (* 2 1024 1024)
   "Default `gc-cons-threshold' after startup.")

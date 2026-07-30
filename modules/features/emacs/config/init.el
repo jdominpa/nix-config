@@ -61,7 +61,7 @@
                            'writing)
   "List of modules to be loaded by init.el.")
 
-(let ((modules-directory (expand-file-name "modules/" user-emacs-directory)))
+(let ((modules-directory (expand-file-name "modules/" +core-config-directory)))
   (dolist (module +core-module-list)
     (when module
       (condition-case err

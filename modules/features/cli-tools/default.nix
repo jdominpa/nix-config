@@ -11,7 +11,6 @@ let
         fd
         fzf
         gawk
-        git
         gnugrep
         gnumake
         gnupg
@@ -35,7 +34,7 @@ let
     };
 in
 {
-  flake.modules.nixos.basic-cli-tools =
+  flake.modules.nixos.cli-tools =
     { pkgs, ... }:
     {
       imports = [ sharedPackages ];
@@ -49,7 +48,7 @@ in
       ];
     };
 
-  flake.modules.darwin.basic-cli-tools = {
+  flake.modules.darwin.cli-tools = {
     imports = [ sharedPackages ];
   };
 }

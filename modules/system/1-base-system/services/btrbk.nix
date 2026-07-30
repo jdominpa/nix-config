@@ -12,7 +12,7 @@
         volume."/btr_pool" = {
           snapshot_dir = "snapshots";
           subvolume = {
-            "@home" = {};
+            "@home" = { };
           };
         };
       };

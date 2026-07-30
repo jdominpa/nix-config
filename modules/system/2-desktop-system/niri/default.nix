@@ -1,48 +1,74 @@
 {
   inputs,
-  self,
+  moduleWithSystem,
   ...
 }:
 {
-  flake.modules.nixos.niri =
-    { pkgs, ... }:
-    {
-      imports = [ inputs.niri-flake.nixosModules.niri ];
-      environment = {
-        systemPackages = [ pkgs.xwayland-satellite ];
-        variables."NIXOS_OZONE_WL" = "1";
-      };
-      home-manager.sharedModules = [ self.modules.homeManager.niri ];
+  flake.nixosModules.niri = moduleWithSystem (
+    { pkgs, self', ... }: {
       programs.niri = {
         enable = true;
-        package = pkgs.niri;
+        package = self'.packages.niri;
+        useNautilus = false;
       };
       xdg.portal = {
-        config.niri = {
-          default = [
-            "gtk"
-            "gnome"
-          ];
-          "org.freedesktop.impl.portal.Screencast" = [ "gnome" ];
-          "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-        };
+        config.niri."org.freedesktop.impl.portal.Screencast" = [ "gnome" ];
         extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
       };
-    };
+    }
+  );
 
-  flake.modules.homeManager.niri = {
-    programs.niri.settings = {
-      gestures.hot-corners.enable = false;
-      hotkey-overlay.skip-at-startup = true;
-      overview = {
-        workspace-shadow.enable = false; # needed for overview mode with noctalia
-        zoom = 0.5;
-      };
-      prefer-no-csd = true;
-      screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
-      spawn-at-startup = [
-        { argv = [ "noctalia" ]; }
+  perSystem = { pkgs, self', ... }: {
+    packages.niri = inputs.wrappers.wrappers.niri.wrap {
+      inherit pkgs;
+      imports = [
+        ./_binds.nix
+        ./_input.nix
+        ./_layout.nix
+        ./_rules.nix
       ];
+      # niri-flake's NixOS module reads these off programs.niri.package to
+      # decide whether it needs the gnome screencast portal.
+      passthru = {
+        inherit (pkgs.niri) cargoBuildFeatures cargoBuildNoDefaultFeatures;
+      };
+      runtimePkgs = [
+        self'.packages.kitty
+        pkgs.brightnessctl
+        pkgs.playerctl
+        pkgs.wireplumber # wpctl
+        pkgs.xwayland-satellite
+      ];
+      settings = {
+        gestures.hot-corners.off = _: { };
+        hotkey-overlay.skip-at-startup = _: { };
+        outputs = {
+          "DP-1" = {
+            mode = "1920x1080@143.855";
+            position = _: {
+              props = { x = 0; y = 0; };
+            };
+            scale = 1.0;
+            variable-refresh-rate = _: { };
+          };
+          "DP-2" = {
+            focus-at-startup = _: { };
+            mode = "2560x1440@240.001";
+            position = _: {
+              props = { x = 1920; y = 0; };
+            };
+            scale = 1.0;
+            variable-refresh-rate = _: { };
+          };
+        };
+        overview = {
+          workspace-shadow.off = _: { }; # needed for overview mode with noctalia
+          zoom = 0.5;
+        };
+        prefer-no-csd = _: { };
+        screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
+        spawn-at-startup = [ "noctalia" ];
+      };
     };
   };
 }
