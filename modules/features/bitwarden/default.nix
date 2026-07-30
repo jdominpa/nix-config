@@ -1,31 +1,15 @@
 {
-  flake.modules.darwin.bitwarden = {
+  flake.nixosModules.bitwarden = { pkgs, ... }: {
+    environment = {
+      systemPackages = [ pkgs.bitwarden-desktop ];
+      variables.SSH_AUTH_SOCK = "/home/jdominpa/.bitwarden-ssh-agent.sock";
+    };
+  };
+
+  flake.darwinModules.bitwarden = {
+    environment.variables.SSH_AUTH_SOCK = "/Users/jdominpa/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
     homebrew.masApps = {
       Bitwarden = 1352778147;
     };
   };
-
-  flake.modules.homeManager.bitwarden =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
-    let
-      inherit (pkgs.stdenv.hostPlatform) isLinux;
-    in
-    {
-      home = {
-        packages = lib.optionals isLinux [ pkgs.bitwarden-desktop ];
-        sessionVariables.SSH_AUTH_SOCK =
-          "${config.home.homeDirectory}/"
-          + (
-            if isLinux then
-              ".bitwarden-ssh-agent.sock"
-            else
-              "Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
-          );
-      };
-    };
 }

@@ -12,6 +12,7 @@ in
     modules = [
       self.modules.nixos.${hostName}
     ] ++ (with self.nixosModules; [
+      bitwarden
       emacs
       git
       kitty
@@ -44,7 +45,6 @@ in
         {
           home-manager.users.jdominpa = {
             imports = with self.modules.homeManager; [
-              bitwarden
               syncthing
             ];
           };
