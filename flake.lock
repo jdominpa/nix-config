@@ -129,6 +129,22 @@
         "type": "github"
       }
     },
+    "math-delimiters": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769105079,
+        "narHash": "sha256-w/BuDrujoBQ69JR7b1uMCwHIbjmopLYuLooS2oB+ozw=",
+        "owner": "oantolin",
+        "repo": "math-delimiters",
+        "rev": "a2ea2c63957d959c5f46ed5e704d79e4fee4154f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oantolin",
+        "repo": "math-delimiters",
+        "type": "github"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -288,6 +304,7 @@
         "git-hooks": "git-hooks",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "math-delimiters": "math-delimiters",
         "nix-darwin": "nix-darwin",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",

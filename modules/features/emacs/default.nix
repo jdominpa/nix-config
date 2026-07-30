@@ -65,6 +65,11 @@ in
           magit
           magit-todos
           marginalia
+          (trivialBuild {
+            pname = "math-delimiters";
+            version = "0.1";
+            src = inputs.math-delimiters;
+          })
           meow
           modus-themes
           mu4e

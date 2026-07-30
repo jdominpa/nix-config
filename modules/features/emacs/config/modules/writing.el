@@ -21,8 +21,6 @@
 
 ;; [math-delimiters] Insert \( when pressing $ key
 (use-package math-delimiters
-  :vc (:url "https://github.com/oantolin/math-delimiters"
-       :rev :newest)
   :commands (math-delimiters-no-dollars math-delimiters-insert)
   :config
   (setq math-delimiters-compressed-display-math nil))

@@ -26,6 +26,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:vic/import-tree";
+    # Emacs package that's not on elpa/melpa
+    math-delimiters = {
+      url = "github:oantolin/math-delimiters";
+      flake = false;
+    };
     noctalia = {
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
