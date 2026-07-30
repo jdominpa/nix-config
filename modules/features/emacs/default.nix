@@ -97,13 +97,16 @@ in
         self'.packages.git
         pkgs.nixd # Nix language server
       ];
-      # `user-emacs-directory` stays writable (backups, autosaves, recentf,
-      # savehist, eln-cache); the read-only parts are read from the store
-      # through `+core-config-directory`.
-      userDirectory = "~/.emacs.d/";
+      userDirectory = "~/.emacs.d";
       earlyConfigFile = ''
-        (defconst +core-config-directory "${./config}/"
+        (defvar +core-config-directory "${./config}/"
           "Directory holding the read-only parts of the configuration.")
+
+        ;; Emacs re-derives the delayed defcustoms (`package-user-dir' and friends)
+        ;; from `--init-directory' before this file runs, so anything under it that
+        ;; needs to be written has to be pointed at `user-emacs-directory' by hand.
+        (setq package-user-dir (expand-file-name "elpa" user-emacs-directory)
+              package-gnupghome-dir (expand-file-name "elpa/gnupg" user-emacs-directory))
       ''
       + builtins.readFile ./config/early-init.el;
       configFile = builtins.readFile ./config/init.el;

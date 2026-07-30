@@ -1,8 +1,12 @@
 ;;; -*- lexical-binding: t -*-
 
-(defconst +core-config-directory
+;; NOTE: this declaration must be a `defvar' and cannot be a `defconst'. The
+;; value of `+core-config-directory' may be declared externally (for example via
+;; a nix wrapper) and a `defconst' declaration would overwrite the externally
+;; defined value.
+(defvar +core-config-directory
   (file-name-directory (or load-file-name buffer-file-name user-emacs-directory))
-  "Directory holding the read-only parts of the emacs configuration."
+  "Directory holding the read-only parts of the emacs configuration.")
 
 ;; Defer GC during startup, then restore sane runtime defaults later
 (defvar +core-gc-cons-threshold (* 2 1024 1024)
