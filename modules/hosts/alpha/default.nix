@@ -34,17 +34,9 @@ in
         kitty
         latex
         nix
+        syncthing
         zsh
-      ])
-      ++ [
-        {
-          home-manager.users.jdominpa = {
-            imports = with self.modules.homeManager; [
-              syncthing
-            ];
-          };
-        }
-      ];
+      ]);
 
       boot.loader = {
         efi.canTouchEfiVariables = true;

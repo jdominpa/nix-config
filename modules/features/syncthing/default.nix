@@ -1,13 +1,12 @@
 {
-  flake.modules.homeManager.syncthing =
+  flake.nixosModules.syncthing =
     { pkgs, ... }:
-    let
-      inherit (pkgs.stdenv.hostPlatform) isLinux;
-    in
     {
-      services.syncthing = {
-        enable = true;
-        tray.enable = isLinux;
-      };
+      services.syncthing.enable = true;
+      environment.systemPackages = [ pkgs.syncthingtray ];
     };
+
+  flake.darwinModules.syncthing = {
+    homebrew.casks = [ "syncthing-app" ];
+  };
 }
