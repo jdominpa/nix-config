@@ -115,6 +115,10 @@
           ll = "ls -l";
           la = "ls -la";
         };
+        # Bitwarden ssh auth socket symlink
+        zshenv.content = ''
+          [[ -S $HOME/.bitwarden-ssh-agent.sock ]] && export SSH_AUTH_SOCK=$HOME/.bitwarden-ssh-agent.sock
+        '';
         zshrc.content = ''
           #
           # Writable state
