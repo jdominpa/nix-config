@@ -18,7 +18,6 @@
 
   flake.modules.darwin.core = {
     imports = with self.modules.darwin; [
-      base-settings
       fonts
       homebrew
       locale

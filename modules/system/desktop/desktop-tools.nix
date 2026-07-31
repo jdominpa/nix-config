@@ -3,11 +3,9 @@
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
-        brightnessctl
         libsecret
         mpv
         nomacs
-        playerctl
         qalculate-gtk
         seahorse
       ];
