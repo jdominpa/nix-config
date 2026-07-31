@@ -7,6 +7,7 @@
     imports = with self.nixosModules; [
       core
       desktop-tools
+      gtk
       login-manager
       niri
       noctalia
