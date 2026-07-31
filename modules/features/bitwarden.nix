@@ -2,7 +2,7 @@
   flake.nixosModules.bitwarden = { pkgs, ... }: {
     environment = {
       systemPackages = [ pkgs.bitwarden-desktop ];
-      sessionVariables.SSH_AUTH_SOCK = "/home/jdominpa/.bitwarden-ssh-auth.sock";
+      sessionVariables.SSH_AUTH_SOCK = "/home/jdominpa/.bitwarden-ssh-agent.sock";
     };
   };
 
