@@ -1,5 +1,5 @@
 {
-  settings.input = {
+  flake.wrappers.niri.settings.input = {
     keyboard = {
       repeat-delay = 200;
       repeat-rate = 30;

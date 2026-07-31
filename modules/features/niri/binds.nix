@@ -1,8 +1,5 @@
 {
-  # Bind properties (`allow-when-locked`, `repeat`, `cooldown-ms`,
-  # `hotkey-overlay-title`) are KDL node properties, so they go in `props` and
-  # the action goes in `content`. Binds that are only an action stay flat.
-  settings.binds = {
+  flake.wrappers.niri.settings.binds = {
     "Mod+Shift+Slash".show-hotkey-overlay = _: { };
     "Mod+T" = _: {
       props.hotkey-overlay-title = "Open a terminal";

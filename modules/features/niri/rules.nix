@@ -1,5 +1,5 @@
 {
-  settings = {
+  flake.wrappers.niri.settings = {
     window-rules = [
       {
         matches = [ { app-id = "^bitwarden$"; } ];

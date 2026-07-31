@@ -9,7 +9,6 @@ in
   flake.modules.nixos.niri =
     { config, pkgs, ... }:
     {
-      imports = [ wrappers.niri.install ];
       programs.niri = {
         enable = true;
         package = config.wrappers.niri.wrapper;
@@ -32,13 +31,7 @@ in
   flake.wrappers.niri =
     { pkgs, wlib, ... }:
     {
-      imports = [
-        wlib.wrapperModules.niri
-        ./_binds.nix
-        ./_input.nix
-        ./_layout.nix
-        ./_rules.nix
-      ];
+      imports = [ wlib.wrapperModules.niri ];
       runtimePkgs = [
         (wrappers.kitty.wrap { inherit pkgs; })
         pkgs.bibata-cursors

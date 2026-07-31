@@ -1,10 +1,5 @@
-{
-  config,
-  ...
-}:
 let
   install = {
-    imports = [ config.flake.wrappers.git.install ];
     wrappers.git.enable = true;
   };
 in

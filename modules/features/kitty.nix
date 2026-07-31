@@ -1,10 +1,5 @@
-{
-  config,
-  ...
-}:
 let
   install = {
-    imports = [ config.flake.wrappers.kitty.install ];
     wrappers.kitty.enable = true;
   };
 in

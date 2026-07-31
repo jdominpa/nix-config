@@ -7,7 +7,6 @@ let
   install =
     { pkgs, ... }:
     {
-      imports = [ config.flake.wrappers.emacs.install ];
       wrappers.emacs.enable = true;
       environment = {
         systemPackages = [

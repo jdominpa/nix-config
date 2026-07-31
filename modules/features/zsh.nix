@@ -10,7 +10,6 @@ in
   flake.modules.nixos.zsh =
     { config, ... }:
     {
-      imports = [ wrappers.zsh.install ];
       programs.zsh = {
         enable = true;
         syntaxHighlighting.enable = true;
@@ -29,7 +28,6 @@ in
   flake.modules.darwin.zsh =
     { config, ... }:
     {
-      imports = [ wrappers.zsh.install ];
       programs.zsh = {
         enable = true;
         enableCompletion = true;

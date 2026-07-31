@@ -1,5 +1,5 @@
 {
-  settings.layout = {
+  flake.wrappers.niri.settings.layout = {
     background-color = "transparent"; # needed for overview mode with noctalia
     border.off = _: { };
     focus-ring = {
