@@ -27,7 +27,7 @@ in
       themeFile = "Modus_Vivendi";
     };
 
-  flake.nixosModules.kitty = install;
+  flake.modules.nixos.kitty = install;
 
-  flake.darwinModules.kitty = install;
+  flake.modules.darwin.kitty = install;
 }

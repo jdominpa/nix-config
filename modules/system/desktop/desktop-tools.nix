@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.desktop-tools =
+  flake.modules.nixos.desktop-tools =
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
@@ -29,7 +29,7 @@
       };
     };
 
-  flake.darwinModules.desktop-tools = {
+  flake.modules.darwin.desktop-tools = {
     homebrew.masApps = {
       LocalSend = 1661733229;
     };

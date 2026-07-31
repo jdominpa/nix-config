@@ -32,7 +32,7 @@ in
       };
     };
 
-  flake.nixosModules.git = install;
+  flake.modules.nixos.git = install;
 
-  flake.darwinModules.git = install;
+  flake.modules.darwin.git = install;
 }

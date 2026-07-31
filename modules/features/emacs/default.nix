@@ -25,9 +25,9 @@ let
     };
 in
 {
-  flake.nixosModules.emacs = install;
+  flake.modules.nixos.emacs = install;
 
-  flake.darwinModules.emacs = install;
+  flake.modules.darwin.emacs = install;
 
   flake.wrappers.emacs =
     { pkgs, wlib, ... }:

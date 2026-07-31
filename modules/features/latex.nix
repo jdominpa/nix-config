@@ -1,11 +1,11 @@
 {
-  flake.nixosModules.latex =
+  flake.modules.nixos.latex =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.texliveFull ];
     };
 
-  flake.darwinModules.latex =
+  flake.modules.darwin.latex =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.texliveFull ];

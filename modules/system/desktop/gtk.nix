@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.gtk =
+  flake.modules.nixos.gtk =
     { lib, pkgs, ... }:
     let
       theme = {

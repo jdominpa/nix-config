@@ -12,7 +12,7 @@ let
     };
 in
 {
-  flake.nixosModules.fonts = {
+  flake.modules.nixos.fonts = {
     imports = [ fonts ];
     fonts.fontconfig.defaultFonts = {
       serif = [ "Aporetic Serif" ];
@@ -22,7 +22,7 @@ in
     };
   };
 
-  flake.darwinModules.fonts = {
+  flake.modules.darwin.fonts = {
     imports = [ fonts ];
   };
 }

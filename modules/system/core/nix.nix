@@ -22,7 +22,7 @@ let
   };
 in
 {
-  flake.nixosModules.nix = {
+  flake.modules.nixos.nix = {
     imports = [ sharedSettings ];
     nix = {
       settings.auto-optimise-store = true;
@@ -34,7 +34,7 @@ in
     };
   };
 
-  flake.darwinModules.nix = {
+  flake.modules.darwin.nix = {
     imports = [ sharedSettings ];
     nix = {
       gc = {

@@ -3,8 +3,8 @@
   ...
 }:
 {
-  flake.nixosModules.desktop = {
-    imports = with self.nixosModules; [
+  flake.modules.nixos.desktop = {
+    imports = with self.modules.nixos; [
       core
       desktop-tools
       gtk
@@ -14,8 +14,8 @@
     ];
   };
 
-  flake.darwinModules.desktop = {
-    imports = with self.darwinModules; [
+  flake.modules.darwin.desktop = {
+    imports = with self.modules.darwin; [
       core
       darwin-settings
       desktop-tools

@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.syncthing =
+  flake.modules.nixos.syncthing =
     { pkgs, ... }:
     {
       services.syncthing = {
@@ -13,7 +13,7 @@
       environment.systemPackages = [ pkgs.syncthingtray ];
     };
 
-  flake.darwinModules.syncthing = {
+  flake.modules.darwin.syncthing = {
     homebrew.casks = [ "syncthing-app" ];
   };
 }

@@ -7,7 +7,7 @@ let
   wrappers = config.flake.wrappers;
 in
 {
-  flake.nixosModules.zsh =
+  flake.modules.nixos.zsh =
     { config, ... }:
     {
       imports = [ wrappers.zsh.install ];
@@ -26,7 +26,7 @@ in
       users.defaultUserShell = config.wrappers.zsh.wrapper;
     };
 
-  flake.darwinModules.zsh =
+  flake.modules.darwin.zsh =
     { config, ... }:
     {
       imports = [ wrappers.zsh.install ];

@@ -1,11 +1,11 @@
 {
-  flake.nixosModules.discord =
+  flake.modules.nixos.discord =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.vesktop ];
     };
 
-  flake.darwinModules.discord =
+  flake.modules.darwin.discord =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.vesktop ];

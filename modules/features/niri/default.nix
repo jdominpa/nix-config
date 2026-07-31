@@ -6,7 +6,7 @@ let
   wrappers = config.flake.wrappers;
 in
 {
-  flake.nixosModules.niri =
+  flake.modules.nixos.niri =
     { config, pkgs, ... }:
     {
       imports = [ wrappers.niri.install ];

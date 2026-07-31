@@ -1,12 +1,12 @@
 {
-  flake.nixosModules.bitwarden = { pkgs, ... }: {
+  flake.modules.nixos.bitwarden = { pkgs, ... }: {
     environment = {
       systemPackages = [ pkgs.bitwarden-desktop ];
       sessionVariables.SSH_AUTH_SOCK = "/home/jdominpa/.bitwarden-ssh-agent.sock";
     };
   };
 
-  flake.darwinModules.bitwarden = {
+  flake.modules.darwin.bitwarden = {
     homebrew.masApps = {
       Bitwarden = 1352778147;
     };

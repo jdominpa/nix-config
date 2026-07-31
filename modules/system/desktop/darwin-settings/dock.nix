@@ -1,5 +1,5 @@
 {
-  flake.darwinModules.darwin-settings = {
+  flake.modules.darwin.darwin-settings = {
     system.defaults.dock = {
       autohide = true; # hide dock since it cannot be disabled
       autohide-delay = 100000.0; # show/hide dock after 100000s (basically never)

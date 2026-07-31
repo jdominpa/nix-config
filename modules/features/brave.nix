@@ -1,11 +1,11 @@
 {
-  flake.nixosModules.brave =
+  flake.modules.nixos.brave =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.brave ];
     };
 
-  flake.darwinModules.brave =
+  flake.modules.darwin.brave =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.brave ];

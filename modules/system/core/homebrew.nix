@@ -1,5 +1,5 @@
 {
-  flake.darwinModules.homebrew = {
+  flake.modules.darwin.homebrew = {
     homebrew = {
       enable = true;
       onActivation = {

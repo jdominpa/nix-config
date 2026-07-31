@@ -9,17 +9,17 @@ in
 {
   flake.nixosConfigurations.${hostName} = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [ self.nixosModules.${hostName} ];
+    modules = [ self.modules.nixos.${hostName} ];
   };
 
-  flake.nixosModules.${hostName} =
+  flake.modules.nixos.${hostName} =
     { pkgs, ... }:
     {
       imports = [
         inputs.nixos-hardware.nixosModules.common-cpu-intel
         inputs.nixos-hardware.nixosModules.common-pc-ssd
       ]
-      ++ (with self.nixosModules; [
+      ++ (with self.modules.nixos; [
         bitwarden
         brave
         btrbk

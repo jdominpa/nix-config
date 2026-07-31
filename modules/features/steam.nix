@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.gaming =
+  flake.modules.nixos.gaming =
     { pkgs, ... }:
     {
       environment.systemPackages = [

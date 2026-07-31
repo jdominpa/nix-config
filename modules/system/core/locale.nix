@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.locale = {
+  flake.modules.nixos.locale = {
     i18n = {
       defaultLocale = "ca_ES.UTF-8";
       extraLocaleSettings = {
@@ -16,7 +16,7 @@
     time.timeZone = "Europe/Madrid";
   };
 
-  flake.darwinModules.locale = {
+  flake.modules.darwin.locale = {
     time.timeZone = "Europe/Madrid";
     system.defaults.menuExtraClock.Show24Hour = true; # show 24 hour format
   };

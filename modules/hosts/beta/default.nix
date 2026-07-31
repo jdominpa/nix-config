@@ -15,7 +15,7 @@ in
     ];
   };
 
-  flake.darwinModules.beta = {
+  flake.modules.darwin.beta = {
     imports = with self.darwinModules; [
       bitwarden
       brave

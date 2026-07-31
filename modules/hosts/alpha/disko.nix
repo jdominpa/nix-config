@@ -3,7 +3,7 @@
   ...
 }:
 {
-  flake.nixosModules.alpha = {
+  flake.modules.nixos.alpha = {
     imports = [ inputs.disko.nixosModules.disko ];
     disko.devices.disk.main = {
       type = "disk";

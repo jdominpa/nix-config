@@ -33,7 +33,7 @@ let
     };
 in
 {
-  flake.nixosModules.cli-tools =
+  flake.modules.nixos.cli-tools =
     { pkgs, ... }:
     {
       imports = [ sharedPackages ];
@@ -47,7 +47,7 @@ in
       ];
     };
 
-  flake.darwinModules.cli-tools = {
+  flake.modules.darwin.cli-tools = {
     imports = [ sharedPackages ];
   };
 }

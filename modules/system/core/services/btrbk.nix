@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.btrbk = {
+  flake.modules.nixos.btrbk = {
     services.btrbk.instances.btrbk = {
       # How often this btrbk instance is started. See systemd.time(7) for more information about the format.
       onCalendar = "daily";

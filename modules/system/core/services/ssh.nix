@@ -1,9 +1,9 @@
 {
-  flake.nixosModules.ssh = {
+  flake.modules.nixos.ssh = {
     services.openssh.enable = true;
   };
 
-  flake.darwinModules.ssh = {
+  flake.modules.darwin.ssh = {
     services.openssh.enable = true;
   };
 }
