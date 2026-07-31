@@ -1,23 +1,18 @@
 {
-  inputs,
-  moduleWithSystem,
+  config,
   ...
 }:
 let
-  module = moduleWithSystem (
-    { self', ... }: {
-      environment.systemPackages = [ self'.packages.git ];
-    }
-  );
+  install = {
+    imports = [ config.flake.wrappers.git.install ];
+    wrappers.git.enable = true;
+  };
 in
 {
-  flake.nixosModules.git = module;
-
-  flake.darwinModules.git = module;
-
-  perSystem = { pkgs, ... }: {
-    packages.git = inputs.wrappers.wrappers.git.wrap {
-      inherit pkgs;
+  flake.wrappers.git =
+    { wlib, ... }:
+    {
+      imports = [ wlib.wrapperModules.git ];
       settings = {
         commit.gpgSign = true;
         commit.verbose = true;
@@ -36,5 +31,8 @@ in
         include.path = "~/.config/git/config.local";
       };
     };
-  };
+
+  flake.nixosModules.git = install;
+
+  flake.darwinModules.git = install;
 }

@@ -1,14 +1,16 @@
 {
+  config,
   inputs,
-  moduleWithSystem,
   ...
 }:
 let
-  sharedSettings = moduleWithSystem (
-    { pkgs, self', ... }: {
+  install =
+    { pkgs, ... }:
+    {
+      imports = [ config.flake.wrappers.emacs.install ];
+      wrappers.emacs.enable = true;
       environment = {
         systemPackages = [
-          self'.packages.emacs
           # Spellchecking backend for jinx. Kept as system packages because
           # enchant discovers dictionaries through the profile, not through PATH.
           pkgs.hunspell
@@ -20,17 +22,17 @@ let
           VISUAL = "emacsclient --alternate-editor='emacs' -c";
         };
       };
-    }
-  );
+    };
 in
 {
-  flake.nixosModules.emacs = sharedSettings;
+  flake.nixosModules.emacs = install;
 
-  flake.darwinModules.emacs = sharedSettings;
+  flake.darwinModules.emacs = install;
 
-  perSystem = { pkgs, self', ... }: {
-    packages.emacs = inputs.wrappers.wrappers.emacs.wrap {
-      inherit pkgs;
+  flake.wrappers.emacs =
+    { pkgs, wlib, ... }:
+    {
+      imports = [ wlib.wrapperModules.emacs ];
       package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs31 else pkgs.emacs31-pgtk;
       emacsPackages =
         epkgs: with epkgs; [
@@ -93,7 +95,8 @@ in
       # Subprocesses emacs spawns. On PATH for the wrapper only, so
       # `nix run .#emacs` on any machine gets a working magit and eglot.
       runtimePkgs = [
-        self'.packages.git
+        # Same derivation the `git` package output is built from.
+        (config.flake.wrappers.git.wrap { inherit pkgs; })
         pkgs.nixd # Nix language server
       ];
       userDirectory = "~/.emacs.d";
@@ -110,5 +113,4 @@ in
       + builtins.readFile ./config/early-init.el;
       configFile = builtins.readFile ./config/init.el;
     };
-  };
 }

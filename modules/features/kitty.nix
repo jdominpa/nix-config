@@ -1,24 +1,18 @@
 {
-  inputs,
-  moduleWithSystem,
+  config,
   ...
 }:
+let
+  install = {
+    imports = [ config.flake.wrappers.kitty.install ];
+    wrappers.kitty.enable = true;
+  };
+in
 {
-  flake.nixosModules.kitty = moduleWithSystem (
-    { self', ... }: {
-      environment.systemPackages = [ self'.packages.kitty ];
-    }
-  );
-
-  flake.darwinModules.kitty = moduleWithSystem (
-    { self', ... }: {
-      environment.systemPackages = [ self'.packages.kitty ];
-    }
-  );
-
-  perSystem = { pkgs, ... }: {
-    packages.kitty = inputs.wrappers.wrappers.kitty.wrap {
-      inherit pkgs;
+  flake.wrappers.kitty =
+    { wlib, ... }:
+    {
+      imports = [ wlib.wrapperModules.kitty ];
       font = {
         name = "Aporetic Sans Mono";
         size = 13;
@@ -32,5 +26,8 @@
       };
       themeFile = "Modus_Vivendi";
     };
-  };
+
+  flake.nixosModules.kitty = install;
+
+  flake.darwinModules.kitty = install;
 }

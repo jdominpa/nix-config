@@ -1,20 +1,20 @@
 {
-  moduleWithSystem,
   self,
   ...
 }:
 let
   username = "jdominpa";
-  sharedSettings = moduleWithSystem (
-    { self', ... }:
+  sharedSettings =
+    { config, ... }:
     {
       nix.settings.trusted-users = [ username ];
-      users.users.${username}.shell = self'.packages.zsh;
+      # `wrappers.zsh` is declared by the zsh module's install module, which
+      # every host imports alongside this one.
+      users.users.${username}.shell = config.wrappers.zsh.wrapper;
       home-manager.users.${username} = {
         imports = [ self.modules.homeManager.${username} ];
       };
-    }
-  );
+    };
 in
 {
   flake.nixosModules.${username} = {
@@ -26,6 +26,7 @@ in
         "wheel"
       ];
       home = "/home/${username}";
+      initialPassword = "1234";
     };
   };
 
