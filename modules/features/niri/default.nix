@@ -1,10 +1,7 @@
 {
-  config,
+  self,
   ...
 }:
-let
-  wrappers = config.flake.wrappers;
-in
 {
   flake.modules.nixos.niri =
     { config, pkgs, ... }:
@@ -29,11 +26,19 @@ in
     };
 
   flake.wrappers.niri =
-    { pkgs, wlib, ... }:
+    {
+      lib,
+      pkgs,
+      wlib,
+      ...
+    }:
+    let
+      noctaliaExe = lib.getExe (self.wrappers.noctalia-shell.wrap { inherit pkgs; });
+    in
     {
       imports = [ wlib.wrapperModules.niri ];
       runtimePkgs = [
-        (wrappers.kitty.wrap { inherit pkgs; })
+        (self.wrappers.kitty.wrap { inherit pkgs; })
         pkgs.bibata-cursors
         pkgs.brightnessctl
         pkgs.playerctl
@@ -78,7 +83,7 @@ in
         };
         prefer-no-csd = _: { };
         screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
-        spawn-at-startup = [ "noctalia" ];
+        spawn-at-startup = [ "${noctaliaExe}" ];
       };
     };
 }

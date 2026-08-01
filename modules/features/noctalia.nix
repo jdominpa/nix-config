@@ -1,109 +1,103 @@
 {
-  inputs,
   self,
   ...
 }:
 {
-  flake.modules.nixos.noctalia = {
-    imports = [ inputs.noctalia.nixosModules.default ];
-    home-manager.sharedModules = [ self.modules.homeManager.noctalia ];
+  flake.modules.nixos.noctalia-shell = {
+    wrappers.noctalia-shell.enable = true;
   };
 
-  flake.modules.homeManager.noctalia = {
-    imports = [ inputs.noctalia.homeModules.default ];
-
-    # Noctalia settings
-    programs.noctalia = {
-      enable = true;
+  flake.wrappers.noctalia-shell =
+    {
+      lib,
+      pkgs,
+      wlib,
+      ...
+    }:
+    {
+      imports = [ wlib.wrapperModules.noctalia-shell ];
       settings = {
+        appLauncher = {
+          terminalCommand = "${lib.getExe (self.wrappers.kitty.wrap { inherit pkgs; })} -e";
+        };
+        audio.volumeStep = 2;
         bar = {
+          barType = "floating";
+          showCapsule = false;
+          widgetSpacing = 2;
           widgets = {
-            start = [
-              "session"
-              "launcher"
-              "control-center"
-              "spacer_0"
-              "media"
+            left = [
+              { id = "ControlCenter"; }
+              { id = "Launcher"; }
+              { id = "MediaMini"; }
             ];
-            center = [ "workspaces" ];
-            end = [
-              "tray"
-              "spacer_1"
-              "keyboard_layout"
-              "notifications"
-              "clipboard"
-              "network"
-              "bluetooth"
-              "volume"
-              "brightness"
-              "battery"
-              "spacer_0"
-              "clock"
+            center = [
+              { id = "Workspace"; }
             ];
-            margin_edge = 4;
-            margin_ends = 4;
-            padding = 10;
-            radius = 10;
-            thickness = 30;
+            right = [
+              { id = "Tray"; }
+              {
+                id = "NotificationHistory";
+                hideWhenZero = true;
+              }
+              { id = "Network"; }
+              { id = "Bluetooth"; }
+              { id = "Volume"; }
+              { id = "Battery"; }
+              {
+                id = "Clock";
+                formatHorizontal = "HH:mm ddd, dd-MM-yyyy";
+                tooltipFormat = "HH:mm ddd, dd-MM-yyyy";
+              }
+            ];
           };
+        };
+        brightness.brightnessStep = 2;
+        colorSchemes = {
+          darkMode = true;
+          predefinedScheme = "Catppuccin";
+        };
+        dock.enabled = false;
+        general = {
+          animationSpeed = 1.2;
+          clockFormat = "HH:mm\nddd dd-MM-yyyy";
         };
         idle = {
-          behavior = {
-            lock = {
-              action = "lock";
-              enabled = true;
-              timeout = 900.0;
-            };
-            lock-and-suspend = {
-              action = "lock_and_suspend";
-              enabled = false;
-            };
-            screen-off = {
-              action = "screen_off";
-              enabled = true;
-              timeout = 1200.0;
-            };
-          };
-          behavior_order = [
-            "lock"
-            "screen-off"
-            "lock-and-suspend"
-          ];
-        };
-        keybinds.validate = [
-          "Return"
-          "KP_Enter"
-        ];
-        location.auto_locate = true;
-        nightlight.enabled = true;
-        shell = {
-          clipboard_history_max_entries = 10;
-          font_family = "Aporetic Sans";
-          panel.open_near_click_control_center = true;
-        };
-        theme = {
-          mode = "dark";
-          source = "builtin";
-          builtin = "Catppuccin";
-        };
-        wallpaper = {
           enabled = true;
-          directory = "~/Imatges/Wallpapers";
+          screenOffTimeout = 600;
+          lockTimeout = 660;
+          suspendTimeout = 0;
         };
-        widget = {
-          bluetooth.hide_when_no_connected_device = true;
-          clock.format = "{:%H:%M | %d-%m-%Y}";
-          spacer_0 = {
-            length = 15;
-            type = "spacer";
-          };
-          spacer_1 = {
-            length = 10;
-            type = "spacer";
-          };
-          volume.scroll_step = 2;
-        };
+        location.autoLocate = true;
+        nightLight.autoSchedule = true;
+        sessionMenu.powerOptions = [
+          {
+            action = "lock";
+            enabled = true;
+          }
+          {
+            action = "suspend";
+            enabled = true;
+          }
+          {
+            action = "logout";
+            enabled = true;
+          }
+          {
+            action = "reboot";
+            enabled = true;
+          }
+          {
+            action = "rebootToUefi";
+            enabled = true;
+          }
+          {
+            action = "shutdown";
+            enabled = true;
+          }
+        ];
+        ui.panelBackgroundOpacity = 1;
+        wallpaper.directory = "~/Imatges/Wallpapers";
       };
     };
-  };
 }

@@ -10,7 +10,7 @@
       gtk
       login-manager
       niri
-      noctalia
+      noctalia-shell
     ];
   };
 
