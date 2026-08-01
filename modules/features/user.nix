@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 let
@@ -11,9 +10,6 @@ let
     {
       nix.settings.trusted-users = [ username ];
       users.users.${username}.shell = config.wrappers.zsh.wrapper;
-      home-manager.users.${username} = {
-        imports = [ self.modules.homeManager.user ];
-      };
     };
 in
 {
@@ -94,20 +90,5 @@ in
       };
       system.primaryUser = username;
     };
-
-    flake.modules.homeManager.user =
-      { pkgs, ... }:
-      let
-        inherit (pkgs.stdenv.hostPlatform) isLinux;
-      in
-      {
-        programs.home-manager.enable = true; # let home-manager manage itself
-        home = {
-          inherit username;
-          homeDirectory = if isLinux then homeDirectory.linux else homeDirectory.darwin;
-          # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-          stateVersion = "24.05";
-        };
-      };
   };
 }

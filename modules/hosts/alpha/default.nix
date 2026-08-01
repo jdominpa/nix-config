@@ -29,7 +29,6 @@ in
         emacs
         gaming
         git
-        home-manager
         kitty
         latex
         syncthing

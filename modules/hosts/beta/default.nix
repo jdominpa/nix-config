@@ -23,7 +23,6 @@ in
       desktop
       emacs
       git
-      home-manager
       kanata
       kitty
       latex

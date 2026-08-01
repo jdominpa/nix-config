@@ -21,10 +21,6 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     import-tree.url = "github:vic/import-tree";
     # Emacs package that's not on elpa/melpa
     math-delimiters = {
