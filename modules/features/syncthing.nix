@@ -1,12 +1,17 @@
 {
+  config,
+  ...
+}:
+let
+  inherit (config.user) username homeDirectory;
+in
+{
   flake.modules.nixos.syncthing = {
     services.syncthing = {
       enable = true;
-      user = "jdominpa";
-      group = "users";
-      configDir = "/home/jdominpa/.config/syncthing";
-      dataDir = "/home/jdominpa";
-      openDefaultPorts = true;
+      user = username;
+      configDir = "${homeDirectory.linux}/.config/syncthing";
+      dataDir = homeDirectory.linux;
     };
   };
 

@@ -1,4 +1,9 @@
+{
+  config,
+  ...
+}:
 let
+  inherit (config.user) fullName email signingKey;
   install = {
     wrappers.git.enable = true;
   };
@@ -12,9 +17,9 @@ in
         commit.gpgSign = true;
         commit.verbose = true;
         user = {
-          name = "Joan Domingo Pasarin";
-          email = "work@jdompas.com";
-          signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGebTck6crA64QvOnpPVBHgB7nzIX18+FU9nANAaE2W4";
+          name = fullName;
+          inherit email;
+          signingkey = signingKey;
         };
         init.defaultBranch = "main";
         gpg.format = "ssh";

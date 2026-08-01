@@ -13,6 +13,7 @@
       power-profiles
       printing
       ssh
+      user
     ];
   };
 
@@ -24,6 +25,7 @@
       nix
       power-profiles
       ssh
+      user
     ];
   };
 }

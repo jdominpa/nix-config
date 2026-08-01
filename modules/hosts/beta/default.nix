@@ -24,7 +24,6 @@ in
       emacs
       git
       home-manager
-      jdominpa
       kanata
       kitty
       latex

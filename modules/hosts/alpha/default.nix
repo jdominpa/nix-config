@@ -30,7 +30,6 @@ in
         gaming
         git
         home-manager
-        jdominpa
         kitty
         latex
         syncthing
