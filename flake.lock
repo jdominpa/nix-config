@@ -256,26 +256,6 @@
         "type": "github"
       }
     },
-    "noctalia": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1783582738,
-        "narHash": "sha256-fO9Yd6qJWPVhA8VAv4GaJMBpvMuwILJOttAvSTON1NA=",
-        "owner": "noctalia-dev",
-        "repo": "noctalia",
-        "rev": "4c62feac1983d6d99dadd33c5824ddb5c2f0ec6a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "noctalia-dev",
-        "repo": "noctalia",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "disko": "disko",
@@ -288,7 +268,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-stable": "nixpkgs-stable_2",
-        "noctalia": "noctalia",
         "treefmt-nix": "treefmt-nix",
         "wrappers": "wrappers"
       }
