@@ -1,7 +1,7 @@
 [Dendritic](https://github.com/mightyiam/dendritic) NixOS/macOS configuration
 using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes),
 [nix-darwin](https://github.com/nix-darwin/nix-darwin) and
-[home-manager](https://nixos.wiki/wiki/Home_Manager).
+[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules).
 
 ## Deployment
 
@@ -105,6 +105,8 @@ Other nix configuration that inspired this one:
 - [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config)
 - [hlissner/dotfiles](https://github.com/hlissner/dotfiles)
 - [drupol/infra](https://github.com/drupol/infra)
+- [BirdeeHub/birdeeSystems](https://github.com/BirdeeHub/birdeeSystems)
+- [Goxore/nixconf](https://github.com/Goxore/nixconf)
 
 Also, for more information on the dendritic pattern see:
 
