@@ -17,6 +17,7 @@
     {
       imports = [ wlib.wrapperModules.noctalia-shell ];
       settings = {
+        settingsVersion = 59;
         appLauncher = {
           terminalCommand = "${lib.getExe (self.wrappers.kitty.wrap { inherit pkgs; })} -e";
         };
