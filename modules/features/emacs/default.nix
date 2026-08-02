@@ -1,6 +1,6 @@
 {
-  config,
   inputs,
+  self,
   ...
 }:
 let
@@ -95,8 +95,9 @@ in
       # `nix run .#emacs` on any machine gets a working magit and eglot.
       runtimePkgs = [
         # Same derivation the `git` package output is built from.
-        (config.flake.wrappers.git.wrap { inherit pkgs; })
+        (self.wrappers.git.wrap { inherit pkgs; })
         pkgs.nixd # Nix language server
+        pkgs.ripgrep
       ];
       userDirectory = "~/.emacs.d";
       earlyConfigFile = ''

@@ -1,6 +1,6 @@
 {
-  config,
   inputs,
+  self,
   ...
 }:
 {
@@ -17,7 +17,7 @@
 
   flake.modules =
     let
-      installWrapperModules = builtins.mapAttrs (_: v: v.install) config.flake.wrappers;
+      installWrapperModules = builtins.mapAttrs (_: v: v.install) self.wrappers;
     in
     {
       nixos = installWrapperModules;

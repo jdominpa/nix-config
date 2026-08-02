@@ -1,11 +1,8 @@
 {
-  config,
   lib,
+  self,
   ...
 }:
-let
-  wrappers = config.flake.wrappers;
-in
 {
   flake.modules.nixos.zsh =
     { config, ... }:
@@ -114,7 +111,7 @@ in
       ...
     }:
     let
-      starship = wrappers.starship.wrap { inherit pkgs; };
+      starship = self.wrappers.starship.wrap { inherit pkgs; };
     in
     {
       imports = [ wlib.wrapperModules.zsh ];
