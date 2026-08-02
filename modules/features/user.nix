@@ -78,7 +78,6 @@ in
           "wheel"
         ];
         home = homeDirectory.linux;
-        initialPassword = "1234";
       };
     };
 

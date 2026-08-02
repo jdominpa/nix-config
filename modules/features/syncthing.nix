@@ -10,8 +10,10 @@ in
     services.syncthing = {
       enable = true;
       user = username;
+      group = "users";
       configDir = "${homeDirectory.linux}/.config/syncthing";
       dataDir = homeDirectory.linux;
+      openDefaultPorts = true;
     };
   };
 

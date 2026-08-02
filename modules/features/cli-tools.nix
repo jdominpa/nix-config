@@ -10,8 +10,6 @@ let
         fd
         fzf
         gawk
-        gnugrep
-        gnumake
         gnupg
         gnused
         gnutar
