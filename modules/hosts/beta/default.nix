@@ -11,12 +11,12 @@ in
     system = "aarch64-darwin";
     modules = [
       { nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "aarch64-darwin"; }
-      self.darwinModules.${hostName}
+      self.modules.darwin.${hostName}
     ];
   };
 
   flake.modules.darwin.beta = {
-    imports = with self.darwinModules; [
+    imports = with self.modules.darwin; [
       bitwarden
       brave
       cli-tools
