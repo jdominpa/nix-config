@@ -9,8 +9,6 @@
     {
       programs.zsh = {
         enable = true;
-        syntaxHighlighting.enable = true;
-        autosuggestions.enable = true;
         # `compinit` is run from the wrapper's zshrc with an explicit, writable
         # dumpfile. The global one would dump next to the read-only ZDOTDIR.
         enableGlobalCompInit = false;
@@ -27,8 +25,6 @@
     {
       programs.zsh = {
         enable = true;
-        enableCompletion = true;
-        enableSyntaxHighlighting = true;
         # See the NixOS module above.
         enableGlobalCompInit = false;
         shellInit = lib.mkIf config.homebrew.enable ''
@@ -226,6 +222,15 @@
         # Fzf
         #
         source <(${lib.getExe pkgs.fzf} --zsh)
+
+        #
+        # Plugins
+        #
+        # Sourced here rather than through `programs.zsh` so that a plain
+        # `nix run .#zsh` behaves the same as the installed shell.
+        # NOTE: zsh-syntax-highlighting must be the last plugin to be loaded
+        source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+        source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
         unset zsh_cache_dir zsh_data_dir
       '';
