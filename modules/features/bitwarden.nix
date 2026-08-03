@@ -17,6 +17,6 @@ in
     homebrew.masApps = {
       Bitwarden = 1352778147;
     };
-    environment.sessionVariables.SSH_AUTH_SOCK = "${homeDirectory.darwin}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
+    environment.variables.SSH_AUTH_SOCK = "${homeDirectory.darwin}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
   };
 }
