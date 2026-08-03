@@ -5,7 +5,13 @@ let
 in
 {
   flake.wrappers.kitty =
-    { wlib, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      wlib,
+      ...
+    }:
     {
       imports = [ wlib.wrapperModules.kitty ];
       font = {
@@ -20,6 +26,19 @@ in
         tab_bar_style = "slant";
       };
       themeFile = "Modus_Vivendi";
+      # Copy the wrapped binary correctly to /Applications on darwin
+      wrapperImplementation = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "binary";
+      buildCommand.kittyAppBundle = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        after = [
+          "symlinkScript"
+          "makeWrapper"
+        ];
+        data = ''
+          bundleExe=${placeholder config.outputName}/Applications/kitty.app/Contents/MacOS/kitty
+          rm -f "$bundleExe"
+          cp ${config.wrapperPaths.placeholder} "$bundleExe"
+        '';
+      };
     };
 
   flake.modules.nixos.kitty = install;
