@@ -112,5 +112,12 @@ in
       ''
       + builtins.readFile ./config/early-init.el;
       configFile = builtins.readFile ./config/init.el;
+      # Fix .app bundle on darwin
+      wrapperVariants = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        Emacs = {
+          binDir = "Applications/Emacs.app/Contents/MacOS";
+          exePath = "Applications/Emacs.app/Contents/MacOS/Emacs";
+        };
+      };
     };
 }
