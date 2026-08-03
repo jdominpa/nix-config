@@ -181,6 +181,22 @@ is nil."
             (unless (memq system-type '(ms-dos windows-nt))
               (daemonp)))
   :hook (after-init . exec-path-from-shell-initialize)
+  :init
+  (defvar +basic-launcher-path (getenv "PATH")
+    "`PATH' as emacs received it from its launcher.
+Under a nix wrapper this is where the subprocesses emacs spawns (git,
+ripgrep, etc.) come from.")
+  (defun +basic-keep-launcher-path-a (&rest _)
+    "Prepend the launcher's `PATH' entries back in front of the shell's.
+`exec-path-from-shell-initialize' replaces `PATH' wholesale, which drops
+entries added by a nix wrapper."
+    (let ((entries (seq-uniq
+                    (append (split-string +basic-launcher-path path-separator t)
+                            (split-string (getenv "PATH") path-separator t))
+                    #'string-equal)))
+      (setenv "PATH" (string-join entries path-separator))
+      (setq exec-path (append entries (list exec-directory)))))
+  (advice-add #'exec-path-from-shell-initialize :after #'+basic-keep-launcher-path-a)
   :config
   (setq exec-path-from-shell-arguments '("-l"))
   (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK"))
