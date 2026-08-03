@@ -69,7 +69,10 @@
           lockTimeout = 660;
           suspendTimeout = 0;
         };
-        location.autoLocate = true;
+        location = {
+          autoLocate = true;
+          firstDayOfWeek = 1;
+        };
         nightLight.autoSchedule = true;
         sessionMenu.powerOptions = [
           {
