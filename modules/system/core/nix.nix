@@ -73,6 +73,19 @@ in
       };
       nixpkgsOverlays = [
         inputs.emacs-overlay.overlays.package
+        # FIXME: temporary until https://github.com/lsd-rs/lsd/pull/1226 is
+        # merged. Fixes lsd package build on darwin with non-english locale
+        (_final: prev: {
+          lsd =
+            if prev.stdenv.hostPlatform.isDarwin then
+              prev.lsd.overrideAttrs (old: {
+                checkFlags = (old.checkFlags or [ ]) ++ [
+                  "--skip=test_date_custom_format_supports_nanos_with_length"
+                ];
+              })
+            else
+              prev.lsd;
+        })
         (final: _prev: {
           stable = inputs.nixpkgs-stable.legacyPackages.${final.stdenv.hostPlatform.system};
         })
