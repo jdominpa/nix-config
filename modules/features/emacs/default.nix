@@ -37,6 +37,12 @@ in
     }:
     let
       gitPkg = self.wrappers.git.wrap { inherit pkgs; };
+      runtimePkgs = [
+        # Same derivation the `git` package output is built from.
+        gitPkg
+        pkgs.nixd # Nix language server
+        pkgs.ripgrep
+      ];
     in
     {
       imports = [ wlib.wrapperModules.emacs ];
@@ -99,14 +105,7 @@ in
           vertico
           ws-butler
         ];
-      # Subprocesses emacs spawns. On PATH for the wrapper only, so
-      # `nix run .#emacs` on any machine gets a working magit and eglot.
-      runtimePkgs = [
-        # Same derivation the `git` package output is built from.
-        gitPkg
-        pkgs.nixd # Nix language server
-        pkgs.ripgrep
-      ];
+      inherit runtimePkgs;
       userDirectory = "~/.emacs.d";
       earlyConfigFile = ''
         (defvar +core-config-directory "${./config}/"
@@ -119,12 +118,15 @@ in
               package-gnupghome-dir (expand-file-name "elpa/gnupg" user-emacs-directory))
       ''
       + builtins.readFile ./config/early-init.el;
-      configFile = builtins.readFile ./config/init.el + ''
-        ;; Point magit's git executable to the runtime git wrapper
-        ;; (on darwin systems it points incorrectly to "/usr/bin/git")
-        (with-eval-after-load 'magit
-          (setq magit-git-executable "${lib.getExe gitPkg}"))
-      '';
+      # nix.el contains the elisp needed to integrate correctly the emacs
+      # configuration with the wrappers runtimePkgs
+      configFile =
+        builtins.readFile ./config/init.el
+        +
+          builtins.replaceStrings
+            [ "@git@" "@runtimePath@" ]
+            [ (lib.getExe gitPkg) (lib.makeBinPath runtimePkgs) ]
+            (builtins.readFile ./config/nix.el);
       # Fix .app bundle on darwin
       wrapperVariants = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         Emacs = {
