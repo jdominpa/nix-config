@@ -29,7 +29,15 @@ in
   flake.modules.darwin.emacs = install;
 
   flake.wrappers.emacs =
-    { pkgs, wlib, ... }:
+    {
+      lib,
+      pkgs,
+      wlib,
+      ...
+    }:
+    let
+      gitPkg = self.wrappers.git.wrap { inherit pkgs; };
+    in
     {
       imports = [ wlib.wrapperModules.emacs ];
       package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs31 else pkgs.emacs31-pgtk;
@@ -95,7 +103,7 @@ in
       # `nix run .#emacs` on any machine gets a working magit and eglot.
       runtimePkgs = [
         # Same derivation the `git` package output is built from.
-        (self.wrappers.git.wrap { inherit pkgs; })
+        gitPkg
         pkgs.nixd # Nix language server
         pkgs.ripgrep
       ];
@@ -111,7 +119,12 @@ in
               package-gnupghome-dir (expand-file-name "elpa/gnupg" user-emacs-directory))
       ''
       + builtins.readFile ./config/early-init.el;
-      configFile = builtins.readFile ./config/init.el;
+      configFile = builtins.readFile ./config/init.el + ''
+        ;; Point magit's git executable to the runtime git wrapper
+        ;; (on darwin systems it points incorrectly to "/usr/bin/git")
+        (with-eval-after-load 'magit
+          (setq magit-git-executable "${lib.getExe gitPkg}"))
+      '';
       # Fix .app bundle on darwin
       wrapperVariants = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         Emacs = {
