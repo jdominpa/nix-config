@@ -21,9 +21,19 @@
         open-maximized = true;
       }
       {
-        matches = [ { app-id = "dev.noctalia.Noctalia"; } ];
+        matches = [
+          { app-id = "xdg-desktop-portal-gtk"; }
+        ];
         open-floating = true;
         default-column-width.fixed = 1080;
+        default-window-height.fixed = 920;
+      }
+      {
+        matches = [
+          { app-id = "xdg-desktop-portal-gtk"; }
+        ];
+        open-floating = true;
+        default-column-width.fixed = 1280;
         default-window-height.fixed = 920;
       }
       {
