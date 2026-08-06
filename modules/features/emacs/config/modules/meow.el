@@ -123,10 +123,10 @@
      '("\\" . meow-indent)
      '("'" . repeat)
      '("<escape>" . ignore)))
-  ;; NOTE: Depth -95 makes sure that `meow-mode' turns on before every other
-  ;; mode in `after-init-hook'. This guarantees that all the shims are properly
+  ;; Make sure `meow-mode' turns on before every other mode in
+  ;; `after-init-hook'. This guarantees that all the shims are properly
   ;; activated
-  (add-hook 'after-init-hook #'+meow-turn-on-meow-mode-h -95)
+  (add-hook 'after-init-hook #'+meow-turn-on-meow-mode-h -90)
 
   ;; Angle bracket
   (meow-thing-register 'angle

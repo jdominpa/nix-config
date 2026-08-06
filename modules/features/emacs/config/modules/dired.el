@@ -23,15 +23,15 @@
    ;;   `-l' long listing format
    ;;   `-v' natural sort of (version) numbers in text
    dired-listing-switches "-ahlv")
-  (when (eq system-type 'darwin)
-    (if (executable-find "gls")
-        ;; Use GNU ls as `gls' from `coreutils' if available
-        (setq insert-directory-program "gls")
-      ;; Suppress warning: "ls does not support --dired"
-      (setq dired-use-ls-dired nil)))
-  (when (or (not (eq system-type 'darwin))
-            (executable-find "gls"))
-    ;; Show directories first
+  (defun +dired--gnu-ls-p (program)
+    "Return non-nil when PROGRAM is GNU coreutils' `ls'."
+    (with-temp-buffer
+      (and (eq 0 (ignore-error file-missing
+                   (call-process program nil t nil "--version")))
+           (progn (goto-char (point-min))
+                  (search-forward "GNU coreutils" nil t)))))
+  (unless (and (memq system-type '(berkeley-unix darwin))
+               (not (+dired--gnu-ls-p (executable-find insert-directory-program))))
     (setq dired-listing-switches (concat dired-listing-switches
                                          " --group-directories-first"))))
 

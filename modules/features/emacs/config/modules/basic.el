@@ -177,10 +177,12 @@ is nil."
 ;; [environment variables]
 (use-package exec-path-from-shell
   :ensure t
+  :defer t
   :when (or (memq window-system '(mac ns x pgtk))
             (unless (memq system-type '(ms-dos windows-nt))
               (daemonp)))
-  :hook (after-init . exec-path-from-shell-initialize)
+  ;; Make sure fixing the path is top priority
+  :init (add-hook 'after-init-hook #'exec-path-from-shell-initialize -99)
   :config
   (setq exec-path-from-shell-arguments '("-l"))
   (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK"))
