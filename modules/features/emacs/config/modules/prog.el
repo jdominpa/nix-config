@@ -78,7 +78,7 @@
 
 (use-package eglot-tempel
   :ensure t
-  :after (eglot tempel)
+  :after eglot
   :config
   (eglot-tempel-mode 1))
 

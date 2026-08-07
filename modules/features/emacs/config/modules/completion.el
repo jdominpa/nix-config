@@ -245,7 +245,7 @@
   (defun +completion-add-tempel-capf-h ()
     "Add trigger Capf calls `tempel-complete' with trigger key / to
 `completion-at-point-functions'."
-    (add-hook 'completion-at-point-functions (cape-capf-trigger #'tempel-complete ?/) nil t))
+    (add-hook 'completion-at-point-functions (cape-capf-trigger #'tempel-complete ?/) -90 t))
   :config
   (setq tempel-path (expand-file-name "templates/*.eld" +core-config-directory)))
 
