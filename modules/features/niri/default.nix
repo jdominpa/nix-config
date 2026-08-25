@@ -52,31 +52,6 @@
         ];
         gestures.hot-corners.off = _: { };
         hotkey-overlay.skip-at-startup = _: { };
-        outputs = {
-          "DP-1" = {
-            mode = "1920x1080@143.855";
-            position = _: {
-              props = {
-                x = 0;
-                y = 0;
-              };
-            };
-            scale = 1.0;
-            variable-refresh-rate = _: { };
-          };
-          "DP-2" = {
-            focus-at-startup = _: { };
-            mode = "2560x1440@240.001";
-            position = _: {
-              props = {
-                x = 1920;
-                y = 0;
-              };
-            };
-            scale = 1.0;
-            variable-refresh-rate = _: { };
-          };
-        };
         overview = {
           workspace-shadow.off = _: { }; # needed for overview mode with noctalia
           zoom = 0.5;

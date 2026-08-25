@@ -35,6 +35,33 @@ in
         zsh
       ]);
 
+      # Niri monitor setup
+      wrappers.niri.settings.outputs = {
+        "DP-1" = {
+          mode = "1920x1080@143.855";
+          position = _: {
+            props = {
+              x = 2560;
+              y = 180;
+            };
+          };
+          scale = 1.0;
+          variable-refresh-rate = _: { };
+        };
+        "DP-2" = {
+          focus-at-startup = _: { };
+          mode = "2560x1440@240.001";
+          position = _: {
+            props = {
+              x = 0;
+              y = 0;
+            };
+          };
+          scale = 1.0;
+          variable-refresh-rate = _: { };
+        };
+      };
+
       boot.loader = {
         efi.canTouchEfiVariables = true;
         systemd-boot = {
