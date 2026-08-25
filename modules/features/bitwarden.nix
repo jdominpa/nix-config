@@ -13,7 +13,14 @@ in
     };
   };
 
-  flake.modules.darwin.bitwarden = {
+  flake.modules.darwin.bitwarden = { config, ... }: {
+    assertions = [
+      {
+        assertion = config.homebrew.enable;
+        message = "bitwarden module requires homebrew on darwin";
+      }
+    ];
+
     homebrew.masApps = {
       Bitwarden = 1352778147;
     };

@@ -27,7 +27,14 @@
       };
     };
 
-  flake.modules.darwin.desktop-tools = {
+  flake.modules.darwin.desktop-tools = { config, ... }: {
+    assertions = [
+      {
+        assertion = config.homebrew.enable;
+        message = "desktop-tools module requires homebrew on darwin";
+      }
+    ];
+
     homebrew.masApps = {
       LocalSend = 1661733229;
     };

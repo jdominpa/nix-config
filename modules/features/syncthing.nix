@@ -17,7 +17,14 @@ in
     };
   };
 
-  flake.modules.darwin.syncthing = {
+  flake.modules.darwin.syncthing = { config, ... }: {
+    assertions = [
+      {
+        assertion = config.homebrew.enable;
+        message = "syncthing module requires homebrew on darwin";
+      }
+    ];
+
     homebrew.casks = [ "syncthing-app" ];
   };
 }
