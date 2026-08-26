@@ -109,10 +109,10 @@
 (use-package dape
   :ensure t
   :commands dape
-  :bind (:map prog-mode-map
-              ("C-c D" . dape))
-  :init
-  (setq dape-buffer-window-arrangement 'right))
+  :config
+  (setq dape-buffer-window-arrangement 'right
+        dape-repl-echo-shell-output t)
+  (add-hook 'dape-display-source-hook #'+highlight-pulse-momentary-line-a))
 
 ;; [flymake] On-the-fly syntax checker
 (use-package flymake
