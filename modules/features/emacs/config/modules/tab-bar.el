@@ -2,7 +2,7 @@
 
 ;; [tab-bar]
 (use-package tab-bar
-  :defer t
+  :hook (after-init . tab-bar-history-mode)
   :config
   (setq tab-bar-separator ""
         tab-bar-new-tab-choice t

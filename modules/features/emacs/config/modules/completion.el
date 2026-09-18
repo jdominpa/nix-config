@@ -9,7 +9,12 @@
          (minibuffer-setup . cursor-intangible-mode))
   :config
   (setq
+   minibuffer-visible-completions t
+   completions-detailed t
+   completions-group t
    completions-sort 'historical
+   completion-auto-select 'second-tab
+   completion-eager-update t
    completion-ignore-case t
    completion-pcm-leading-wildcard t
    read-buffer-completion-ignore-case t

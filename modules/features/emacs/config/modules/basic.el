@@ -157,6 +157,12 @@ is nil."
         set-mark-command-repeat-pop t))
 
 ;; [mouse] Mouse settings
+(use-package mouse
+  :config
+  (setq mouse-drag-and-drop-region t
+        mouse-drag-and-drop-region-cross-program t
+        mouse-yank-at-point t))
+
 (use-package mwheel
   :config
   (setopt mouse-wheel-scroll-amount
