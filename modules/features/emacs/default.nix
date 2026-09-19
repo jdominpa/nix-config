@@ -9,12 +9,15 @@ let
     {
       wrappers.emacs.enable = true;
       environment = {
-        systemPackages = [
+        systemPackages = with pkgs; [
+          # Needed outside emacs for a one-time claude subscription login so
+          # that agent-shell's ACP can read the login data from ~/.claude.
+          claude-code
           # Spellchecking backend for jinx. Kept as system packages because
           # enchant discovers dictionaries through the profile, not through PATH.
-          pkgs.hunspell
-          pkgs.hunspellDicts.en-us-large
-          pkgs.hunspellDicts.es-es
+          hunspell
+          hunspellDicts.en-us-large
+          hunspellDicts.es-es
         ];
         variables = {
           EDITOR = "emacsclient --alternate-editor='emacs' -t";
@@ -42,6 +45,7 @@ in
         gitPkg
         pkgs.nixd # Nix language server
         pkgs.ripgrep
+        pkgs.claude-agent-acp # claude code for agent-shell
       ];
     in
     {
@@ -50,6 +54,8 @@ in
       emacsPackages =
         epkgs: with epkgs; [
           ace-window
+          agent-recall
+          agent-shell
           auctex
           avy
           browse-at-remote
@@ -119,7 +125,7 @@ in
       ''
       + builtins.readFile ./config/early-init.el;
       # nix.el contains the elisp needed to integrate correctly the emacs
-      # configuration with the wrappers runtimePkgs
+      # configuration with the wrapper's runtimePkgs
       configFile =
         builtins.readFile ./config/init.el
         +

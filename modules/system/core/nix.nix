@@ -7,17 +7,21 @@ let
   sharedSettings = { config, ... }: {
     # Use the configured pkgs from perSystem
     nixpkgs.pkgs = withSystem config.nixpkgs.hostPlatform.system ({ pkgs, ... }: pkgs);
-    nix.settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      substituters = [
-        "https://nix-community.cachix.org"
-      ];
-      trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      ];
+    nix = {
+      # Use input's nixpkgs when running `nix run` or `nix shell`.
+      registry.nixpkgs.flake = inputs.nixpkgs;
+      settings = {
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+        substituters = [
+          "https://nix-community.cachix.org"
+        ];
+        trusted-public-keys = [
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        ];
+      };
     };
   };
 in

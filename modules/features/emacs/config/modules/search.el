@@ -38,7 +38,6 @@
 (use-package avy
   :ensure t
   :bind (("C-," . avy-goto-char-timer)
-         ("C-c ," . avy-goto-char-timer) ; meow leader keybind
          :map isearch-mode-map
          ("C-," . avy-isearch))
   :config

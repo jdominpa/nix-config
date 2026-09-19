@@ -41,6 +41,7 @@
                                 ("nongnu" . 1))))
 
 (defvar +core-module-list (list
+                           'ai
                            'basic
                            'completion
                            'dired
