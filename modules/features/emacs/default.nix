@@ -107,7 +107,10 @@ in
           rust-mode
           spacious-padding
           tempel
-          treesit-grammars.with-all-grammars
+          # treesit-grammars.with-all-grammars
+          (treesit-grammars.with-grammars (
+            grammars: builtins.attrValues (removeAttrs grammars [ "tree-sitter-cuda" ])
+          ))
           vertico
           ws-butler
         ];

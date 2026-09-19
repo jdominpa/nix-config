@@ -3,7 +3,9 @@ let
     { pkgs, ... }:
     {
       fonts.packages = with pkgs; [
-        aporetic
+        # FIXME: temporarily switch to nixpkgs-stable since nodejs-slim package
+        # build is currently broken.
+        stable.aporetic
         noto-fonts
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif

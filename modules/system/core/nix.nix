@@ -68,13 +68,7 @@ in
   perSystem =
     { system, ... }:
     let
-      nixpkgsConfig = {
-        allowUnfree = true;
-        # FIXME: temporary fix, remove eventually
-        permittedInsecurePackages = [
-          "electron-39.8.10"
-        ];
-      };
+      nixpkgsConfig.allowUnfree = true;
       nixpkgsOverlays = [
         inputs.emacs-overlay.overlays.package
         # FIXME: temporary until https://github.com/lsd-rs/lsd/pull/1226 is
