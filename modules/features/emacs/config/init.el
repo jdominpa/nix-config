@@ -1,8 +1,8 @@
 ;;; -*- lexical-binding: t -*-
 
 ;; Naming conventions:
-;;   +core                     core namespace (init.el/early-init.el)
-;;   +MODULE                   module namespace for variables/functions defined in modules/module.el
+;;   +core                     core namespace (init.el and early-init.el)
+;;   +MODULE                   module namespace for variables/functions defined in modules/MODULE.el
 ;;   +NAMESPACE-SYMBOLNAME     public variable or function
 ;;   +NAMESPACE--SYMBOLNAME    private/internal variable or function
 ;;   +MODULE/NAME              interactive command (invoked through a keybind or M-x)

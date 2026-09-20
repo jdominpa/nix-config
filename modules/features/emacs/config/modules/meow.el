@@ -166,7 +166,9 @@
                            (?c . line)
                            (?v . paragraph)))
 
-  (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion)))
+  (dolist (rule '((ghostel-mode . insert)
+                  (mu4e-view-mode . motion)))
+    (add-to-list 'meow-mode-state-list rule)))
 
 ;; These optional interfaces are not needed to make Meow usable.  Load each from
 ;; its own library only when its command is invoked.
