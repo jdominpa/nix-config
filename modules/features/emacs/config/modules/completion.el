@@ -258,4 +258,4 @@
   :hook ((text-mode prog-mode) . abbrev-mode)
   :config
   (setq abbrev-file-name (expand-file-name "abbrev_defs" +core-config-directory)
-	save-abbrevs nil))
+        save-abbrevs nil))

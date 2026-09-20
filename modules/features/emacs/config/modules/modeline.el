@@ -487,19 +487,13 @@ mouse-3: LSP server control menu"
                               map)))))))
 (add-hook 'eglot-managed-mode-hook #'+modeline-update-eglot-h)
 
-(defun +modeline--eglot-pending-count (server)
-  "Get count of pending eglot requests to SERVER."
-  (if (fboundp 'jsonrpc-continuation-count)
-      (jsonrpc-continuation-count server)
-    (hash-table-count (jsonrpc--request-continuations server))))
-
 (defun +modeline--eglot-face (server nick)
   "Return the face for SERVER, whose project nickname is NICK.
 This is evaluated on redisplay rather than cached: at the moment eglot
 starts managing a buffer there is by definition no error and nothing
 pending, so a cached face could only ever report a healthy server."
   (cond ((jsonrpc-last-error server) '+modeline-urgent)
-        ((plusp (+modeline--eglot-pending-count server)) '+modeline-warning)
+        ((plusp (jsonrpc-continuation-count server)) '+modeline-warning)
         (nick '+modeline-info)
         (t '+modeline-notice)))
 
