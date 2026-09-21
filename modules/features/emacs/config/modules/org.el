@@ -17,7 +17,7 @@
 (use-package org
   :hook ((org-mode . turn-on-auto-fill)
          (org-mode . turn-on-org-cdlatex))
-  :bind (("C-c o l" . org-store-link)
+  :bind (("C-c o s" . org-store-link)
          :map org-mode-map
          ("M-g o" . consult-org-heading)
          :map org-cdlatex-mode-map

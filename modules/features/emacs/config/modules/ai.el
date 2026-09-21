@@ -6,7 +6,7 @@
   :hook (agent-shell-mode . +ai-agent-shell-subscribe-idle-h)
   :bind (("C-c i i" . agent-shell)
          ("C-c i t" . agent-shell-toggle)
-         ("C-c i p" . agent-shell-prompt-compose)
+         ("C-c i c" . agent-shell-prompt-compose)
          ("C-c i w" . agent-shell-send-dwim))
   :config
   (setq agent-shell-preferred-agent-config '(preselect . claude-code)
@@ -59,7 +59,7 @@
 (use-package agent-recall
   :ensure t
   :hook (agent-shell-mode . agent-recall-track-sessions)
-  :bind (("C-c i h" . agent-recall-browse)
+  :bind (("C-c i v" . agent-recall-browse)
          ("C-c i r" . agent-recall-resume))
   :config
   (setq agent-recall-search-paths (mapcar #'expand-file-name

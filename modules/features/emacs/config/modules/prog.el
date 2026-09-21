@@ -44,15 +44,15 @@
   :functions eglot-ensure
   :commands eglot
   :bind (:map eglot-mode-map
-              ("C-c l R" . eglot-reconnect)
-              ("C-c l s" . eglot-shutdown)
-              ("C-c l S" . eglot-shutdown-all)
-              ("C-c l r" . eglot-rename)
-              ("C-c l f" . eglot-format)
-              ("C-c l i" . imenu)
-              ("C-c l a" . eglot-code-actions)
-              ("C-c l d" . flymake-show-buffer-diagnostics)
-              ("C-c l D" . flymake-show-project-diagnostics))
+              ("C-c u R" . eglot-reconnect)
+              ("C-c u s" . eglot-shutdown)
+              ("C-c u S" . eglot-shutdown-all)
+              ("C-c u r" . eglot-rename)
+              ("C-c u f" . eglot-format)
+              ("C-c u i" . imenu)
+              ("C-c u a" . eglot-code-actions)
+              ("C-c u d" . flymake-show-buffer-diagnostics)
+              ("C-c u D" . flymake-show-project-diagnostics))
   :preface
   (defconst +prog-eglot-auto-start-modes
     '( c-mode c++-mode c-ts-mode c++-ts-mode
@@ -120,10 +120,8 @@
   :bind (:map flymake-mode-map
          ("M-n" . flymake-goto-next-error)
          ("M-p" . flymake-goto-prev-error)
-         ("C-c ! n" . flymake-goto-next-error)
-         ("C-c ! p" . flymake-goto-prev-error)
-         ("C-c ! d" . flymake-show-buffer-diagnostics)
-         ("C-c ! D" . flymake-show-project-diagnostics)
+         ("C-c u d" . flymake-show-buffer-diagnostics)
+         ("C-c u D" . flymake-show-project-diagnostics)
          :repeat-map +prog-flymake-repeat-map
          ("n" . flymake-goto-next-error)
          ("p" . flymake-goto-prev-error))
