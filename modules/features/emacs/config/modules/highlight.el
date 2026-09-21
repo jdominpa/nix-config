@@ -4,7 +4,10 @@
 (use-package hl-line
   :hook (after-init . global-hl-line-mode)
   :config
-  (setopt hl-line-sticky-flag nil))
+  (setopt hl-line-sticky-flag nil)
+  (setq hl-line-range-function (lambda ()
+                                 (cons (line-end-position)
+                                       (line-beginning-position 2)))))
 
 ;; [show-paren-mode] Highlight matching parens
 (use-package paren
