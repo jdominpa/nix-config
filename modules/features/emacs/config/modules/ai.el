@@ -24,11 +24,16 @@
     (cond ((featurep 'dbusbind)
            (require 'notifications)
            (notifications-notify :title title :body body :app-name "Emacs"))
-          ((eq system-type 'darwin)
-           (call-process "osascript" nil 0 nil "-e"
-                         (format "display notification %S with title %S" body title)))
+          ((fboundp 'ns-do-applescript)
+           ;; `ns-do-applescript' allows us to send a osascript notification as
+           ;; a notification sent from emacs.
+           (ns-do-applescript
+            (format "display notification %S with title %S" body title)))
           (t (message "%s: %s" title body)
-             (ding))))
+             ;; `ring-bell-function' is `ignore' globally. Re-enable the bell
+             ;; temporarily for the notification.
+             (let ((ring-bell-function nil))
+               (ding)))))
 
   (defun +ai--agent-shell-notify-idle (event)
     "Notify when EVENT reports an agent shell idle awaiting input."
