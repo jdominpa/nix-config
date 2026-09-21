@@ -118,7 +118,7 @@
       zshAliases = {
         cat = lib.getExe pkgs.bat;
         grep = lib.getExe pkgs.ripgrep;
-        ls = "${lib.getExe pkgs.lsd} --group-directories-first";
+        ls = "${lib.getExe' pkgs.coreutils "ls"} --color=auto --group-directories-first";
         ll = "ls -l";
         la = "ls -la";
       };
