@@ -56,6 +56,7 @@ in
           ace-window
           agent-recall
           agent-shell
+          agent-shell-math-renderer
           auctex
           avy
           browse-at-remote

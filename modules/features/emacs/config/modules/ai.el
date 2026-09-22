@@ -56,6 +56,12 @@
      :event 'idle
      :on-event #'+ai--agent-shell-notify-idle)))
 
+;; [agent-shell-math-renderer] Render equations and inline math as SVG images
+(use-package agent-shell-math-renderer
+  :ensure t
+  :hook (agent-shell-mode . agent-shell-math-renderer-mode))
+
+;; [agent-recall] Browse and resume past agent sessions
 (use-package agent-recall
   :ensure t
   :hook (agent-shell-mode . agent-recall-track-sessions)
