@@ -10,7 +10,6 @@
          ("C-c i w" . agent-shell-send-dwim))
   :config
   (setq agent-shell-preferred-agent-config '(preselect . claude-code)
-        agent-shell-session-restore-verbosity 'full
         agent-shell-show-welcome-message nil
         agent-shell-header-style 'text
         agent-shell-markdown-table-zebra-stripe nil
