@@ -2,12 +2,12 @@
 
 ;; [hl-line] Highlight current line
 (use-package hl-line
-  :hook (after-init . global-hl-line-mode)
+  :hook ((archive-mode dired-mode git-rebase-mode
+          grep-mode ibuffer-mode log-view-mode
+          magit-log-mode occur-mode org-agenda-mode
+          proced-mode tabulated-list-mode tar-mode) . hl-line-mode)
   :config
-  (setopt hl-line-sticky-flag nil)
-  (setq hl-line-range-function (lambda ()
-                                 (cons (line-end-position)
-                                       (line-beginning-position 2)))))
+  (setopt hl-line-sticky-flag nil))
 
 ;; [show-paren-mode] Highlight matching parens
 (use-package paren
