@@ -132,7 +132,7 @@
     (unless (derived-mode-p +prog-eglot-auto-start-modes)
       (flymake-mode 1)))
   :config
-  (setq flymake-show-diagnostics-at-end-of-line 'short
+  (setq flymake-inline-diagnostics 'short
         flymake-mode-line-format '("" flymake-mode-line-exception flymake-mode-line-counters)))
 
 ;; [treesit]

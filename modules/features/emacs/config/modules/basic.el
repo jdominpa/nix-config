@@ -19,6 +19,8 @@
   (setq-default
    ;; Select help window after opening it
    help-window-select t
+   ;; Send custom.el to oblivion
+   custom-file null-device
    ;; Backup settings
    create-lockfiles nil
    backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory)))
@@ -39,10 +41,13 @@
    bidi-display-reordering 'left-to-right
    ;; Smaller threshold to improve long line performance
    long-line-threshold 10000
-   large-hscroll-threshold 10000
-   syntax-wholeline-max 2000
-   ;; Send custom.el to oblivion
-   custom-file null-device
+   large-hscroll-threshold 1000
+   syntax-wholeline-max 1000
+   ;; [wrapping] Do not wrap by default. Wrap words at whitespace rather than in
+   ;; the middle of a word.
+   word-wrap t
+   truncate-lines t
+   truncate-partial-width-windows nil
    ;; Always follow links when visiting a [symbolic link]
    find-file-visit-truename t
    vc-follow-symlinks t

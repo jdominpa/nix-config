@@ -7,7 +7,16 @@
           magit-log-mode occur-mode org-agenda-mode
           proced-mode tabulated-list-mode tar-mode) . hl-line-mode)
   :config
-  (setopt hl-line-sticky-flag nil))
+  (setopt hl-line-sticky-flag nil)
+  ;; `hl-line' highlights the whole logical line, so a wrapped line lights up
+  ;; every screen line it occupies. `vertical-motion' walks screen lines, so
+  ;; this also covers continuation lines, not just `visual-line-mode'.
+  (defun +highlight-hl-line-range-function ()
+    "Return the bounds of the screen line at point.
+Meant to be used as `hl-line-range-function'."
+    (cons (save-excursion (vertical-motion 0) (point))
+          (save-excursion (vertical-motion 1) (point))))
+  (setq hl-line-range-function #'+highlight-hl-line-range-function))
 
 ;; [show-paren-mode] Highlight matching parens
 (use-package paren
