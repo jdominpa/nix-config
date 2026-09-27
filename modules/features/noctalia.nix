@@ -56,7 +56,8 @@
         brightness.brightnessStep = 2;
         colorSchemes = {
           darkMode = true;
-          predefinedScheme = "Catppuccin";
+          useWallpaperColors = true;
+          generationMethod = "tonal-spot";
         };
         dock.enabled = false;
         general = {
