@@ -108,11 +108,15 @@
 ;; [dape] Debug Adapter Protocol client
 (use-package dape
   :ensure t
-  :commands dape
+  :commands (dape dape-breakpoint-toggle)
   :config
   (setq dape-buffer-window-arrangement 'right
         dape-repl-echo-shell-output t)
-  (add-hook 'dape-display-source-hook #'+highlight-pulse-momentary-line-a))
+  (defun +prog-dape-save-buffers-h ()
+    "Save file-visiting buffers before starting a debug session."
+    (save-some-buffers t t))
+  (add-hook 'dape-display-source-hook #'+highlight-pulse-momentary-line-a)
+  (add-hook 'dape-start-hook #'+prog-dape-save-buffers-h))
 
 ;; [flymake] On-the-fly syntax checker
 (use-package flymake
