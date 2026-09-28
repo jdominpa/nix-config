@@ -11,6 +11,7 @@
   :config
   (setq agent-shell-preferred-agent-config '(preselect . claude-code)
         agent-shell-show-welcome-message nil
+        agent-shell-session-restore-verbosity 'last
         agent-shell-header-style 'text
         agent-shell-markdown-table-zebra-stripe nil
         agent-shell-file-display-action '((display-buffer-reuse-window
