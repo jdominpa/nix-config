@@ -30,10 +30,10 @@
       }
       {
         matches = [
-          { app-id = "xdg-desktop-portal-gtk"; }
+          { app-id = "dev.noctalia.Noctalia"; }
         ];
         open-floating = true;
-        default-column-width.fixed = 1280;
+        default-column-width.fixed = 1080;
         default-window-height.fixed = 920;
       }
       {
@@ -62,9 +62,7 @@
         open-focused = false;
       }
       {
-        # niri takes the radius as arguments, not as a block, so the four equal
-        # corners collapse into the single-argument form.
-        geometry-corner-radius = 12.0;
+        geometry-corner-radius = 12;
         clip-to-geometry = true;
       }
     ];
