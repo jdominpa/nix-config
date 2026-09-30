@@ -6,7 +6,7 @@
   flake.wrappers.niri =
     { lib, pkgs, ... }:
     let
-      noctaliaExe = lib.getExe (self.wrappers.noctalia-shell.wrap { inherit pkgs; });
+      noctaliaExe = lib.getExe (self.wrappers.noctalia.wrap { inherit pkgs; });
     in
     {
       settings.binds = {
@@ -19,10 +19,9 @@
           props.hotkey-overlay-title = "Run application launcher";
           content.spawn = [
             "${noctaliaExe}"
-            "ipc"
-            "call"
+            "msg"
+            "panel-toggle"
             "launcher"
-            "toggle"
           ];
         };
         "Mod+P".screenshot = _: { };
@@ -33,8 +32,8 @@
           props.hotkey-overlay-title = "Lock the screen";
           content.spawn = [
             "${noctaliaExe}"
-            "ipc"
-            "lockScreen"
+            "msg"
+            "session"
             "lock"
           ];
         };

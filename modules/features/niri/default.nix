@@ -27,13 +27,11 @@
 
   flake.wrappers.niri =
     {
-      lib,
       pkgs,
       wlib,
       ...
     }:
     let
-      noctaliaExe = lib.getExe (self.wrappers.noctalia-shell.wrap { inherit pkgs; });
       # FIXME: Steam popup dialogs close instantly on 0.8.2. Cherry-pick the
       # upstream fix, which landed after the tag was cut, until nixpkgs ships
       # it. Mirrors the pending nixpkgs PR, so this becomes a no-op once that
@@ -73,7 +71,6 @@
         };
         prefer-no-csd = _: { };
         screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
-        spawn-at-startup = [ "${noctaliaExe}" ];
       };
     };
 }
