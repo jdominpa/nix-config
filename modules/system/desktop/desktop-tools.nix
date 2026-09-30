@@ -4,9 +4,8 @@
     {
       environment.systemPackages = with pkgs; [
         libsecret
+        loupe
         mpv
-        nomacs
-        qalculate-gtk
         seahorse
       ];
       programs = {
