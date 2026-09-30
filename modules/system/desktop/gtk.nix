@@ -16,7 +16,7 @@
           size = 24;
           package = pkgs.bibata-cursors;
         };
-        font = "Aporetic Sans 11";
+        font = "Aporetic Sans 12";
       };
       gtkSettings = ''
         [Settings]
