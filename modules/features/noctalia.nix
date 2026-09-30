@@ -95,15 +95,14 @@ in
               ];
               end = [
                 "tray"
-                "spacer_0"
                 "notifications"
+                "clipboard"
                 "keyboard_layout"
                 "network"
                 "bluetooth"
                 "volume"
                 "brightness"
                 "battery"
-                "spacer_1"
                 "clock"
               ];
               margin_ends = 0;
@@ -113,6 +112,7 @@ in
                 "wallpaper"
                 "media"
               ];
+              widget_spacing = 10;
             };
           };
           idle = {
@@ -161,22 +161,26 @@ in
           };
           wallpaper.directory = "${homeDirectory.linux}/Imatges/Wallpapers";
           widget = {
+            bluetooth = {
+              hide_when_no_connected_device = true;
+            };
             clock = {
               format = "{:%a %d %b %H:%M}";
             };
             media = {
               hide_when_no_media = true;
             };
+            network = {
+              show_label = false;
+            };
             notifications = {
               hide_when_no_unread = true;
             };
-            spacer_0 = {
-              length = 15;
-              type = "spacer";
+            tray = {
+              drawer = true;
             };
-            spacer_1 = {
-              length = 15;
-              type = "spacer";
+            volume = {
+              show_label = false;
             };
           };
         };
