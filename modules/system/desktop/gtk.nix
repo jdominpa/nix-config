@@ -18,6 +18,13 @@
         };
         font = "Aporetic Sans 12";
       };
+      # Ensure xwayland-satellite uses the cursor theme
+      defaultCursorTheme = pkgs.writeTextDir "share/icons/default/index.theme" ''
+        [Icon Theme]
+        Name=default
+        Comment=Alias for ${theme.cursor.name}
+        Inherits=${theme.cursor.name}
+      '';
       gtkSettings = ''
         [Settings]
         gtk-application-prefer-dark-theme=1
@@ -31,6 +38,7 @@
     {
       environment = {
         systemPackages = [
+          defaultCursorTheme
           theme.cursor.package
           theme.gtk.package
           theme.icons.package
@@ -40,6 +48,11 @@
         etc = {
           "xdg/gtk-3.0/settings.ini".text = gtkSettings;
           "xdg/gtk-4.0/settings.ini".text = gtkSettings;
+        };
+        # Set X cursor theme
+        sessionVariables = {
+          XCURSOR_SIZE = lib.toString theme.cursor.size;
+          XCURSOR_THEME = theme.cursor.name;
         };
       };
       programs.dconf = {
