@@ -106,6 +106,7 @@ in
                 "clock"
               ];
               margin_ends = 0;
+              radius = 0;
               start = [
                 "session"
                 "launcher"
@@ -150,13 +151,13 @@ in
               open_near_click_control_center = true;
             };
             polkit_agent = true;
-            screen_corners.enabled = true;
           };
           theme = {
             source = "wallpaper";
             templates.builtin_ids = [
               "gtk3"
               "gtk4"
+              "niri"
             ];
           };
           wallpaper.directory = "${homeDirectory.linux}/Imatges/Wallpapers";

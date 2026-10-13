@@ -61,10 +61,10 @@
         ];
         open-focused = false;
       }
-      {
-        geometry-corner-radius = 12;
-        clip-to-geometry = true;
-      }
+      # {
+      #   geometry-corner-radius = 12;
+      #   clip-to-geometry = true;
+      # }
     ];
     layer-rules = [
       # Rule for overview mode with noctalia
