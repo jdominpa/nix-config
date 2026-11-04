@@ -15,6 +15,7 @@
 ;;; Org
 
 (use-package org
+  :ensure t
   :hook ((org-mode . turn-on-auto-fill)
          (org-mode . turn-on-org-cdlatex))
   :bind (("C-c o s" . org-store-link)
@@ -162,6 +163,10 @@
          ("C-c C-d C-r" . denote-dired-rename-files)
          ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
          ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
+
+(use-package denote-org
+  :ensure t
+  :after denote)
 
 (use-package consult-denote
   :ensure t

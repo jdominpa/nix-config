@@ -69,6 +69,7 @@ in
           corfu
           dape
           denote
+          denote-org
           diff-hl
           eglot-tempel
           eldoc-box
@@ -98,6 +99,7 @@ in
           nael
           nix-ts-mode
           orderless
+          org
           org-appear
           org-modern
           pdf-tools
