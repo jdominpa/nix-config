@@ -31,6 +31,7 @@ in
         git
         kitty
         latex
+        restic
         syncthing
         zsh
       ]);
