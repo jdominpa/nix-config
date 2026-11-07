@@ -70,7 +70,7 @@
           zoom = 0.5;
         };
         prefer-no-csd = _: { };
-        screenshot-path = "~/Imatges/Screenshots/%Y%m%dT%H%M%S.png";
+        screenshot-path = "~/Pictures/Screenshots/%Y%m%dT%H%M%S.png";
       };
     };
 }
