@@ -14,6 +14,7 @@ let
     paths = map (dir: "${home}/${dir}") [
       "Documents"
       "Pictures"
+      "GrapheneOS"
     ];
   };
   linux = perHome homeDirectory.linux;
@@ -36,7 +37,7 @@ in
         repository
         ;
       inherit (linux) passwordFile;
-      paths = linux.paths ++ [ "${homeDirectory.linux}/GrapheneOS/SeedVault" ];
+      inherit (linux) paths;
       extraOptions = [ "sftp.args='-i ${linux.sshKey}'" ];
       checkOpts = [ retryLock ];
       timerConfig = {
