@@ -26,6 +26,7 @@ in
       kanata
       kitty
       latex
+      restic
       syncthing
       zsh
     ];
