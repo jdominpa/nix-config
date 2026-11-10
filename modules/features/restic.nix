@@ -15,7 +15,7 @@ let
   perHome = home: {
     passwordFile = "${home}/.config/restic/password";
     # Optional: holds a healthchecks.io ping URL (see `mkPing`)
-    healthcheckFile = "${home}/.config/restic/healthchecks-url";
+    healthcheckFile = "${home}/.config/restic/healthcheck-url";
     sshKey = "${home}/.ssh/storagebox";
     paths = map (dir: "${home}/${dir}") [
       "Documents"
