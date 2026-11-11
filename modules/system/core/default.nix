@@ -7,6 +7,7 @@
     imports = with self.modules.nixos; [
       bluetooth
       fonts
+      hardening
       locale
       nix
       pipewire
@@ -20,6 +21,7 @@
   flake.modules.darwin.core = {
     imports = with self.modules.darwin; [
       fonts
+      hardening
       homebrew
       locale
       nix

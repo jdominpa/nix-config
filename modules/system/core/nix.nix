@@ -29,7 +29,11 @@ in
   flake.modules.nixos.nix = {
     imports = [ sharedSettings ];
     nix = {
-      settings.auto-optimise-store = true;
+      settings = {
+        auto-optimise-store = true;
+        # Only wheel may talk to the nix daemon
+        allowed-users = [ "@wheel" ];
+      };
       gc = {
         automatic = true;
         dates = "weekly";

@@ -67,7 +67,11 @@
                   };
                   "@home" = {
                     mountpoint = "/home";
-                    mountOptions = [ "compress=zstd:1" ];
+                    mountOptions = [
+                      "compress=zstd:1"
+                      "nosuid" # ignore setuid
+                      "nodev" # no device nodes
+                    ];
                   };
                   "@snapshots" = {
                     mountpoint = "/btr_pool/snapshots";

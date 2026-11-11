@@ -8,7 +8,6 @@ let
   sharedSettings =
     { config, ... }:
     {
-      nix.settings.trusted-users = [ username ];
       users.users.${username}.shell = config.wrappers.zsh.wrapper;
     };
 in

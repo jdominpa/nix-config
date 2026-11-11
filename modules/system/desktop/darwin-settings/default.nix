@@ -20,10 +20,6 @@
         ShowStatusBar = true;
       };
 
-      LaunchServices = {
-        LSQuarantine = false; # disable "Are you sure you want to open this application?" message
-      };
-
       # macOS settings
       NSGlobalDomain = {
         # `defaults read NSGlobalDomain <key>`
