@@ -49,11 +49,6 @@
                 type = "btrfs";
                 extraArgs = [ "-f" ]; # Force overwrite if filesystem already exists
                 subvolumes = {
-                  # Top-level subvolume (id 5); used for btrfs send/receive and snapshots
-                  "/" = {
-                    mountpoint = "/btr_pool";
-                    mountOptions = [ "subvolid=5" ];
-                  };
                   "@" = {
                     mountpoint = "/";
                     mountOptions = [ "compress=zstd:1" ];
@@ -72,10 +67,6 @@
                       "nosuid" # ignore setuid
                       "nodev" # no device nodes
                     ];
-                  };
-                  "@snapshots" = {
-                    mountpoint = "/btr_pool/snapshots";
-                    mountOptions = [ "noatime" ];
                   };
                   "@swap" = {
                     mountpoint = "/swap";

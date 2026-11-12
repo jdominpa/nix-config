@@ -22,7 +22,6 @@ in
       ++ (with self.modules.nixos; [
         bitwarden
         brave
-        btrbk
         cli-tools
         desktop
         discord
