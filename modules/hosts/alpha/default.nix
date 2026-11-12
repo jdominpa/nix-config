@@ -32,6 +32,7 @@ in
         kitty
         latex
         restic
+        secure-boot
         syncthing
         zsh
       ]);

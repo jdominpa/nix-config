@@ -50,6 +50,17 @@ and update it with the hardware configuration generated.
 
 #### 4. Install NixOS
 
+A host that imports the `secure-boot` module signs its boot files during the
+installation, so its signing keys have to be in place before `nixos-install`
+runs. Skip this for any other host.
+
+```bash
+# Create the Secure Boot keys and copy them to the new system
+sudo nix --experimental-features "nix-command flakes" run nixpkgs#sbctl -- create-keys
+sudo mkdir -p /mnt/var/lib
+sudo cp -a /var/lib/sbctl /mnt/var/lib/
+```
+
 ```bash
 # Install NixOS with <hostname> configuration
 sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
@@ -65,6 +76,50 @@ sudo umount -R /mnt
 reboot
 ```
 
+#### 5. Enable Secure Boot
+
+Only for hosts that import the `secure-boot` module, which replaces systemd-boot
+with [lanzaboote](https://github.com/nix-community/lanzaboote). After Step 4 the
+boot files are signed, but the firmware does not know the keys yet.
+
+To add Secure Boot to a host that was installed without the module, create the
+keys with `sudo nix run nixpkgs#sbctl -- create-keys`, add `secure-boot` to the
+imports of the host and rebuild. Then continue here.
+
+1. Check that the boot files are signed. Only the kernel images under
+   `/boot/EFI/nixos` are expected to be reported as not signed.
+
+   ```bash
+   sudo sbctl verify
+   ```
+
+2. Reboot into the firmware setup, enable Secure Boot and put it into Setup
+   Mode.
+
+   ```bash
+   systemctl reboot --firmware-setup
+   ```
+
+3. Boot NixOS again and enroll the keys. `--microsoft` keeps the certificates of
+   Microsoft next to them: the firmware of the graphics card is usually signed
+   with those, and without them the machine may not boot anymore.
+
+   ```bash
+   sudo sbctl enroll-keys --microsoft
+   ```
+
+4. Reboot and check that Secure Boot is active. If it is not, enable it in the
+   firmware setup. Some boards also need "OS Type" set to "Windows UEFI Mode".
+
+   ```bash
+   bootctl status | grep "Secure Boot" # Secure Boot: enabled (user)
+   ```
+
+5. Set an administrator password in the firmware setup, otherwise anyone at the
+   keyboard can turn Secure Boot off again.
+
+From here on every rebuild signs the new generation by itself.
+
 ### macOS
 
 For first time deployment, install
@@ -77,6 +132,24 @@ nix-shell -p git just
 
 # Deploy using `just` & Justfile
 just switch <hostname>
+```
+
+Some settings cannot be set by nix-darwin because macOS only changes them after
+asking for the password of the user, so they have to be set once by hand.
+
+```bash
+# Encrypt the disk with FileVault. This prints a recovery key: store it in the
+# password manager, it is the only way in if the password is lost
+sudo fdesetup enable
+
+# Check it: "FileVault is On."
+fdesetup status
+
+# Require the password immediately after sleep or screen saver begins
+sysadminctl -screenLock immediate -password -
+
+# Check it: the output should end in "screenLock delay is immediate"
+sysadminctl -screenLock status
 ```
 
 ## How to add a new host
