@@ -13,6 +13,7 @@
       pipewire
       power-profiles
       printing
+      secure-boot
       ssh
       user
     ];

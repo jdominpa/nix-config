@@ -3,8 +3,6 @@
   ...
 }:
 {
-  # Not part of `core`: a host can only import this once its signing keys exist
-  # in /var/lib/sbctl, see "Enable Secure Boot" in the README.
   flake.modules.nixos.secure-boot =
     { lib, pkgs, ... }:
     {

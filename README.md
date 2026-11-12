@@ -50,9 +50,9 @@ and update it with the hardware configuration generated.
 
 #### 4. Install NixOS
 
-A host that imports the `secure-boot` module signs its boot files during the
-installation, so its signing keys have to be in place before `nixos-install`
-runs. Skip this for any other host.
+Every NixOS host uses Secure Boot through the `secure-boot` module in `core` and
+signs its boot files during the installation, so the signing keys have to be in
+place before `nixos-install` runs.
 
 ```bash
 # Create the Secure Boot keys and copy them to the new system
@@ -78,13 +78,10 @@ reboot
 
 #### 5. Enable Secure Boot
 
-Only for hosts that import the `secure-boot` module, which replaces systemd-boot
-with [lanzaboote](https://github.com/nix-community/lanzaboote). After Step 4 the
+Secure Boot is provided by
+[lanzaboote](https://github.com/nix-community/lanzaboote), which the
+`secure-boot` module sets up in place of plain systemd-boot. After Step 4 the
 boot files are signed, but the firmware does not know the keys yet.
-
-To add Secure Boot to a host that was installed without the module, create the
-keys with `sudo nix run nixpkgs#sbctl -- create-keys`, add `secure-boot` to the
-imports of the host and rebuild. Then continue here.
 
 1. Check that the boot files are signed. Only the kernel images under
    `/boot/EFI/nixos` are expected to be reported as not signed.
