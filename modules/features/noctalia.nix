@@ -7,182 +7,115 @@ let
   inherit (config.user) homeDirectory;
 in
 {
-  flake.modules.nixos.noctalia = { pkgs, ... }: {
-    programs.noctalia = {
-      enable = true;
-      package = self.wrappers.noctalia.wrap { inherit pkgs; };
-      systemd.enable = true;
+  flake.modules.nixos.noctalia =
+    { pkgs, ... }:
+    {
+      programs.noctalia = {
+        enable = true;
+        package = self.wrappers.noctalia.wrap { inherit pkgs; };
+        systemd.enable = true;
+      };
     };
-  };
 
   flake.wrappers.noctalia =
+    { wlib, ... }:
     {
-      config,
-      lib,
-      pkgs,
-      wlib,
-      ...
-    }:
-    let
-      tomlFmt = pkgs.formats.toml { };
-    in
-    {
-      imports = [ wlib.modules.default ];
-
-      options = {
-        generatedConfigDirname = lib.mkOption {
-          type = lib.types.str;
-          default = "${config.binName}";
-          description = "Name of the directory which is created as the NOCTALIA_CONFIG_HOME in the wrapper output";
-          apply = x: lib.removePrefix "/" (lib.removeSuffix "/" x);
-        };
-        configDrvOutput = lib.mkOption {
-          type = lib.types.str;
-          default = config.outputName;
-          description = "Name of the derivation output where the generated NOCTALIA_CONFIG_HOME is output to.";
-        };
-        configPlaceholder = lib.mkOption {
-          type = lib.types.str;
-          default = "${placeholder config.configDrvOutput}/${config.generatedConfigDirname}";
-          readOnly = true;
-          description = ''
-                The placeholder for the generated config directory.
-
-            Use this inside the module to place files in an ad-hoc manner within it.
-
-            Outside of the module, you should instead use `wrapped-noctalia.generatedConfig` to get the path.
-          '';
-        };
-        settings = lib.mkOption {
-          type = wlib.types.structuredValueWith { typeName = "TOML"; };
-          default = { };
-          description = ''
-                Noctalia configuration settings as an attribute set,
-            to be written to $NOCTALIA_CONFIG_HOME/noctalia/settings.toml`.
-          '';
-        };
-        colors = lib.mkOption {
-          type = wlib.types.structuredValueWith { typeName = "TOML"; };
-          default = { };
-          description = ''
-            Noctalia color configuration as an attribute set
-          '';
-        };
-      };
-
-      config = {
-        env = {
-          NOCTALIA_CONFIG_HOME = "${placeholder config.configDrvOutput}";
-        };
-        constructFiles.settings = {
-          content = builtins.readFile (
-            tomlFmt.generate config.constructFiles.settings.relPath config.settings
-          );
-          output = lib.mkOverride 0 config.configDrvOutput;
-          relPath = lib.mkOverride 0 "noctalia/settings.toml";
-        };
-        constructFiles.colors = {
-          content = builtins.toJSON config.colors;
-          output = lib.mkOverride 0 config.configDrvOutput;
-          relPath = lib.mkOverride 0 "noctalia/palettes/custom.json";
-        };
-        package = lib.mkDefault pkgs.noctalia;
-        settings = {
-          bar = {
-            default = {
-              center = [
-                "workspaces"
-              ];
-              end = [
-                "tray"
-                "notifications"
-                "clipboard"
-                "keyboard_layout"
-                "network"
-                "bluetooth"
-                "volume"
-                "brightness"
-                "battery"
-                "clock"
-              ];
-              margin_ends = 0;
-              radius = 0;
-              start = [
-                "session"
-                "launcher"
-                "wallpaper"
-                "media"
-              ];
-              widget_spacing = 10;
-            };
-          };
-          idle = {
-            behavior = {
-              lock = {
-                action = "lock";
-                enabled = true;
-                timeout = 600.0;
-              };
-              screen-off = {
-                action = "screen_off";
-                enabled = true;
-                timeout = 660.0;
-              };
-            };
-            behavior_order = [
-              "lock"
-              "screen-off"
+      imports = [ wlib.wrapperModules.noctalia ];
+      settings = {
+        bar = {
+          default = {
+            center = [
+              "workspaces"
             ];
-          };
-          keybinds = {
-            validate = [
-              "Return"
-              "KP_Enter"
+            end = [
+              "tray"
+              "notifications"
+              "clipboard"
+              "keyboard_layout"
+              "network"
+              "bluetooth"
+              "volume"
+              "brightness"
+              "battery"
+              "clock"
             ];
-          };
-          location.auto_locate = true;
-          nightlight.enabled = true;
-          shell = {
-            clipboard_history_max_entries = 10;
-            greeter_sync.auto_sync = true;
-            launch_apps_as_systemd_services = true;
-            panel = {
-              open_near_click_clipboard = true;
-              open_near_click_control_center = true;
-            };
-            polkit_agent = true;
-          };
-          theme = {
-            source = "wallpaper";
-            templates.builtin_ids = [
-              "gtk3"
-              "gtk4"
-              "niri"
+            margin_ends = 0;
+            radius = 0;
+            start = [
+              "session"
+              "launcher"
+              "wallpaper"
+              "media"
             ];
+            widget_spacing = 10;
           };
-          wallpaper.directory = "${homeDirectory.linux}/Imatges/Wallpapers";
-          widget = {
-            bluetooth = {
-              hide_when_no_connected_device = true;
+        };
+        idle = {
+          behavior = {
+            lock = {
+              action = "lock";
+              enabled = true;
+              timeout = 600.0;
             };
-            clock = {
-              format = "{:%a %d %b %H:%M}";
+            screen-off = {
+              action = "screen_off";
+              enabled = true;
+              timeout = 660.0;
             };
-            media = {
-              hide_when_no_media = true;
-            };
-            network = {
-              show_label = false;
-            };
-            notifications = {
-              hide_when_no_unread = true;
-            };
-            tray = {
-              drawer = true;
-            };
-            volume = {
-              show_label = false;
-            };
+          };
+          behavior_order = [
+            "lock"
+            "screen-off"
+          ];
+        };
+        keybinds = {
+          validate = [
+            "Return"
+            "KP_Enter"
+          ];
+        };
+        location.auto_locate = true;
+        nightlight.enabled = true;
+        shell = {
+          clipboard_history_max_entries = 10;
+          greeter_sync.auto_sync = true;
+          launch_apps_as_systemd_services = true;
+          panel = {
+            open_near_click_clipboard = true;
+            open_near_click_control_center = true;
+          };
+          polkit_agent = true;
+        };
+        theme = {
+          source = "wallpaper";
+          templates.builtin_ids = [
+            "gtk3"
+            "gtk4"
+            "niri"
+          ];
+        };
+        wallpaper.directory = "${homeDirectory.linux}/Imatges/Wallpapers";
+        widget = {
+          bluetooth = {
+            hide_when_no_connected_device = true;
+          };
+          clock = {
+            format = "{:%a %d %b %H:%M}";
+          };
+          media = {
+            hide_when_no_media = true;
+          };
+          network = {
+            show_label = false;
+          };
+          notifications = {
+            hide_when_no_unread = true;
+          };
+          tray = {
+            drawer = true;
+          };
+          volume = {
+            show_label = false;
           };
         };
       };
