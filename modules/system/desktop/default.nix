@@ -10,6 +10,7 @@
       gtk
       login-manager
       niri
+      nixpak
       noctalia
     ];
   };

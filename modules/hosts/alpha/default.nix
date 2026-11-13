@@ -26,12 +26,12 @@ in
         desktop
         discord
         emacs
-        gaming
         git
         kitty
         latex
         restic
         syncthing
+        steam
         zsh
       ]);
 
@@ -84,6 +84,8 @@ in
           modesetting.enable = true;
         };
       };
+
+      programs.coolercontrol.enable = true;
 
       networking = {
         inherit hostName;
