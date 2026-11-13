@@ -5,9 +5,31 @@
       environment.systemPackages = with pkgs; [
         libsecret
         loupe
-        mpv
         seahorse
       ];
+      # Sandboxed mpv
+      security.nixpak.apps.mpv.configuration =
+        { sloth, ... }:
+        {
+          app.package = pkgs.mpv;
+          flatpak.appId = "io.mpv.Mpv";
+          # Renders on the GPU, which needs `linux-dmabuf`
+          waylandProxy.enable = false;
+          bubblewrap.bind = {
+            rw = [
+              (sloth.mkdir (sloth.concat' sloth.xdgConfigHome "/mpv"))
+              # Positions saved with `quit-watch-later`
+              (sloth.mkdir (sloth.concat' sloth.xdgStateHome "/mpv"))
+              (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/mpv"))
+            ];
+            ro = [
+              sloth.xdgDocumentsDir
+              sloth.xdgDownloadDir
+              sloth.xdgPicturesDir
+            ];
+          };
+        };
+
       programs = {
         localsend.enable = true;
         thunar = {
