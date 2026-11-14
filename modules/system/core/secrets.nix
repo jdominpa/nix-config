@@ -7,14 +7,13 @@
 let
   inherit (config.user) username homeDirectory;
   # Each host decrypts its own file of the private `secrets` input with the one
-  # personal age key, the same file the `sops` CLI uses. See docs/SECRETS.md for
-  # the key, the layout of the secrets repository and the bootstrap.
+  # personal age key, kept where the `sops` CLI looks for it by default on each
+  # platform, so editing works without any environment variable. See
+  # docs/SECRETS.md for the key, the layout of the secrets repository and the
+  # bootstrap.
   sharedSettings =
-    home:
+    keyFile:
     { config, ... }:
-    let
-      keyFile = "${home}/.config/sops/age/keys.txt";
-    in
     {
       options.secretPresets = lib.mkOption {
         type = lib.types.attrsOf (lib.types.attrsOf lib.types.str);
@@ -44,9 +43,6 @@ let
           };
           gnupg.sshKeyPaths = [ ];
         };
-        # The same path for the `sops` CLI on both platforms; on macOS it would
-        # otherwise look under ~/Library/Application Support
-        environment.variables.SOPS_AGE_KEY_FILE = keyFile;
       };
     };
 in
@@ -54,7 +50,7 @@ in
   flake.modules.nixos.secrets = {
     imports = [
       inputs.sops-nix.nixosModules.sops
-      (sharedSettings homeDirectory.linux)
+      (sharedSettings "${homeDirectory.linux}/.config/sops/age/keys.txt")
     ];
     fileSystems."/home".neededForBoot = true;
   };
@@ -62,7 +58,7 @@ in
   flake.modules.darwin.secrets = {
     imports = [
       inputs.sops-nix.darwinModules.sops
-      (sharedSettings homeDirectory.darwin)
+      (sharedSettings "${homeDirectory.darwin}/Library/Application Support/sops/age/keys.txt")
     ];
   };
 }
