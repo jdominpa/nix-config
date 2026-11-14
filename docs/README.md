@@ -17,6 +17,8 @@ coding agents require those entry points.
   sandbox.
 - [Backups](BACKUPS.md): what is backed up, how to check it, how to restore, and
   the restore drill log.
+- [Secrets](SECRETS.md): sops-nix, the private secrets repository, the age keys
+  and the procedures for editing secrets and (re)installing a host.
 - [Workarounds](WORKAROUNDS.md): temporary workarounds, pins and sandbox
   exceptions, each with the condition for removing it.
 

@@ -13,7 +13,7 @@ Every file under `modules/` is a flake-parts module, auto-imported by
 - `modules/system/` — `core` and `desktop` system configuration.
 - `modules/flake-parts/` — flake-level wiring (formatting, dev shell).
 - `docs/` — design documentation: the security docs (`SECURITY.md`,
-  `SANDBOXING.md`), `BACKUPS.md` and `WORKAROUNDS.md`. See "Documentation"
+  `SANDBOXING.md`, `SECRETS.md`), `BACKUPS.md` and `WORKAROUNDS.md`. See "Documentation"
   below.
 
 ## Commands
@@ -50,6 +50,7 @@ change that touches the first column, make both commits.
 | `secure-boot.nix`, `disko.nix`, the boot loader, fwupd, TPM or lockdown       | `docs/SECURITY.md`, architecture / boot |
 | `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, supply chain        |
 | `restic.nix`: backed-up paths, schedule, retention, monitoring, credentials   | `docs/BACKUPS.md`, and the summary in `docs/SECURITY.md` |
+| `secrets.nix`, a `sops.secrets` declaration, the `secrets` or `sops-nix` input | `docs/SECRETS.md`, and `docs/SECURITY.md` supply chain |
 | `ssh.nix`, sudo, users and groups, login manager, screen lock                 | `docs/SECURITY.md`, architecture        |
 | `modules/system/desktop/nixpak/` (the shared sandbox policy, the Wayland helper) | `docs/SANDBOXING.md`, shared boundaries and Wayland |
 | A sandboxed app (`security.nixpak.apps.*`): paths, portals, D-Bus, network, sockets | `docs/SANDBOXING.md`, its table and section, plus limits |

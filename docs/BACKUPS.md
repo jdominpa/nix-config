@@ -33,7 +33,8 @@ Hetzner Storage Box.
   enough for the machine being off or offline). `alpha` reports success only
   when backup, prune and check all pass. `beta` reports success only on exit
   status 0; status 3 (some files unreadable, e.g. a macOS TCC denial) counts as
-  a failure. Without `~/.config/restic/healthcheck-url` nothing is reported.
+  a failure. The ping URL is one of the host's secrets; if it is missing the
+  ping unit fails instead of skipping the report.
 - **`restic-storagebox`** is a wrapper that supplies the repository, password
   file and SSH key, so plain restic arguments can be appended. It exists on both
   hosts.
@@ -61,28 +62,32 @@ repository, not the snapshots.
 
 ## Credentials
 
-None are in this repository: per host restic password, backup SSH key (no
-passphrase) and monitor ping URL. A lost backup key is replaced, not recovered;
-a ping URL is copied again from the monitor's website.
+None are in this repository. Each host's restic password, backup SSH key (no
+passphrase) and monitor ping URL are encrypted in its file of the private
+`secrets` input and decrypted at activation to `/run/secrets/restic/`, owned by
+the user ([SECRETS.md](SECRETS.md)). Reading them back from there needs the
+personal age key or a working host. A lost backup key is replaced, not
+recovered; a ping URL is copied again from the monitor's website.
 
 ## Procedures
 
 ### Placing the secrets on a host
 
+Edit the host's file in `nix-secrets` and fill in the `restic` keys
+([SECRETS.md](SECRETS.md#adding-or-updating-secrets)):
+
 ```sh
-install -d -m 700 ~/.config/restic
-# restic password, silent prompt, no trailing newline, never world-readable
-read -rs pw && (umask 077; printf '%s' "$pw" > ~/.config/restic/password); unset pw
-# monitor ping URL
-read -r url && (umask 077; printf '%s\n' "$url" > ~/.config/restic/healthcheck-url); unset url
+cd ~/dev/nix-secrets && nix shell nixpkgs#sops -c sops <hostname>.yaml
 ```
 
-Check the mode is `600` (`stat -c %a` on NixOS, `stat -f %Lp` on macOS).
+Then commit, push and `just update secrets`. After the next switch the three
+files are in `/run/secrets/restic/`, owned by the user with mode `400`.
 
 ### Adding a host
 
 Credentials first, configuration last, otherwise the service fails until the key
-and password are in place.
+and password are in place. The host needs the personal age key and its file
+in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
 
 1. Create the backup key, without a passphrase:
    `ssh-keygen -t ed25519 -f ~/.ssh/storagebox -N "" -C "restic <hostname>"`.
@@ -90,7 +95,8 @@ and password are in place.
    `ssh-copy-id -s -p 23 -i ~/.ssh/storagebox <sub-account>@<sub-account>.your-storagebox.de`.
 3. From a host that already works, add a restic key:
    `restic-storagebox key add --host <hostname> --user <user>`.
-4. Place the password and a new monitor URL on the host (above).
+4. Place the private backup key, the password and a new monitor URL in the
+   host's secrets (above), then delete `~/.ssh/storagebox` and its `.pub`.
 5. Add `restic` to the host's imports in `modules/hosts/<host>` and
    `just switch <host>`. This also pins the Storage Box host key.
 6. Run it by hand and confirm the snapshot and the success ping:

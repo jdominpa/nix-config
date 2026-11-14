@@ -51,6 +51,7 @@ modules/
     │   ├── locale.nix                      # Locale and time zone
     │   ├── nix.nix                         # Nix settings and nixpkgs configuration
     │   ├── power-profiles.nix              # Power management
+    │   ├── secrets.nix                     # sops-nix and the private secrets input
     │   ├── secure-boot.nix                 # Secure Boot with lanzaboote
     │   └── services/                       # Small system services
     │       ├── bluetooth.nix

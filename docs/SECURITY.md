@@ -152,14 +152,15 @@ built-in code and does not stop a privileged module insertion.
 
 - `flake.lock` pins every input. Updates are a deliberate `just update`.
 - `nixpkgs` follows `nixos-unstable`: fixes arrive quickly, so do regressions.
-- The extra substituter `nix-community.cachix.org` is trusted through the
-  `nixConfig` of `flake.nix` and the matching `nix.settings`. The first time a
-  non-trusted user evaluates the flake, Nix asks whether to accept the
-  `nixConfig` and stores the answer in
-  `~/.local/share/nix/trusted-settings.json`.
+- The extra substituter `nix-community.cachix.org` is trusted through the option
+  `nix.settings`.
 - `nixpak` is a flake input and runs as the user on every launch of a sandboxed
   application: treat bumps of it, `xdg-dbus-proxy` and `bubblewrap` as
   security-relevant when reading a `flake.lock` diff.
+- `sops-nix` runs as root at every activation to decrypt the secrets: treat its
+  bumps the same way. The `secrets` input is a private repository fetched over
+  SSH. It is read as plain files (`flake = false`), so it adds ciphertext to the
+  evaluation, not code. See [SECRETS.md](SECRETS.md).
 
 ## Backups and recovery
 
@@ -168,15 +169,20 @@ What is backed up, how to check it and the restore procedure are in
 
 - restic encrypts on the client: the Storage Box only holds ciphertext.
 - The backup runs as the user, not as root. The repository password and the
-  Storage Box SSH key are plain files in the home directory, so any process of
-  the user can read them and, with them, delete or tamper with the repository.
+  Storage Box SSH key are decrypted by sops-nix into `/run/secrets` (a tmpfs),
+  owned by the user, so any process of the user can still read them and, with
+  them, delete or tamper with the repository. The age key that decrypts the
+  secrets of both hosts is in the home directory too, and on NixOS `/home` is
+  mounted in the initrd so the key is there when the secrets are decrypted at
+  boot ([SECRETS.md](SECRETS.md)).
   The backstop is the daily Storage Box snapshots (10 kept, so damage must be
   noticed within 10 days), which are managed only in the Hetzner Console and
   cannot be reached over SSH. They are configured outside this repository and
   cannot be verified from it.
 - The Storage Box host key is pinned in `programs.ssh.knownHosts`.
-- Failures are reported only if a healthchecks.io URL file exists; without it
-  nothing notifies.
+- Failures are reported to healthchecks.io. The ping URL is a sops secret; if
+  it is missing the ping unit fails, and the monitor alerts when the success
+  ping stops arriving.
 - NixOS generations give a rollback of about a week (see the table above); they
   are not a backup of data.
 

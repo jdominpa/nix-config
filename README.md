@@ -67,9 +67,15 @@ sudo mkdir -p /mnt/var/lib
 sudo cp -a /var/lib/sbctl /mnt/var/lib/
 ```
 
+The secrets come from a private repository that root on the installer cannot
+fetch. Bring a clone of it to `/tmp/nix-secrets` first. The age key is restored
+after the first login, as described in [Installing a host from
+scratch](docs/SECRETS.md#installing-a-host-from-scratch).
+
 ```bash
 # Install NixOS with <hostname> configuration
-sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
+sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt \
+  --override-input secrets path:/tmp/nix-secrets
 
 # Set user password for any users defined in the configuration
 sudo nixos-enter --root /mnt -c 'passwd <username>'
@@ -128,6 +134,10 @@ From here on every rebuild signs the new generation by itself.
 For first time deployment, install
 [nix](https://nixos.org/download/#nix-install-macos) and
 [homebrew](https://brew.sh) manually. Then proceed as follows:
+
+Restore the personal age key to `~/.config/sops/age/keys.txt` before the first
+switch, otherwise the secrets are not decrypted
+([SECRETS.md](docs/SECRETS.md#installing-a-host-from-scratch)).
 
 ```bash
 # Prepare the deployment environment
