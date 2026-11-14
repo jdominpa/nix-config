@@ -8,13 +8,6 @@ that it is active on a running machine**.
 Related documents: [application sandboxing](SANDBOXING.md) for the nixpak
 policy and the permissions of each sandboxed application.
 
-## Hosts
-
-|Host   |System            |Status of this document                        |
-|-------|------------------|-----------------------------------------------|
-|`alpha`|NixOS desktop     |Source reviewed; parts checked live (see below)|
-|`beta` |macOS (nix-darwin)|Source reviewed only, never checked on the Mac |
-
 ## Threat model and priorities
 
 Protect the data of the user (documents, pictures, etc.), desktop application
