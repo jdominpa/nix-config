@@ -3,11 +3,6 @@
   ...
 }:
 {
-  # Application sandboxing with nixpak, a declarative wrapper around bubblewrap.
-  # Applications are declared in `security.nixpak.apps` and each one gets what
-  # is listed in `defaults` plus whatever it asks for itself. Apart from the Nix
-  # store it sees nothing else: no home directory, no session bus other than the
-  # names it was granted, no devices other than the GPU and no host loopback.
   flake.modules.nixos.nixpak =
     {
       config,
@@ -17,11 +12,64 @@
     }:
     let
       inherit (config) i18n time;
+      cfg = config.security.nixpak;
       # Icon themes of the system, for the cursor theme
       icons = "/run/current-system/sw/share/icons";
+
+      waylandSecurityContext = pkgs.stdenv.mkDerivation {
+        name = "wayland-security-context";
+        src = ./wayland-security-context.c;
+        dontUnpack = true;
+        nativeBuildInputs = [
+          pkgs.pkg-config
+          pkgs.wayland-scanner
+        ];
+        buildInputs = [ pkgs.wayland ];
+        buildPhase = ''
+          protocol=${pkgs.wayland-protocols}/share/wayland-protocols/staging/security-context/security-context-v1.xml
+          wayland-scanner client-header $protocol security-context-v1-client-protocol.h
+          wayland-scanner private-code $protocol security-context-v1-protocol.c
+          $CC -O2 -Wall -Wextra -Werror -I. $src security-context-v1-protocol.c \
+            $(pkg-config --cflags --libs wayland-client) -o wayland-security-context
+        '';
+        installPhase = ''
+          install -Dm755 -t $out/bin wayland-security-context
+        '';
+      };
+
+      # The sandbox takes its Wayland socket from `NIXPAK_WAYLAND_SOCKET`, so
+      # its launcher has to be started through the helper that creates the
+      # socket. Started on its own it refuses to run. This copies the package
+      # nixpak installs and points everything that starts the sandbox (the
+      # executable, desktop entries) at a launcher that goes through the
+      # helper.
+      restrictWayland =
+        sandbox:
+        let
+          name = baseNameOf sandbox.app.binPath;
+          script = "${sandbox.script}/bin/${name}";
+          launcher = pkgs.writeShellScript name ''
+            exec ${waylandSecurityContext}/bin/wayland-security-context \
+              ${lib.escapeShellArg sandbox.flatpak.appId} ${script} "$@"
+          '';
+        in
+        pkgs.runCommandLocal "${sandbox.env.name}-restricted-wayland" { } ''
+          cp -rsL --no-preserve=mode ${sandbox.env} $out
+          { grep -RlF --binary-files=without-match ${script} $out || true; } | while read -r file; do
+            cp --remove-destination "$(readlink -f "$file")" "$file"
+            substituteInPlace "$file" --replace-fail ${script} ${launcher}
+          done
+          ln -sf ${launcher} $out/bin/${name}
+        '';
     in
     {
       imports = [ inputs.nixpak.nixosModules.default ];
+
+      # These take precedence over the packages nixpak installs
+      environment.systemPackages = lib.pipe cfg.apps [
+        (lib.filterAttrs (_: app: app.expose))
+        (lib.mapAttrsToList (_: app: lib.hiPrio (restrictWayland app.output.config)))
+      ];
 
       security.nixpak = {
         enable = true;
@@ -49,32 +97,12 @@
             config = {
               # /dev/dri and the drivers in /run/opengl-driver
               gpu.enable = true;
-              # The application talks to a Wayland proxy instead of the
-              # compositor, which would hand it every privileged protocol:
-              # screen capture, virtual keyboard and pointer, clipboard
-              # managers, layer shell. The proxy only passes on what ordinary
-              # windows need. It does not pass on `linux-dmabuf` either, so
-              # frames reach the compositor through shared memory, a copy that
-              # costs some CPU. Its windows have their name in the title.
-              #
-              # Applications that render on the GPU (browsers, video players)
-              # turn it off and get the socket of the compositor instead, with
-              # every protocol it offers.
-              waylandProxy.enable = lib.mkDefault true;
               etc.sslCertificates.enable = true;
-              # Network access goes through pasta: internet and LAN work, but
-              # the sandbox has a loopback interface of its own, so whatever
-              # listens only on the localhost of the host (the Syncthing GUI,
-              # for one) is out of reach. What listens on every address of the
-              # host can still be reached through its LAN address. Nothing can
-              # connect into the sandbox either, so an application that needs
-              # that turns it off.
               pasta = {
                 enable = lib.mkDefault true;
                 # It prints its network setup on every start otherwise
                 args = [ "--quiet" ];
               };
-
               dbus = {
                 policies = {
                   "${appId}" = "own";
@@ -104,10 +132,7 @@
                 clearEnv = true;
                 dieWithParent = true;
                 newSession = true;
-                sockets = {
-                  pulse = lib.mkDefault true;
-                  wayland = !config.waylandProxy.enable;
-                };
+                sockets.pulse = lib.mkDefault true;
                 bind = {
                   rw = [
                     # A /tmp shared by the instances of one application only
@@ -134,6 +159,12 @@
                     "/etc/egl"
                     "/etc/static/egl"
                     icons
+                    # `sloth.env` fails when the variable is not set, so the
+                    # sandbox never starts without the restricted socket
+                    [
+                      (sloth.env "NIXPAK_WAYLAND_SOCKET")
+                      (sloth.concat' sloth.runtimeDir "/wayland-0")
+                    ]
                   ];
                   # The NVIDIA driver needs its own device nodes besides
                   # /dev/dri
@@ -161,12 +192,9 @@
                   LANG = i18n.defaultLocale;
                   LOCALE_ARCHIVE = "${i18n.glibcLocales}/lib/locale/locale-archive";
                   TZDIR = "/etc/zoneinfo";
+                  WAYLAND_DISPLAY = "wayland-0";
                 }
                 // i18n.extraLocaleSettings
-                # The proxy sets it itself
-                // lib.optionalAttrs (!config.waylandProxy.enable) {
-                  WAYLAND_DISPLAY = sloth.envOr "WAYLAND_DISPLAY" "wayland-0";
-                }
                 // lib.optionalAttrs (lib.elem "FileChooser" config.portals) { GTK_USE_PORTAL = "1"; }
                 # /etc/localtime is a plain file inside the sandbox, so the name
                 # of the time zone cannot be read from its link target

@@ -13,8 +13,6 @@
         {
           app.package = pkgs.mpv;
           flatpak.appId = "io.mpv.Mpv";
-          # Renders on the GPU, which needs `linux-dmabuf`
-          waylandProxy.enable = false;
           bubblewrap.bind = {
             rw = [
               (sloth.mkdir (sloth.concat' sloth.xdgConfigHome "/mpv"))

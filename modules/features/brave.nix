@@ -31,8 +31,6 @@
             # Media controls, as `org.mpris.MediaPlayer2.brave.instance<pid>`
             "org.mpris.MediaPlayer2.brave.*" = "own";
           };
-          # Renders on the GPU, which needs `linux-dmabuf`
-          waylandProxy.enable = false;
           # The localhost of the host stays reachable: the Syncthing GUI and
           # local development servers live there
           pasta.enable = false;
