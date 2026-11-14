@@ -51,7 +51,7 @@ change that touches the first column, make both commits.
 | `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, supply chain        |
 | `restic.nix`: backed-up paths, schedule, retention, monitoring, credentials   | `docs/BACKUPS.md`, and the summary in `docs/SECURITY.md` |
 | `ssh.nix`, sudo, users and groups, login manager, screen lock                 | `docs/SECURITY.md`, architecture        |
-| `modules/system/desktop/nixpak.nix` (the shared sandbox policy)               | `docs/SANDBOXING.md`, shared boundaries |
+| `modules/system/desktop/nixpak/` (the shared sandbox policy, the Wayland helper) | `docs/SANDBOXING.md`, shared boundaries and Wayland |
 | A sandboxed app (`security.nixpak.apps.*`): paths, portals, D-Bus, network, sockets | `docs/SANDBOXING.md`, its table and section, plus limits |
 | Sandboxing a new app, or dropping the sandbox of one                          | `docs/SANDBOXING.md` and the app list in `docs/SECURITY.md` |
 | Adding or removing a workaround, a pinned input or a sandbox exception        | `docs/WORKAROUNDS.md`: a row with a removal condition, or delete the row |

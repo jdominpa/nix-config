@@ -1,8 +1,9 @@
 # Application sandboxing
 
 Selected desktop applications run in [nixpak](https://github.com/nixpak/nixpak)
-sandboxes (bubblewrap, `xdg-dbus-proxy`, `pasta` and `wayland-proxy-virtwl`).
-The shared policy is in [nixpak.nix](../modules/system/desktop/nixpak.nix); each
+sandboxes (bubblewrap, `xdg-dbus-proxy`, `pasta` and a restricted Wayland
+socket). The shared policy is in
+[nixpak/default.nix](../modules/system/desktop/nixpak/default.nix); each
 application declares only what it needs next to its own package configuration.
 
 See [SECURITY.md](SECURITY.md) for the overall context and the system-level
@@ -26,7 +27,7 @@ use needs.
 ## Shared boundaries
 
 Every application declared in `security.nixpak.apps` gets the `defaults` of
-`nixpak.nix`:
+`nixpak/default.nix`:
 
 - **Filesystem:** The root is a fresh tmpfs and `/nix/store` is read-only. The
   real home directory, `/etc`, `/var`, `/run` and `/root` are not there; only
@@ -63,7 +64,7 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
   `nvidia-modeset`, `nvidia-uvm`), `/run/opengl-driver` and the PCI sysfs.
 - **Audio:** The PulseAudio socket (this allows recording). The PipeWire socket
   is opt-in.
-- **Display:** A Wayland proxy by default; see [Wayland](#wayland).
+- **Display:** A restricted Wayland socket; see [Wayland](#wayland).
 - **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices, the
   system bus, SSH and GPG agents, the real home directory.
 
@@ -71,9 +72,9 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
 
 |Application|App ID                 |Network     |Wayland   |Audio               |
 |-----------|-----------------------|------------|----------|--------------------|
-|Vesktop    |`dev.vencord.Vesktop`  |pasta       |proxy     |PulseAudio, PipeWire|
-|Brave      |`org.chromium.Chromium`|host network|compositor|PulseAudio          |
-|mpv        |`io.mpv.Mpv`           |pasta       |compositor|PulseAudio          |
+|Vesktop    |`dev.vencord.Vesktop`  |pasta       |restricted|PulseAudio, PipeWire|
+|Brave      |`org.chromium.Chromium`|host network|restricted|PulseAudio          |
+|mpv        |`io.mpv.Mpv`           |pasta       |restricted|PulseAudio          |
 
 Definitions: [discord.nix](../modules/features/discord.nix),
 [brave.nix](../modules/features/brave.nix) and the `mpv` block of
@@ -122,9 +123,8 @@ Definitions: [discord.nix](../modules/features/discord.nix),
 
 ## Wayland
 
-By default applications talk to a **Wayland proxy** (`wayland-proxy-virtwl`),
-not to the compositor. A client that connects to niri directly is offered, among
-others (observed with `wayland-info` inside a sandbox on niri 26.04):
+A client that connects to niri's own socket is offered, among others (observed
+with `wayland-info` inside a sandbox on niri 26.04):
 
 - `zwlr_screencopy_manager_v1`: capture the screen without any prompt.
 - `zwp_virtual_keyboard_manager_v1` and `zwlr_virtual_pointer_manager_v1`:
@@ -137,33 +137,30 @@ others (observed with `wayland-info` inside a sandbox on niri 26.04):
 - the toplevel list, workspace, output management, gamma control and input
   method managers.
 
-The proxy offers only what ordinary windows need (`wl_compositor`, `wl_shm`,
-`xdg_wm_base`, `wl_seat`, data device and primary selection, decorations, cursor
-shape, viewporter, pointer constraints, relative pointer, xdg-output), and adds
-the application's name to window titles (`[vesktop] …`).
+Sandboxes never get that socket. Each launcher starts through
+`wayland-security-context`, a small helper in
+[wayland-security-context.c](../modules/system/desktop/nixpak/wayland-security-context.c).
+It asks niri for a new socket through `wp_security_context_v1` (what Flatpak
+does), tagged with the app ID, and the sandbox mounts that socket as its
+`wayland-0`. Niri marks the clients of such a socket as sandboxed and hides the
+privileged protocols from them, but they still talk to it directly, so
+`zwp_linux_dmabuf_v1` stays and GPU rendering is not copied through shared
+memory.
 
-The proxy does not forward `zwp_linux_dmabuf_v1`, so clients cannot share GPU
-buffers with the compositor and every frame is copied through shared memory.
-That costs some CPU and is fine for a chat client, but applications that render
-on the GPU (browsers, video players) need dmabuf. Those applications therefore
-set `waylandProxy.enable = false` and get the compositor's socket, **with every
-protocol above**. For them the sandbox restricts files, D-Bus, devices and (for
-mpv) the network, but not the display server.
+- Every way of starting a sandbox goes through the helper: the executables in
+  `PATH` and the desktop entries are rewritten to call it, and the bare nixpak
+  launcher refuses to start without `NIXPAK_WAYLAND_SOCKET`.
+- The helper never falls back to niri's own socket: if the compositor does not
+  offer `wp_security_context_v1` the application does not start.
+- The socket lives as long as any process of the sandbox does; the helper
+  removes its path in `$XDG_RUNTIME_DIR` when the launched command exits.
 
-### The better fix, not done yet
-
-niri denies exactly those protocols to a client that connects through a socket
-created with `wp_security_context_v1`, which is what Flatpak does, and it keeps
-dmabuf. Two attempts, neither kept:
-
-- [`way-secure`](https://git.sr.ht/~whynothugo/way-secure) 0.2.0 created a
-  context that niri accepted, but niri never listened on the socket (not
-  diagnosed);
-- a small C helper using the same protocol worked (restricted globals, dmabuf
-  kept), and was dropped to avoid carrying code that is hard to maintain.
-
-Revisit this when a packaged tool exists, and then move Brave and mpv back to a
-restricted socket (WA-006 in [WORKAROUNDS.md](WORKAROUNDS.md)).
+Checked on 2026-11-14, with `wayland-info` through the helper: of the protocols
+above, dmabuf was still offered and screencopy, virtual keyboard and pointer,
+both data-control managers, layer shell, session lock and
+`wp_security_context_manager_v1` itself were not. mpv played a test stream
+through Vulkan with `zwp_linux_dmabuf_v1` bound. Brave and Vesktop have not been
+checked on the restricted socket yet.
 
 ## Browser secrets
 
@@ -185,7 +182,9 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
 
 ## Limits
 
-- **The compositor socket** for Brave and mpv, as described above.
+- **The restricted Wayland socket relies on niri's list** of privileged
+  protocols. What niri considers unprivileged (focused keyboard input, the
+  clipboard of the focused window, the cursor) is still offered.
 - **PulseAudio and PipeWire** grant recording authority, and the PipeWire socket
   of Vesktop also exposes the camera and other applications' streams.
 - **pasta isolates loopback, not the LAN.** From a sandbox, a TCP connection to
@@ -213,7 +212,6 @@ grant only what the use needs:
 |`portals = [ "FileChooser" … ]`  |Portal interfaces the application may call       |
 |`dbus.policies."<name>" = "talk"`|Bus names it may talk to (`see`, `talk`, `own`)  |
 |`bubblewrap.bind.rw` / `.ro`     |Paths to mount; use `sloth.mkdir` for directories|
-|`waylandProxy.enable = false`    |Compositor socket, for GPU-rendered applications |
 |`pasta.enable = false`           |Host network instead of the isolated one         |
 |`bubblewrap.sockets.pipewire`    |PipeWire socket                                  |
 
@@ -222,8 +220,11 @@ Then add the application to the table above and to its section, and to
 
 ## Code map
 
-- [nixpak.nix](../modules/system/desktop/nixpak.nix): shared policy (`defaults`)
-  and the `portals` option.
+- [nixpak/default.nix](../modules/system/desktop/nixpak/default.nix): shared
+  policy (`defaults`), the `portals` option and the launchers that go through
+  the Wayland helper.
+- [wayland-security-context.c](../modules/system/desktop/nixpak/wayland-security-context.c):
+  the helper that creates the restricted Wayland socket.
 - [discord.nix](../modules/features/discord.nix),
   [brave.nix](../modules/features/brave.nix),
   [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix): the three

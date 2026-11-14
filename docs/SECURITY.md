@@ -190,8 +190,8 @@ What is backed up, how to check it and the restore procedure are in
   the browser profiles and the Bitwarden agent. A sandbox protects the system
   *from* an application, not the application's data from the unsandboxed ones.
 - **Sandbox limits** are listed in [SANDBOXING.md](SANDBOXING.md#limits); the
-  main ones are the raw Wayland socket given to Brave and mpv and the PipeWire
-  socket given to Vesktop.
+  main ones are the host network given to Brave and the PipeWire socket given
+  to Vesktop.
 - **Firewall ports for Steam Remote Play** are open only because Steam runs
   unsandboxed; if it is sandboxed again they need a second look.
 - **Nothing verifies the live firewall ruleset or `sbctl verify`**
