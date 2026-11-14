@@ -1,7 +1,13 @@
-[Dendritic](https://github.com/mightyiam/dendritic) NixOS/macOS configuration
-using [nix](https://nixos.org), [flakes](https://nixos.wiki/wiki/Flakes),
-[nix-darwin](https://github.com/nix-darwin/nix-darwin) and
-[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules).
+This repository contains the [Nix](https://nix.dev/) code that builds all my
+systems:
+
+1. **NixOS** -- [niri](https://github.com/niri-wm/niri),
+   [Noctalia](https://github.com/noctalia-dev/noctalia) shell.
+2. **macOS**: [nix-darwin](https://github.com/nix-darwin/nix-darwin).
+
+See [./docs](./docs/README.md) for the documentation index,
+[./modules/hosts](./modules/hosts) for the host list, and
+[./AGENTS.md](./AGENTS.md) for the repository conventions.
 
 ## Deployment
 
