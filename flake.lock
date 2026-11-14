@@ -414,11 +414,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1794669706,
-        "narHash": "sha256-nHODeF3KCHOeoX+5P74zHhYlrN6PpNbTcBtiJOcMroM=",
+        "lastModified": 1794672704,
+        "narHash": "sha256-RJ1EacsZrnVQwGMAHj1b5Vd9HLI1C46mn8BJgkE8iIc=",
         "ref": "refs/heads/master",
-        "rev": "d3b04efeb3086265661d0093a8328fdfca651d45",
-        "revCount": 2,
+        "rev": "3b8ce2913834d4baad321a4716719fdb125e3959",
+        "revCount": 3,
         "type": "git",
         "url": "ssh://git@github.com/jdominpa/nix-secrets.git"
       },
