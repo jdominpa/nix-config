@@ -196,4 +196,5 @@ is nil."
   :init (add-hook 'after-init-hook #'exec-path-from-shell-initialize -99)
   :config
   (setq exec-path-from-shell-arguments '("-l"))
-  (add-to-list 'exec-path-from-shell-variables "SSH_AUTH_SOCK"))
+  (dolist (var '("SSH_AUTH_SOCK" "NIX_SSL_CERT_FILE"))
+    (add-to-list 'exec-path-from-shell-variables var)))
