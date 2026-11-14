@@ -12,17 +12,24 @@ let
   repository = "sftp://${subAccount}@${resticStoragebox}:23/restic";
   exclude = [ ".stversions" ];
   retryLock = "--retry-lock 30m";
-  perHome = home: {
-    passwordFile = "${home}/.config/restic/password";
-    # Optional: holds a healthchecks.io ping URL (see `mkPing`)
-    healthcheckFile = "${home}/.config/restic/healthcheck-url";
-    sshKey = "${home}/.ssh/storagebox";
-    paths = map (dir: "${home}/${dir}") [
+  paths =
+    home:
+    map (dir: "${home}/${dir}") [
       "Documents"
       "Pictures"
       "GrapheneOS"
     ];
+  secretNames = {
+    passwordFile = "restic/password";
+    healthcheckFile = "restic/healthcheck-url";
+    sshKey = "restic/storagebox-ssh-key";
   };
+  secretSettings =
+    { config, ... }:
+    {
+      sops.secrets = lib.genAttrs (lib.attrValues secretNames) (_: config.secretPresets.userReadable);
+    };
+  secretPaths = config: lib.mapAttrs (_: name: config.sops.secrets.${name}.path) secretNames;
   sshSettings = {
     programs.ssh.knownHosts.storagebox = {
       hostNames = [
@@ -40,10 +47,8 @@ let
     pkgs: healthcheckFile:
     pkgs.writeShellScript "restic-storagebox-ping" ''
       # usage: restic-storagebox-ping success|fail
-      url_file=${lib.escapeShellArg healthcheckFile}
-      # Monitoring is optional: without the file there is nothing to report to.
-      [ -r "$url_file" ] || exit 0
-      url=$(< "$url_file")
+      set -eu
+      url=$(< ${lib.escapeShellArg healthcheckFile})
       if [ "''${1:-fail}" != success ]; then
         url="$url/fail"
       fi
@@ -53,19 +58,23 @@ let
 in
 {
   flake.modules.nixos.restic =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     let
-      linux = perHome homeDirectory.linux;
-      ping = mkPing pkgs linux.healthcheckFile;
+      secrets = secretPaths config;
+      ping = mkPing pkgs secrets.healthcheckFile;
     in
     {
-      imports = [ sshSettings ];
+      imports = [
+        secretSettings
+        sshSettings
+      ];
       services.restic.backups.storagebox = {
         initialize = true;
         user = username;
         inherit exclude repository;
-        inherit (linux) passwordFile paths;
-        extraOptions = [ "sftp.args='-i ${linux.sshKey}'" ];
+        inherit (secrets) passwordFile;
+        paths = paths homeDirectory.linux;
+        extraOptions = [ "sftp.args='-i ${secrets.sshKey}'" ];
         checkOpts = [
           retryLock
           # Besides the structural check, re-read a random sample of the pack
@@ -112,15 +121,18 @@ in
       ...
     }:
     let
-      darwin = perHome homeDirectory.darwin;
+      secrets = secretPaths config;
       home = homeDirectory.darwin;
       logFile = "${home}/Library/Logs/restic-backups-storagebox.log";
-      ping = mkPing pkgs darwin.healthcheckFile;
+      ping = mkPing pkgs secrets.healthcheckFile;
       # `-o sftp.args` mirrors `extraOptions` in the nixos module.
-      sftpOption = "-o sftp.args=${lib.escapeShellArg "-i ${darwin.sshKey}"}";
+      sftpOption = "-o sftp.args=${lib.escapeShellArg "-i ${secrets.sshKey}"}";
     in
     {
-      imports = [ sshSettings ];
+      imports = [
+        secretSettings
+        sshSettings
+      ];
       assertions = [
         {
           # `lib.escapeShellArg null` is `''`, which would silently become
@@ -134,7 +146,7 @@ in
         # `createWrapper`.
         (pkgs.writeShellScriptBin "restic-storagebox" ''
           export RESTIC_REPOSITORY=${lib.escapeShellArg repository}
-          export RESTIC_PASSWORD_FILE=${lib.escapeShellArg darwin.passwordFile}
+          export RESTIC_PASSWORD_FILE=${lib.escapeShellArg secrets.passwordFile}
           exec ${lib.getExe pkgs.restic} ${sftpOption} "$@"
         '')
       ];
@@ -149,7 +161,7 @@ in
         environment = {
           HOME = home; # restic keeps its cache under $HOME
           RESTIC_REPOSITORY = repository;
-          RESTIC_PASSWORD_FILE = darwin.passwordFile;
+          RESTIC_PASSWORD_FILE = secrets.passwordFile;
         };
         script = ''
           set -uo pipefail
@@ -171,7 +183,7 @@ in
             --host ${lib.escapeShellArg config.networking.hostName} \
             ${retryLock} \
             ${lib.concatMapStringsSep " " (p: "--exclude ${lib.escapeShellArg p}") exclude} \
-            ${lib.escapeShellArgs darwin.paths} || status=$?
+            ${lib.escapeShellArgs (paths home)} || status=$?
           echo "=== $(date '+%F %T') backup finished, exit status $status ==="
 
           # Only exit status 0 counts as success. Status 3 means a snapshot was

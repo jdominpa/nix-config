@@ -4,10 +4,6 @@
       # Nix community's cache server
       "https://nix-community.cachix.org"
     ];
-    extra-trusted-public-keys = [
-      # Nix community's cache server public key
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
   };
 
   inputs = {
@@ -42,6 +38,15 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
+    # Encrypted secrets, kept in a private repository (see docs/SECRETS.md)
+    secrets = {
+      url = "git+ssh://git@github.com/jdominpa/nix-secrets.git";
+      flake = false;
+    };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";

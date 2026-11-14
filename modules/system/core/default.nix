@@ -13,6 +13,7 @@
       pipewire
       power-profiles
       printing
+      secrets
       secure-boot
       ssh
       user
@@ -27,6 +28,7 @@
       locale
       nix
       power-profiles
+      secrets
       ssh
       user
     ];

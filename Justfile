@@ -66,11 +66,14 @@ repair-store *paths:
 #  NixOS Desktop related commands
 #
 
+# Evaluates as the user, whose SSH agent can fetch the private `secrets` input,
+# and uses sudo only to activate.
+
 # Rebuild and switch the specified NixOS configuration
 [linux]
 [group('NixOS')]
 switch hostname=`hostname` *FLAGS:
-    sudo nixos-rebuild switch \
+    nixos-rebuild switch --sudo \
         --flake "{{justfile_directory()}}#{{hostname}}" {{FLAGS}}
 
 #
