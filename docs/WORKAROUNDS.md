@@ -6,16 +6,16 @@ entries are rolled back instead of lingering.
 
 ## How to use
 
-- **Adding** --- a change that introduces a workaround, pin or exception adds a
-  row here in the docs commit that follows it (see [AGENTS.md](../AGENTS.md)),
-  with a concrete **removal condition**, the date it was added and a **revisit**
+- **Adding**: a change that introduces a workaround, pin or exception adds a row
+  here in the docs commit that follows it (see [AGENTS.md](../AGENTS.md)), with
+  a concrete **removal condition**, the date it was added and a **revisit**
   trigger: the event after which it is worth checking whether it can go.
-- **Removing** --- once the removal condition is met, delete the change and
-  either set `Status` to `removed` or delete the row, and mention the ID in the
-  commit message.
-- **Reviewing** --- re-evaluate the rows whose `Revisit` trigger is due and
-  refresh `Status`: `active` while the removal condition is not met, `removed`
-  once the change is gone.
+- **Removing**: once the removal condition is met, delete the change and either
+  set `Status` to `removed` or delete the row, and mention the ID in the commit
+  message.
+- **Reviewing**: re-evaluate the rows whose `Revisit` trigger is due and refresh
+  `Status`: `active` while the removal condition is not met, `removed` once the
+  change is gone.
 
 ## Pins
 

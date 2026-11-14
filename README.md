@@ -1,7 +1,7 @@
 This repository contains the [Nix](https://nix.dev/) code that builds all my
 systems:
 
-1. **NixOS** -- [niri](https://github.com/niri-wm/niri),
+1. **NixOS**: [niri](https://github.com/niri-wm/niri),
    [Noctalia](https://github.com/noctalia-dev/noctalia) shell.
 2. **macOS**: [nix-darwin](https://github.com/nix-darwin/nix-darwin).
 
