@@ -1,22 +1,15 @@
-############################################################################
 #
-#  Common commands(suitable for all machines)
+#  Common commands (suitable for all machines)
 #
-############################################################################
 
 [private]
 default:
-	@echo "error: no subcommand specified"
-	@echo "Try 'just help' for more information."
-
-# List all subcommands
-help:
-	@just --list
+    @just --list
 
 # Update flake inputs (all of them if none are specified)
 [group('nix')]
 update *INPUTS:
-    nix flake update {{INPUTS}}
+    nix flake update --commit-lock-file {{INPUTS}}
 
 # List all generations of the system profile
 [group('nix')]
@@ -32,7 +25,9 @@ repl:
 [group('nix')]
 clean:
     # On darwin you may need to switch to root user to run this command
-    sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
+    sudo nix profile wipe-history \
+        --profile /nix/var/nix/profiles/system \
+        --older-than 7d
     nix store gc
 
 # Garbage collect all unused nix store entries
@@ -67,23 +62,20 @@ verify-store:
 repair-store *paths:
     nix store repair {{paths}}
 
-############################################################################
 #
 #  NixOS Desktop related commands
 #
-############################################################################
 
 # Rebuild and switch the specified NixOS configuration
 [linux]
 [group('NixOS')]
-switch host *FLAGS:
-    sudo nixos-rebuild switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+switch hostname=`hostname` *FLAGS:
+    sudo nixos-rebuild switch \
+        --flake "{{justfile_directory()}}#{{hostname}}" {{FLAGS}}
 
-############################################################################
 #
 #  Darwin related commands, harmonica is my macbook pro's hostname
 #
-############################################################################
 
 # Rollback configuration
 [macos]
@@ -94,12 +86,16 @@ rollback:
 # Rebuild and switch the specified Darwin configuration
 [macos]
 [group('Darwin')]
-switch host *FLAGS:
+switch hostname=`hostname` *FLAGS:
     #!/usr/bin/env bash
+    set -euo pipefail
     if ! command -v darwin-rebuild 2>&1 >/dev/null; then
-        sudo nix run nix-darwin/master#darwin-rebuild --extra-experimental-features "nix-command flakes" -- switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+        sudo nix run nix-darwin/master#darwin-rebuild \
+            --extra-experimental-features "nix-command flakes" \
+            -- switch --flake "{{justfile_directory()}}#{{hostname}}" {{FLAGS}}
     else
-        sudo darwin-rebuild switch --flake "{{justfile_directory()}}#{{host}}" {{FLAGS}}
+        sudo darwin-rebuild switch \
+            --flake "{{justfile_directory()}}#{{hostname}}" {{FLAGS}}
     fi
 
 # Reset launchpad to force it to reindex Applications
