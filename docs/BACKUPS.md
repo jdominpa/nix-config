@@ -114,7 +114,8 @@ in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
 
 Notes: a second NixOS host needs `pruneOpts` removed (two pruners contend for
 the lock). Until the service has run once, `restic-storagebox` on NixOS needs
-`--no-cache`. On macOS no Full Disk Access grant has been needed so far, but it
+`--no-cache`. On macOS no Full Disk Access grant has been needed so far
+([Audits](#audits)), but it
 may be tied to the Nix store path of `restic`: after a restic update check the
 log for "operation not permitted" (exit status 3).
 
@@ -140,7 +141,8 @@ restic-storagebox restore "latest:$HOME/Documents/<folder>" \
 diff -r "$t" ~/Documents/<folder> && echo identical; rm -rf "$t"
 ```
 
-Only files changed since the last backup should differ.
+Only files changed since the last backup should differ. Record each run in
+[Audits](#audits).
 
 ### A host is stolen or compromised
 
@@ -192,3 +194,14 @@ restic -o sftp.args="-i $HOME/.ssh/storagebox" \
 
 It asks for a restic password. On a fresh machine, compare the Storage Box host
 key it offers with the one pinned in `restic.nix` before accepting it.
+
+## Audits
+
+Checks and restore drills run on the hosts. Each holds for the configuration it
+ran against: rerun it after a change to `restic.nix`. A `pending` check has not
+been run yet and has no date.
+
+|Date      |Host|Check                                                 |How                                                                             |Status |Findings                                                                                     |
+|----------|----|------------------------------------------------------|--------------------------------------------------------------------------------|-------|---------------------------------------------------------------------------------------------|
+|2026-11-09|beta|The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|checked|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|
+|—         |both|Restore drill (Test restore)                          |—                                                                               |pending|—                                                                                            |

@@ -46,7 +46,7 @@ noticeable performance cost. As implemented:
 |Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                  |
 |Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                           |
 |Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes. Everything else (Steam, Emacs, kitty, Bitwarden, Thunar, …) runs with the full access of the user. See [SANDBOXING.md](SANDBOXING.md)                                                                                                        |
-|Secrets       |The Bitwarden desktop app holds the vault and serves the SSH agent (`SSH_AUTH_SOCK`). The browser's cookie and password key comes from the Secret portal. The restic password and the Storage Box SSH key are plain files in the home directory, readable by anything running as the user    |
+|Secrets       |the browser's cookie and password key comes from the Secret portal. The restic secrets (sops-nix, `/run/secrets`) and the age key in the home directory are readable by any user process ([SECRETS.md](SECRETS.md))                                                                          |
 |Backups       |restic to a Hetzner Storage Box, encrypted on the client; see [BACKUPS.md](BACKUPS.md)                                                                                                                                                                                                       |
 |Recovery      |NixOS generations (ten in the boot menu; weekly garbage collection deletes generations older than 7 days, so the rollback window is about a week), restic snapshots, and the Secure Boot keys in `/var/lib/sbctl`                                                                            |
 |macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                |
@@ -57,6 +57,7 @@ Sources: [hardening](../modules/system/core/hardening.nix),
 [Nix settings](../modules/system/core/nix.nix),
 [SSH](../modules/system/core/services/ssh.nix),
 [restic](../modules/features/restic.nix),
+[secrets](../modules/system/core/secrets.nix),
 [noctalia](../modules/features/noctalia.nix).
 
 ## Network exposure
@@ -71,10 +72,11 @@ configuration, not from the running ruleset, which needs root to read).
 |53317/tcp, 53317/udp                             |LocalSend                    |`programs.localsend`                    |
 |27036–27037/tcp, 27031–27036/udp, 10400–10401/udp|Steam Remote Play            |`programs.steam.remotePlay.openFirewall`|
 
-Listening sockets on 2026-11-13, besides the ports above: Syncthing's GUI on
-`127.0.0.1:8384` (TLS, requires credentials), CUPS on `127.0.0.1:631` and
-`[::1]:631`, and the CoolerControl daemon on `127.0.0.1:11987` and `[::1]:11987`
-(answers 401 without credentials; make sure its default password was changed).
+Listening sockets besides the ports above, as last observed
+([Audits](#audits)): Syncthing's GUI on `127.0.0.1:8384` (TLS, requires
+credentials), CUPS on `127.0.0.1:631` and `[::1]:631`, and the CoolerControl
+daemon on `127.0.0.1:11987` and `[::1]:11987` (answers 401 without credentials;
+make sure its default password was changed).
 Loopback is not a boundary against the user's own unsandboxed applications or
 against sandboxes that share the host network (Brave).
 
@@ -160,7 +162,8 @@ built-in code and does not stop a privileged module insertion.
 - `sops-nix` runs as root at every activation to decrypt the secrets: treat its
   bumps the same way. The `secrets` input is a private repository fetched over
   SSH. It is read as plain files (`flake = false`), so it adds ciphertext to the
-  evaluation, not code. See [SECRETS.md](SECRETS.md).
+  evaluation, not code. On macOS root fetches it through SSH (checked, see
+  [SECRETS.md](SECRETS.md#audits)).
 
 ## Backups and recovery
 
@@ -169,16 +172,15 @@ What is backed up, how to check it and the restore procedure are in
 
 - restic encrypts on the client: the Storage Box only holds ciphertext.
 - The backup runs as the user, not as root. The repository password and the
-  Storage Box SSH key are decrypted by sops-nix into `/run/secrets` (a tmpfs),
-  owned by the user, so any process of the user can still read them and, with
-  them, delete or tamper with the repository. The age key that decrypts the
-  secrets of both hosts is in the home directory too, and on NixOS `/home` is
-  mounted in the initrd so the key is there when the secrets are decrypted at
-  boot ([SECRETS.md](SECRETS.md)).
-  The backstop is the daily Storage Box snapshots (10 kept, so damage must be
-  noticed within 10 days), which are managed only in the Hetzner Console and
-  cannot be reached over SSH. They are configured outside this repository and
-  cannot be verified from it.
+  Storage Box SSH key are decrypted by sops-nix into `/run/secrets` (a tmpfs on
+  NixOS; on macOS a RAM disk), owned by the user, so any process of the user can
+  still read them and, with them, delete or tamper with the repository. The age
+  key that decrypts the secrets of both hosts is in the home directory too, and
+  on NixOS `/home` is mounted in the initrd so the key is there when the secrets
+  are decrypted at boot ([SECRETS.md](SECRETS.md)). The backstop is the daily
+  Storage Box snapshots (10 kept, so damage must be noticed within 10 days),
+  which are managed only in the Hetzner Console and cannot be reached over SSH.
+  They are configured outside this repository and cannot be verified from it.
 - The Storage Box host key is pinned in `programs.ssh.knownHosts`.
 - Failures are reported to healthchecks.io. The ping URL is a sops secret; if
   it is missing the ping unit fails, and the monitor alerts when the success
@@ -204,7 +206,7 @@ What is backed up, how to check it and the restore procedure are in
   automatically. Run the checks below after a rebuild that touches them.
 - **A compromised user process can delete the repository** (see above); only the
   Storage Box snapshots and their 10-day window protect against that. No
-  restore drill is recorded yet in [BACKUPS.md](BACKUPS.md).
+  restore drill is recorded yet in [BACKUPS.md](BACKUPS.md#audits).
 - **LUKS key size.** `--key-size 256` with an XTS cipher means two 128-bit keys,
   i.e. AES-128-XTS. Use 512 for AES-256 if the disk is ever reformatted; it
   cannot be changed in place.
@@ -234,3 +236,17 @@ systemctl status restic-backups-storagebox.timer
 journalctl -u restic-backups-storagebox.service -n 50
 restic-storagebox snapshots
 ```
+
+## Audits
+
+Results of the checks above. Each holds for the configuration it ran against.
+The checks of the secrets, the sandboxes and the backups are in the Audits
+sections of [SECRETS.md](SECRETS.md#audits),
+[SANDBOXING.md](SANDBOXING.md#audits) and [BACKUPS.md](BACKUPS.md#audits). A
+`pending` check has not been run yet and has no date.
+
+|Date      |Host |Check                                       |How                    |Status |Findings                                                |
+|----------|-----|--------------------------------------------|-----------------------|-------|--------------------------------------------------------|
+|2026-11-13|alpha|Listening sockets besides the firewall ports|Not recorded           |checked|Only the loopback services listed under Network exposure|
+|—         |alpha|Live firewall ruleset                       |`sudo nft list ruleset`|pending|The port table comes from the evaluated configuration   |
+|—         |beta |macOS settings in the architecture table    |—                      |pending|—                                                       |

@@ -135,8 +135,9 @@ For first time deployment, install
 [nix](https://nixos.org/download/#nix-install-macos) and
 [homebrew](https://brew.sh) manually. Then proceed as follows:
 
-Restore the personal age key to `~/.config/sops/age/keys.txt` before the first
-switch, otherwise the secrets are not decrypted
+Restore the personal age key to
+`~/Library/Application Support/sops/age/keys.txt` before the first switch,
+otherwise the secrets are not decrypted
 ([SECRETS.md](docs/SECRETS.md#installing-a-host-from-scratch)).
 
 ```bash

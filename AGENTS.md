@@ -66,8 +66,13 @@ Rules for the docs:
 - When a control is removed or reverted, delete or rewrite its text and record
   why in the relevant "Not sandboxed" / "Known gaps" section; do not leave
   stale claims.
-- Update the "Validation" section of `docs/SANDBOXING.md` and the drill table
-  of `docs/BACKUPS.md` when a check is run or a pending one is done.
+- Record every check in the "Audits" table at the end of the document it
+  concerns: date, host, check, how, status (`checked` or `pending`) and
+  findings. A pending check has no date; when it is run, date it, set it to
+  `checked` and write what was found. In the text keep only a short marker next
+  to the claim ("checked" or "not checked", linking to Audits), not the
+  evidence. A check holds for the configuration it ran against, so rerun it
+  after a change that touches it.
 - `docs/BACKUPS.md` must never contain secrets (passwords, SSH keys, the monitor
   URL) or say where their recovery copies are kept. The paths the machines read
   them from are already in `restic.nix` and may be mentioned.

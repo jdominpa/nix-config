@@ -155,12 +155,8 @@ memory.
 - The socket lives as long as any process of the sandbox does; the helper
   removes its path in `$XDG_RUNTIME_DIR` when the launched command exits.
 
-Checked on 2026-11-14, with `wayland-info` through the helper: of the protocols
-above, dmabuf was still offered and screencopy, virtual keyboard and pointer,
-both data-control managers, layer shell, session lock and
-`wp_security_context_manager_v1` itself were not. mpv played a test stream
-through Vulkan with `zwp_linux_dmabuf_v1` bound. Brave and Vesktop have not been
-checked on the restricted socket yet.
+The restricted socket has been checked with `wayland-info` and mpv; Brave and
+Vesktop have not been checked on it yet ([Audits](#audits)).
 
 ## Browser secrets
 
@@ -229,3 +225,16 @@ Then add the application to the table above and to its section, and to
   [brave.nix](../modules/features/brave.nix),
   [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix): the three
   sandboxed applications.
+
+## Audits
+
+Checks run on the hosts. Each holds for the configuration it ran against: rerun
+it after a change to the shared policy, the helper, niri or the app's sandbox. A
+`pending` check has not been run yet and has no date.
+
+|Date      |Host |Check                                               |How                                     |Status |Findings                                                                                                                                                                             |
+|----------|-----|----------------------------------------------------|----------------------------------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper       |checked|`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
+|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan|checked|Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
+|—         |alpha|Brave on the restricted socket                      |—                                       |pending|—                                                                                                                                                                                    |
+|—         |alpha|Vesktop on the restricted socket                    |—                                       |pending|—                                                                                                                                                                                    |
