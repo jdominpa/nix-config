@@ -6,9 +6,6 @@ socket). The shared policy is in
 [nixpak/default.nix](../modules/system/desktop/nixpak/default.nix); each
 application declares only what it needs next to its own package configuration.
 
-See [SECURITY.md](SECURITY.md) for the overall context and the system-level
-hardening.
-
 ## Why these applications are sandboxed
 
 The scope is driven by blast radius and exposure to untrusted input, not by
@@ -65,8 +62,7 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
 - **Audio:** The PulseAudio socket (this allows recording). The PipeWire socket
   is opt-in.
 - **Display:** A restricted Wayland socket; see [Wayland](#wayland).
-- **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices, the
-  system bus, SSH and GPG agents, the real home directory.
+- **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices.
 
 ## Applications
 
@@ -87,11 +83,9 @@ Definitions: [discord.nix](../modules/features/discord.nix),
 - Portals: FileChooser, Inhibit, Notification, OpenURI, ScreenCast.
 - D-Bus: `org.freedesktop.Notifications` and `org.kde.StatusNotifierWatcher`
   (tray icon).
-- The PipeWire socket is mounted for screen-share audio. PipeWire is a general
-  media graph: a compromised Vesktop could list other applications' streams and
-  the camera and record other applications' audio. Remove
-  `bubblewrap.sockets.pipewire` to give that up; screen sharing then has no
-  audio.
+- The PipeWire socket is mounted for screen-share audio (WA-007, see
+  [Limits](#limits)). Without `bubblewrap.sockets.pipewire`, screen sharing has
+  no audio.
 
 ### Brave
 
@@ -103,9 +97,8 @@ Definitions: [discord.nix](../modules/features/discord.nix),
   granted, so web pages cannot use the webcam.
 - D-Bus: `org.freedesktop.Notifications`, and ownership of
   `org.mpris.MediaPlayer2.brave.*` for media controls in the bar.
-- It keeps the **host network** (`pasta` off), because the Syncthing GUI and
-  local development servers live on localhost. The price is that a compromised
-  Brave can reach every service on the loopback of the host.
+- It keeps the **host network** (`pasta` off) for the Syncthing GUI and local
+  development servers on localhost (see [Limits](#limits)).
 - Chromium's own sandbox for web content runs inside this one.
 - The app ID is `org.chromium.Chromium`, not Brave's. See
   [Browser secrets](#browser-secrets).
@@ -181,14 +174,14 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
 - **The restricted Wayland socket relies on niri's list** of privileged
   protocols. What niri considers unprivileged (focused keyboard input, the
   clipboard of the focused window, the cursor) is still offered.
-- **PulseAudio and PipeWire** grant recording authority, and the PipeWire socket
-  of Vesktop also exposes the camera and other applications' streams.
+- **PulseAudio and PipeWire** grant recording. Vesktop's PipeWire socket also
+  lets it list and record other applications' streams and the camera.
 - **pasta isolates loopback, not the LAN.** From a sandbox, a TCP connection to
   the LAN address of the host, on Syncthing's sync port, succeeded: anything the
   host listens on at `0.0.0.0` is reachable. Syncthing authenticates by device
   certificate.
-- **Brave's host network** reaches Syncthing's GUI (needs credentials), CUPS and
-  CoolerControl on loopback.
+- **Brave's host network** reaches every service on the host's loopback:
+  Syncthing's GUI (needs credentials), CUPS and CoolerControl.
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
@@ -214,23 +207,10 @@ grant only what the use needs:
 Then add the application to the table above and to its section, and to
 [SECURITY.md](SECURITY.md) if it changes a boundary.
 
-## Code map
-
-- [nixpak/default.nix](../modules/system/desktop/nixpak/default.nix): shared
-  policy (`defaults`), the `portals` option and the launchers that go through
-  the Wayland helper.
-- [wayland-security-context.c](../modules/system/desktop/nixpak/wayland-security-context.c):
-  the helper that creates the restricted Wayland socket.
-- [discord.nix](../modules/features/discord.nix),
-  [brave.nix](../modules/features/brave.nix),
-  [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix): the three
-  sandboxed applications.
-
 ## Audits
 
-Checks run on the hosts. Each holds for the configuration it ran against: rerun
-it after a change to the shared policy, the helper, niri or the app's sandbox. A
-`pending` check has not been run yet and has no date.
+Each check holds for the configuration it ran against: rerun it after a change
+to the shared policy, the helper, niri or the app's sandbox.
 
 |Date      |Host |Check                                               |How                                     |Status |Findings                                                                                                                                                                             |
 |----------|-----|----------------------------------------------------|----------------------------------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

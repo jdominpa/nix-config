@@ -5,9 +5,6 @@ document describes the intended design, the controls present in the source,
 their limits and the work that remains. **A configured control is not evidence
 that it is active on a running machine**.
 
-Related documents: [application sandboxing](SANDBOXING.md) for the nixpak
-policy and the permissions of each sandboxed application.
-
 ## Threat model and priorities
 
 Protect the data of the user (documents, pictures, etc.), desktop application
@@ -34,22 +31,22 @@ noticeable performance cost. As implemented:
 
 ## Architecture and trust boundaries
 
-|Boundary      |Current design                                                                                                                                                                                                                                                                                                                   |
-|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|Data at rest  |LUKS2 over the whole system partition (`aes-xts-plain64` with a 512-bit key for new installs, `argon2id`, 5 s iteration time) with btrfs subvolumes `@`, `@nix`, `@home`, `@snapshots` (for snapshots of `@home`, mounted `noexec,nosuid,nodev` at `/.snapshots`) and `@swap` inside, so the swap file is encrypted too. Unlocked by passphrase in the initrd. `allowDiscards` is on: TRIM reveals which blocks are in use|
-|`/boot`       |Not encrypted, mounted `noexec,nosuid,nodev` with `0600`/`0700` permissions. Its contents are signed (see below). `/home` is `nosuid,nodev`; `/tmp` is a tmpfs, `nosuid,nodev`, emptied on every boot                                                                                                                            |
-|Boot chain    |Lanzaboote signs the bootloader and the unified kernel images; Secure Boot is enabled with the keys of the user (`/var/lib/sbctl`). The boot menu editor is disabled, so `init=/bin/sh` cannot be appended at the menu. Ten generations are kept (`configurationLimit`)                                                          |
-|Firmware      |`fwupd` is enabled, which also delivers Secure Boot revocation list (dbx) updates. The firmware administrator password is a manual step ([README](../README.md)) and cannot be checked from the OS                                                                                                                               |
-|Kernel        |Boot parameters, sysctls and module deny list from the baseline below; `kexec` and hibernation are disabled; page table isolation is forced on                                                                                                                                                                                   |
-|Administration|Only `wheel` may execute `sudo`. The user is in `wheel` and `networkmanager`. `sshd` is disabled on both hosts; if it is enabled, the settings in `hardening.nix` allow key-only logins for the one user, no root login                                                                                                          |
-|Network       |Host firewall on; the open ports are listed below. Services that only need the machine itself listen on loopback                                                                                                                                                                                                                 |
-|Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                                                      |
-|Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                                                               |
-|Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes. Everything else (Steam, Emacs, kitty, Bitwarden, Thunar, …) runs with the full access of the user. See [SANDBOXING.md](SANDBOXING.md)                                                                                                                                            |
-|Secrets       |the browser's cookie and password key comes from the Secret portal. The restic secrets (sops-nix, `/run/secrets`) and the age key in the home directory are readable by any user process ([SECRETS.md](SECRETS.md))                                                                                                              |
-|Backups       |restic to a Hetzner Storage Box, encrypted on the client; see [BACKUPS.md](BACKUPS.md)                                                                                                                                                                                                                                           |
-|Recovery      |NixOS generations (ten in the boot menu; weekly garbage collection deletes generations older than 7 days, so the rollback window is about a week), restic snapshots, and the Secure Boot keys in `/var/lib/sbctl`                                                                                                                |
-|macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                                                    |
+|Boundary      |Current design                                                                                                                                                                                                                                                                                                    |
+|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Data at rest  |LUKS2 over the whole system partition (`aes-xts-plain64`, 512-bit key for new installs, `argon2id`, 5 s), with btrfs subvolumes `@`, `@nix`, `@home`, `@snapshots` and `@swap` inside, so swap is encrypted too. Unlocked by passphrase in the initrd. `allowDiscards` is on: TRIM reveals which blocks are in use|
+|Mounts        |`/boot` is not encrypted; its contents are signed, and it is mounted `noexec,nosuid,nodev` with `0600`/`0700` permissions. `/home` is `nosuid,nodev`, `/.snapshots` `noexec,nosuid,nodev`, `/tmp` a tmpfs emptied at boot                                                                                         |
+|Boot chain    |Lanzaboote signs the bootloader and the unified kernel images; Secure Boot is enabled with the keys of the user (`/var/lib/sbctl`). The boot menu editor is disabled, so `init=/bin/sh` cannot be appended at the menu. Ten generations are kept (`configurationLimit`)                                           |
+|Firmware      |`fwupd` is enabled, which also delivers Secure Boot revocation list (dbx) updates. The firmware administrator password is a manual step ([README](../README.md)) and cannot be checked from the OS                                                                                                                |
+|Kernel        |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                                                |
+|Administration|Only `wheel` may execute `sudo`. The user is in `wheel` and `networkmanager`. `sshd` is disabled on both hosts; if it is enabled, the settings in `hardening.nix` allow key-only logins for the one user, no root login                                                                                           |
+|Network       |Host firewall on; the open ports are listed below. Services that only need the machine itself listen on loopback                                                                                                                                                                                                  |
+|Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                                       |
+|Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                                                |
+|Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes ([SANDBOXING.md](SANDBOXING.md)); everything else runs with the full access of the user                                                                                                                                                                            |
+|Secrets       |sops-nix; user secrets and the age key are readable by any process of the user ([SECRETS.md](SECRETS.md)). Brave's cookie and password key comes from the Secret portal                                                                                                                                           |
+|Backups       |restic to a Hetzner Storage Box, encrypted on the client ([BACKUPS.md](BACKUPS.md))                                                                                                                                                                                                                               |
+|Recovery      |NixOS generations (10 in the boot menu; weekly garbage collection of generations older than 7 days, so about a week of rollback) and restic snapshots                                                                                                                                                            |
+|macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                                     |
 
 Sources: [hardening](../modules/system/core/hardening.nix),
 [secure boot](../modules/system/core/secure-boot.nix),
@@ -129,11 +126,8 @@ them:
 
 - network protocols: `af_802154`, `appletalk`, `atm`, `ax25`, `can`, `dccp`,
   `decnet`, `econet`, `ipx`, `n-hdlc`, `netrom`, `p8022`, `p8023`, `psnap`,
-  `rds`, `rose`, `sctp`, `tipc`, `x25`. Also `esp4`, `esp6` and `rxrpc`, which
-  the comment in the source ties to the "Dirty Frag" local privilege escalation
-  (CVE-2026-43284, CVE-2026-43500). The CVE numbers come from that comment and
-  were not re-verified. `esp4` and `esp6` are needed by an IPsec VPN: remove
-  them from the list if one is ever used;
+  `rds`, `rose`, `sctp`, `tipc`, `x25`, and `esp4`, `esp6`, `rxrpc` (WA-004 in
+  [WORKAROUNDS.md](WORKAROUNDS.md)).
 - filesystems `cramfs`, `freevxfs`, `jffs2`, and the video test driver `vivid`.
 
 The list does not unload modules that are already loaded, does not affect
@@ -141,9 +135,6 @@ built-in code and does not stop a privileged module insertion.
 
 ## Boot integrity
 
-- The boot menu editor is disabled (`boot.loader.systemd-boot.editor = false`).
-  Lanzaboote replaces the systemd-boot module but reads this option when it
-  writes `loader.conf`.
 - Kernel lockdown is **off**: `/sys/kernel/security/lockdown` reads `[none]
   integrity confidentiality`. Module signature enforcement is not configured
   either; the NVIDIA modules would have to be signed first.
@@ -162,31 +153,12 @@ built-in code and does not stop a privileged module insertion.
 - `sops-nix` runs as root at every activation to decrypt the secrets: treat its
   bumps the same way. The `secrets` input is a private repository fetched over
   SSH. It is read as plain files (`flake = false`), so it adds ciphertext to the
-  evaluation, not code. On macOS root fetches it through SSH (checked, see
-  [SECRETS.md](SECRETS.md#audits)).
+  evaluation, not code.
 
 ## Backups and recovery
 
-What is backed up, how to check it and the restore procedure are in
-[BACKUPS.md](BACKUPS.md). The security properties:
-
-- restic encrypts on the client: the Storage Box only holds ciphertext.
-- The backup runs as the user, not as root. The repository password and the
-  Storage Box SSH key are decrypted by sops-nix into `/run/secrets` (a tmpfs on
-  NixOS; on macOS a RAM disk), owned by the user, so any process of the user can
-  still read them and, with them, delete or tamper with the repository. The age
-  key that decrypts the secrets of both hosts is in the home directory too, and
-  on NixOS `/home` is mounted in the initrd so the key is there when the secrets
-  are decrypted at boot ([SECRETS.md](SECRETS.md)). The backstop is the daily
-  Storage Box snapshots (10 kept, so damage must be noticed within 10 days),
-  which are managed only in the Hetzner Console and cannot be reached over SSH.
-  They are configured outside this repository and cannot be verified from it.
-- The Storage Box host key is pinned in `programs.ssh.knownHosts`.
-- Failures are reported to healthchecks.io. The ping URL is a sops secret; if
-  it is missing the ping unit fails, and the monitor alerts when the success
-  ping stops arriving.
-- NixOS generations give a rollback of about a week (see the table above); they
-  are not a backup of data.
+Restic encrypts on the client, so the Storage Box holds only ciphertext. The
+Storage Box host key is pinned.
 
 ## Known gaps and remaining work
 
@@ -195,18 +167,15 @@ What is backed up, how to check it and the restore procedure are in
 - **Lockdown, module signing and TPM use are not enabled** (see Boot integrity).
 - **Most applications are unsandboxed**, including Steam, Emacs, Bitwarden and
   the terminal. A compromise of any of them reaches the whole home directory,
-  the browser profiles and the Bitwarden agent. A sandbox protects the system
-  *from* an application, not the application's data from the unsandboxed ones.
-- **Sandbox limits** are listed in [SANDBOXING.md](SANDBOXING.md#limits); the
-  main ones are the host network given to Brave and the PipeWire socket given
-  to Vesktop.
+  the browser profiles, etc. For the sandbox limits see
+  [SANDBOXING.md](SANDBOXING.md#limits).
 - **Firewall ports for Steam Remote Play** are open only because Steam runs
   unsandboxed; if it is sandboxed again they need a second look.
 - **Nothing verifies the live firewall ruleset or `sbctl verify`**
   automatically. Run the checks below after a rebuild that touches them.
-- **A compromised user process can delete the repository** (see above); only the
-  Storage Box snapshots and their 10-day window protect against that. No
-  restore drill is recorded yet in [BACKUPS.md](BACKUPS.md#audits).
+- **A compromised user process can delete the backup repository**: restic runs
+  as the user. Only the Storage Box snapshots undo that, within 10 days, and
+  they are configured in the Hetzner Console, outside this repository.
 
 ## Checking the live system
 
@@ -236,11 +205,8 @@ restic-storagebox snapshots
 
 ## Audits
 
-Results of the checks above. Each holds for the configuration it ran against.
-The checks of the secrets, the sandboxes and the backups are in the Audits
-sections of [SECRETS.md](SECRETS.md#audits),
-[SANDBOXING.md](SANDBOXING.md#audits) and [BACKUPS.md](BACKUPS.md#audits). A
-`pending` check has not been run yet and has no date.
+Results of the checks above; those of the secrets, sandboxes and backups are in
+their own documents. Each holds for the configuration it ran against.
 
 |Date      |Host |Check                                       |How                    |Status |Findings                                                |
 |----------|-----|--------------------------------------------|-----------------------|-------|--------------------------------------------------------|

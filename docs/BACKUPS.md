@@ -33,8 +33,7 @@ Hetzner Storage Box.
   enough for the machine being off or offline). `alpha` reports success only
   when backup, prune and check all pass. `beta` reports success only on exit
   status 0; status 3 (some files unreadable, e.g. a macOS TCC denial) counts as
-  a failure. The ping URL is one of the host's secrets; if it is missing the
-  ping unit fails instead of skipping the report.
+  a failure. Without the ping URL secret the ping unit fails.
 - **`restic-storagebox`** is a wrapper that supplies the repository, password
   file and SSH key, so plain restic arguments can be appended. It exists on both
   hosts.
@@ -53,41 +52,24 @@ Hetzner Storage Box.
    cannot rotate: whoever held a password and a copy of the repository can
    decrypt that copy for good. Layer 1 is what keeps a removed device away from
    later data.
-3. **Undo (Storage Box snapshots):** recovery even if a device with valid keys
-   deletes the repository. Reaches back only as far as the 10-day window.
-
-Anything running as the user can reach the repository, `forget --prune`
-included. Layer 3 is the backstop: a compromised machine can delete the
-repository, not the snapshots.
+3. **Undo (Storage Box snapshots):** even if a device with valid keys deletes
+   the repository, which anything running as the user can do, the Storage Box
+   snapshots can be used to recover the data. Reaches back only as far as the
+   10-day window.
 
 ## Credentials
 
-None are in this repository. Each host's restic password, backup SSH key (no
-passphrase) and monitor ping URL are encrypted in its file of the private
-`secrets` input and decrypted at activation to `/run/secrets/restic/`, owned by
-the user ([SECRETS.md](SECRETS.md)). Reading them back from there needs the
-personal age key or a working host. A lost backup key is replaced, not
-recovered; a ping URL is copied again from the monitor's website.
+Each host's restic password, backup SSH key (no passphrase) and monitor ping
+URL are sops secrets under `restic` ([SECRETS.md](SECRETS.md)). A lost backup
+key is replaced, not recovered; a ping URL is copied again from the monitor's
+website.
 
 ## Procedures
-
-### Placing the secrets on a host
-
-Edit the host's file in `nix-secrets` and fill in the `restic` keys
-([SECRETS.md](SECRETS.md#adding-or-updating-secrets)):
-
-```sh
-cd ~/dev/nix-secrets && nix shell nixpkgs#sops -c sops <hostname>.yaml
-```
-
-Then commit, push and `just update secrets`. After the next switch the three
-files are in `/run/secrets/restic/`, owned by the user with mode `400`.
 
 ### Adding a host
 
 Credentials first, configuration last, otherwise the service fails until the key
-and password are in place. The host needs the personal age key and its file
-in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
+and password are in place.
 
 1. Create the backup key, without a passphrase:
    `ssh-keygen -t ed25519 -f ~/.ssh/storagebox -N "" -C "restic <hostname>"`.
@@ -95,8 +77,9 @@ in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
    `ssh-copy-id -s -p 23 -i ~/.ssh/storagebox <sub-account>@<sub-account>.your-storagebox.de`.
 3. From a host that already works, add a restic key:
    `restic-storagebox key add --host <hostname> --user <user>`.
-4. Place the private backup key, the password and a new monitor URL in the
-   host's secrets (above), then delete `~/.ssh/storagebox` and its `.pub`.
+4. Put the private backup key, the password and a new monitor URL in the host's
+   secrets ([SECRETS.md](SECRETS.md#adding-or-updating-secrets)), then delete
+   `~/.ssh/storagebox` and its `.pub`.
 5. Add `restic` to the host's imports in `modules/hosts/<host>` and
    `just switch <host>`. This also pins the Storage Box host key.
 6. Run it by hand and confirm the snapshot and the success ping:
@@ -105,9 +88,11 @@ in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
    # NixOS
    sudo systemctl start --no-block restic-backups-storagebox.service
    journalctl -fu restic-backups-storagebox
+
    # macOS
    launchctl kickstart gui/$(id -u)/org.nixos.restic-backups-storagebox
    tail -f ~/Library/Logs/restic-backups-storagebox.log
+
    # both
    restic-storagebox snapshots --host <hostname>
    ```
@@ -115,9 +100,8 @@ in `nix-secrets` first ([SECRETS.md](SECRETS.md#adding-a-new-host)).
 Notes: a second NixOS host needs `pruneOpts` removed (two pruners contend for
 the lock). Until the service has run once, `restic-storagebox` on NixOS needs
 `--no-cache`. On macOS no Full Disk Access grant has been needed so far
-([Audits](#audits)), but it
-may be tied to the Nix store path of `restic`: after a restic update check the
-log for "operation not permitted" (exit status 3).
+([Audits](#audits)), but it may be tied to the Nix store path of `restic`: after
+a restic update check the log for "operation not permitted" (exit status 3).
 
 ### Verifying
 
@@ -154,12 +138,11 @@ removed keys. Steps 2–4 run from a machine you keep, as the *main account*
 main=sftp://<main-account>@<main-account>.your-storagebox.de:23/restic/restic
 ```
 
-1. **Cut reach:** turn off the sub-account's SSH access in the Console. Backups
-   from the hosts you keep fail until step 5, and the monitor says so.
-2. **Inspect, roll back if needed:**
-   `restic-storagebox -r "$main" snapshots` and `... check`. If the repository
-   was damaged or deleted, or you cannot tell, roll the box back in the Console
-   to the newest snapshot before the loss and run both again.
+1. **Cut reach:** turn off the sub-account's SSH access.
+2. **Inspect, roll back if needed:** `restic-storagebox -r "$main" snapshots`
+   and `... check`. If the repository was damaged or deleted, or you cannot
+   tell, roll the box back in the Console to the newest snapshot before the loss
+   and run both again.
 3. **Replace `restic/.ssh/authorized_keys`** with a file holding only the public
    keys of the hosts you keep (`sftp -P 23 <main-account>@…`, then
    `put <pubkey> restic/.ssh/authorized_keys`).
@@ -178,6 +161,7 @@ restores its contents into the target, so it works across operating systems.
 ```sh
 # NixOS replacement: straight into the new home
 restic-storagebox restore "latest:<old home>" --host <old host> --target ~
+
 # macOS replacement: stage first, then move files in by hand
 restic-storagebox restore "latest:<old home>" --host <old host> --target ~/restore
 ```
@@ -197,9 +181,8 @@ key it offers with the one pinned in `restic.nix` before accepting it.
 
 ## Audits
 
-Checks and restore drills run on the hosts. Each holds for the configuration it
-ran against: rerun it after a change to `restic.nix`. A `pending` check has not
-been run yet and has no date.
+Checks and restore drills. Each holds for the configuration it ran against:
+rerun it after a change to `restic.nix`.
 
 |Date      |Host|Check                                                 |How                                                                             |Status |Findings                                                                                     |
 |----------|----|------------------------------------------------------|--------------------------------------------------------------------------------|-------|---------------------------------------------------------------------------------------------|

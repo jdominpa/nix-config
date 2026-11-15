@@ -110,7 +110,7 @@ System-wide configuration:
 
 ## Usage
 
-Every module in the `modules/` is automatically imported at the flake level by
+Every module in `modules/` is automatically imported at the flake level by
 [import-tree](https://github.com/denful/import-tree). Hosts decide which modules
 they use by importing them in their configuration through the flake-level
 options `flake.modules.nixos` and `flake.modules.darwin`.

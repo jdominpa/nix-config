@@ -13,8 +13,8 @@ See [./docs](./docs/README.md) for the documentation index,
 
 ### NixOS
 
-This steps assume that the NixOS configuration for the machine already exists in
-the flake. Otherwise you will have to add it after cloning the flake in Step 2.
+These steps assume the host already exists in the flake (see [How to add a new
+host](#how-to-add-a-new-host)).
 
 #### 1. Boot the installer
 
@@ -31,22 +31,18 @@ of the NixOS manual. Then, boot the machine from the USB drive.
 git clone https://github.com/jdominpa/nix-config /tmp/nix-config
 ```
 
-The secrets come from a private repository that root on the installer cannot
-fetch. Bring a clone of the secrets repository to `/tmp/nix-secrets` (copied
-from another machine, or cloned over HTTPS with a GitHub token) and point the
-lock file of the installer's copy at it. The age key is restored after the first
-login, as described in [Adding a new host](docs/SECRETS.md#adding-a-new-host).
+The installer cannot fetch the private secrets repository: bring a clone to
+`/tmp/nix-secrets` (copied, or cloned over HTTPS with a GitHub token) and lock
+the flake to it. The age key is restored after the first login
+([SECRETS.md](docs/SECRETS.md#adding-a-new-host)).
 
 ```bash
 nix --experimental-features "nix-command flakes" flake lock /tmp/nix-config \
   --override-input secrets path:/tmp/nix-secrets
 ```
 
-Identify the system disk with `ls -l /dev/disk/by-id/` (and `lsblk` for the
-sizes), and make sure `device` in the host's `disko.nix` is set to its
-`/dev/disk/by-id/` path (the `nvmeXn1` numbering can change between boots).
-Then, format the disk with the following command, which destroys everything on
-it:
+Identify the system disk with `ls -l /dev/disk/by-id/` and set `device` in the
+host's `disko.nix` to the disk's `/dev/disk/by-id/` path. Then, format it:
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
@@ -56,16 +52,12 @@ sudo nix --experimental-features "nix-command flakes" run github:nix-community/d
 
 #### 3. Generate hardware configuration
 
-Generate the hardware configuration for the machine with the command
-`nixos-generate-config`. The flag `--no-filesystems` is used to skip the
-filesystem configuration since that is managed with `disko`.
+Generate it without file systems (disko manages those) and copy it into the
+host's `hardware.nix`:
 
 ```bash
 sudo nixos-generate-config --no-filesystems --root /mnt
 ```
-
-After that, edit the host's hardware configuration `hardware.nix` of the flake
-and update it with the hardware configuration generated.
 
 #### 4. Install NixOS
 
@@ -174,21 +166,12 @@ sysadminctl -screenLock status
 
 ## How to add a new host
 
-The easiest way to add a new host is to copy and adapt an existing configuration:
-
-1. Create a new folder under `modules/hosts/` with the name of the new host.
-2. Copy `flake-parts.nix` from another NixOS/macOS host to the new folder. Make
-sure you also change the hostname in the file to the new hostname.
-3. For NixOS, copy `/etc/nixos/configuration.nix` and
-`/etc/nixos/hardware-configuration.nix` to the new folder and edit
-`configuration.nix` to import any needed modules. For macOS, copy
-`configuration.nix` from another macOS configuration and add/remove any needed
-modules.
-4. Edit `configuration.nix` and `hardware-configuration.nix` to make sure that
-both files are `flake-parts` modules.
-
-**NOTE**: for NixOS, the host's disko configuration has to be added to
- `hardware-configuration.nix` as well.
+1. Copy an existing host directory under `modules/hosts/` (`alpha` for NixOS,
+   `beta` for macOS) and change `hostName`.
+2. Adjust the module list in its `default.nix`.
+3. NixOS: set `device` in `disko.nix`, and replace `hardware.nix` with the
+   output of `nixos-generate-config` (step 3 above).
+4. Add its secrets file ([SECRETS.md](docs/SECRETS.md#adding-a-new-host)).
 
 ## References
 

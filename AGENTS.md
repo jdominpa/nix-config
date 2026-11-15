@@ -59,6 +59,12 @@ change that touches the first column, make both commits.
 
 Rules for the docs:
 
+- Each fact lives in one document: backups in `BACKUPS.md`, secrets in
+  `SECRETS.md`, sandboxes in `SANDBOXING.md`, workarounds in `WORKAROUNDS.md`.
+  `SECURITY.md` is the overview: it summarises and links, it does not repeat
+  their details. Link only where the reader needs to go next.
+- Be brief: state the fact and its limit, without background the reader does
+  not need.
 - Describe what the source configures and what was checked on a running system
   separately. Never write that a control is active or verified unless it was
   checked, and say how and when (date). Mark what is unverified.
