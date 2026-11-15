@@ -5,15 +5,15 @@
 {
   flake.modules.nixos.alpha = {
     imports = [ inputs.disko.nixosModules.disko ];
-    disko.devices.disk.main = {
+    disko.devices.disk.system = {
       type = "disk";
-      device = "/dev/nvme0n1";
+      device = "/dev/disk/by-id/nvme-Lexar_SSD_NQ790_2TB_NHC261R003133P220B";
       content = {
         type = "gpt";
         partitions = {
           ESP = {
             type = "EF00";
-            size = "512M";
+            size = "1G";
             content = {
               type = "filesystem";
               format = "vfat";
@@ -41,7 +41,7 @@
                 "--cipher aes-xts-plain64"
                 "--hash sha512"
                 "--iter-time 5000"
-                "--key-size 256"
+                "--key-size 512"
                 "--pbkdf argon2id"
                 "--use-random" # Block until enough entropy from /dev/random
               ];
@@ -51,7 +51,10 @@
                 subvolumes = {
                   "@" = {
                     mountpoint = "/";
-                    mountOptions = [ "compress=zstd:1" ];
+                    mountOptions = [
+                      "compress=zstd:1"
+                      "noatime"
+                    ];
                   };
                   "@nix" = {
                     mountpoint = "/nix";
@@ -64,8 +67,19 @@
                     mountpoint = "/home";
                     mountOptions = [
                       "compress=zstd:1"
+                      "noatime"
                       "nosuid" # ignore setuid
                       "nodev" # no device nodes
+                    ];
+                  };
+                  "@snapshots" = {
+                    mountpoint = "/.snapshots";
+                    mountOptions = [
+                      "compress=zstd:1"
+                      "noatime"
+                      "nosuid" # ignore setuid
+                      "nodev" # no device nodes
+                      "noexec" # no execution
                     ];
                   };
                   "@swap" = {
