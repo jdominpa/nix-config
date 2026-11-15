@@ -31,9 +31,22 @@ of the NixOS manual. Then, boot the machine from the USB drive.
 git clone https://github.com/jdominpa/nix-config /tmp/nix-config
 ```
 
-Identify the name of the system disk using `lsblk` and make sure the `disko`
-configuration for the host you want to install is set to that disk. Then, format
-the disk with the following command:
+The secrets come from a private repository that root on the installer cannot
+fetch. Bring a clone of the secrets repository to `/tmp/nix-secrets` (copied
+from another machine, or cloned over HTTPS with a GitHub token) and point the
+lock file of the installer's copy at it. The age key is restored after the first
+login, as described in [Adding a new host](docs/SECRETS.md#adding-a-new-host).
+
+```bash
+nix --experimental-features "nix-command flakes" flake lock /tmp/nix-config \
+  --override-input secrets path:/tmp/nix-secrets
+```
+
+Identify the system disk with `ls -l /dev/disk/by-id/` (and `lsblk` for the
+sizes), and make sure `device` in the host's `disko.nix` is set to its
+`/dev/disk/by-id/` path (the `nvmeXn1` numbering can change between boots).
+Then, format the disk with the following command, which destroys everything on
+it:
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
@@ -56,31 +69,24 @@ and update it with the hardware configuration generated.
 
 #### 4. Install NixOS
 
-Every NixOS host uses Secure Boot through the `secure-boot` module in `core` and
-signs its boot files during the installation, so the signing keys have to be in
-place before `nixos-install` runs.
+Since every NixOS host uses Secure Boot and signs its boot files during the
+installation, the signing keys have to be in place before `nixos-install` runs.
 
 ```bash
 # Create the Secure Boot keys and copy them to the new system
 sudo nix --experimental-features "nix-command flakes" run nixpkgs#sbctl -- create-keys
 sudo mkdir -p /mnt/var/lib
 sudo cp -a /var/lib/sbctl /mnt/var/lib/
-```
 
-The secrets come from a private repository that root on the installer cannot
-fetch. Bring a clone of it to `/tmp/nix-secrets` first. The age key is restored
-after the first login, as described in [Installing a host from
-scratch](docs/SECRETS.md#installing-a-host-from-scratch).
-
-```bash
 # Install NixOS with <hostname> configuration
-sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt \
-  --override-input secrets path:/tmp/nix-secrets
+sudo nixos-install --flake /tmp/nix-config#<hostname> --root /mnt
 
 # Set user password for any users defined in the configuration
 sudo nixos-enter --root /mnt -c 'passwd <username>'
 
-# Copy the flake (with hardware-config.nix changes) to the machine's filesystem
+# Undo the lock file change from step 2, then copy the flake (with the
+# hardware.nix changes) to the machine's filesystem
+git -C /tmp/nix-config checkout flake.lock
 sudo cp -r /tmp/nix-config /mnt/etc/nixos/nix-config
 
 # Unmount and reboot
@@ -110,8 +116,8 @@ boot files are signed, but the firmware does not know the keys yet.
    ```
 
 3. Boot NixOS again and enroll the keys. `--microsoft` keeps the certificates of
-   Microsoft next to them: the firmware of the graphics card is usually signed
-   with those, and without them the machine may not boot anymore.
+   Microsoft next to them since the firmware of the graphics card is usually
+   signed with those, and without them the machine may not boot anymore.
 
    ```bash
    sudo sbctl enroll-keys --microsoft
@@ -138,7 +144,7 @@ For first time deployment, install
 Restore the personal age key to
 `~/Library/Application Support/sops/age/keys.txt` before the first switch,
 otherwise the secrets are not decrypted
-([SECRETS.md](docs/SECRETS.md#installing-a-host-from-scratch)).
+([SECRETS.md](docs/SECRETS.md#adding-a-new-host)).
 
 ```bash
 # Prepare the deployment environment
@@ -179,7 +185,7 @@ sure you also change the hostname in the file to the new hostname.
 `configuration.nix` from another macOS configuration and add/remove any needed
 modules.
 4. Edit `configuration.nix` and `hardware-configuration.nix` to make sure that
-both files are `flake-parts` modules
+both files are `flake-parts` modules.
 
 **NOTE**: for NixOS, the host's disko configuration has to be added to
  `hardware-configuration.nix` as well.

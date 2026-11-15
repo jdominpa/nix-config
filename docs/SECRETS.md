@@ -139,22 +139,13 @@ with this it is mounted in the initrd, from the same unlocked LUKS volume.
   writes the secrets to `/run/secrets`, which is gone after a reboot and written
   again at the next activation.
 
-### Installing a host from scratch
+## Adding a new host
 
-The key is not needed for the install itself, only the encrypted files are:
+Installing the system itself, including how the installer gets the private
+repository, is in the [README](../README.md#deployment).
 
-1. `nixos-install` runs as root on the installer, which has no access to the
-   private repository. Bring a clone of `nix-secrets` to `/tmp/nix-secrets`
-   (copied from another machine, or cloned over HTTPS with a GitHub token; it
-   holds only ciphertext), then add
-   `--override-input secrets path:/tmp/nix-secrets` to the `nixos-install`
-   command in the [README](../README.md#4-install-nixos).
-2. Boot the new system and log in. Without the key, decryption at boot fails
-   and `/run/secrets` stays empty; the system itself should come up normally
-   (not tested). `nixos-install` does not run that step, so the install is not
-   affected.
-3. Restore the key from its recovery copy to the key file (mode `600`), then
-   `just switch`.
+1. **Restore the personal key** from its recovery copy to the key file of the
+   platform:
 
    ```sh
    # NixOS
@@ -170,18 +161,21 @@ The key is not needed for the install itself, only the encrypted files are:
 
    Check that the mode is `600` with `stat -c %a`.
 
-On macOS it is the same without step 1: install Nix, restore the key, and
-`just switch`.
+2. **Add the host's file** in `nix-secrets`: add `<host>` to the `path_regex` of
+   `.sops.yaml`, create `<host>.yaml` with `sops` (see [Adding or updating
+   secrets](#adding-or-updating-secrets)), commit and push. Any machine with the
+   key can do this, also before the host is installed.
 
-What has been checked on each host, and what not yet, is in
-[Audits](#audits).
+3. **Update the input and switch**, here:
 
-## Adding a new host
+   ```sh
+   just update secrets
+   just switch <host>
+   ```
 
-1. In `nix-secrets`, add `<host>` to the `path_regex` of `.sops.yaml`, create
-   `<host>.yaml` with `sops`, commit and push.
-2. Here: `just update secrets`, add the host to `modules/hosts/` with the
-   modules it needs, and install it as above.
+Until the key is in place the host builds and boots without secrets:
+`/run/secrets` stays empty and decryption fails at activation (see
+[Audits](#audits)).
 
 ## A host is lost or compromised
 
@@ -249,7 +243,7 @@ it after a change to `secrets.nix`, the `sops-nix` input or the key handling. A
 |2026-11-14|beta |Root fetches `nix-secrets`                         |`sudo ssh -T git@github.com`; `sudo nix flake prefetch --refresh` on the input URL, which bypasses the fetcher cache|checked|Authenticates as `jdominpa` and fetches the input into the store                                                                                                           |
 |2026-11-14|beta |Metadata of the restic secrets                     |`stat` on `/run/secrets/restic/*`, without reading the values                                                       |checked|Owner `jdominpa`, mode `400`, not empty: the `userReadable` preset                                                                                                         |
 |2026-11-14|beta |Switch without the key, then with it               |Key file renamed, `just switch`, key restored, `just switch`                                                        |checked|As on `alpha`: the previous generation is kept, then a new one is written and the old one pruned                                                                           |
-|2026-11-14|beta |Key-restore commands of step 3                     |Run in zsh against a temporary `HOME` with a dummy key                                                              |checked|`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                  |
+|2026-11-14|beta |Key-restore commands of Adding a new host          |Run in zsh against a temporary `HOME` with a dummy key                                                              |checked|`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                  |
 |2026-11-14|beta |Reboot without the key                             |Key file renamed, reboot                                                                                            |checked|No `/run/secrets`; `/run/secrets.d` remounted but empty; the system comes up normally                                                                                      |
 |2026-11-14|beta |`/run/secrets.d` is a RAM disk                     |`hdiutil info`; `sysctl vm.swapusage`                                                                               |checked|`image-path : ram://131072` (64 MiB) and no shadow file; swap is `(encrypted)`                                                                                             |
 |—         |alpha|Boot without the key                               |—                                                                                                                   |pending|Expected: empty `/run/secrets`, normal boot                                                                                                                                |
