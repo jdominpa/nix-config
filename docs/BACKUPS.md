@@ -2,17 +2,18 @@
 
 Off-site, encrypted, versioned backups of the data Syncthing keeps in sync. Each
 host runs a daily backup into **the same repository** on a sub-account of a
-Hetzner Storage Box.
+Hetzner Storage Box. On `alpha`, btrbk also keeps local snapshots of `/home`
+([Local snapshots](#local-snapshots-alpha)).
 
 ## What protects against what
 
-|Threat                                      |Defence                                                                                            |
-|--------------------------------------------|---------------------------------------------------------------------------------------------------|
-|Accidental deletion, bad edit               |restic snapshots (7 daily, 5 weekly, 12 monthly per host)                                          |
-|Disk or host loss                           |restic: encrypted copies on the Storage Box                                                        |
-|A compromised Storage Box                   |Client-side encryption: the box only holds ciphertext                                              |
-|A compromised device deleting the repository|Automatic Storage Box snapshots of the whole box, managed only in the Hetzner Console, not over SSH|
-|A backup that fails or silently stops       |healthchecks.io alerts when a success ping is missing; `restic check` re-reads data on every run   |
+|Threat                                      |Defence                                                                                                                   |
+|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+|Accidental deletion, bad edit               |btrbk snapshots of `/home` on `alpha` (hourly, up to 4 weeks); restic snapshots (7 daily, 5 weekly, 12 monthly per host)  |
+|Disk or host loss                           |restic: encrypted copies on the Storage Box. A failed system disk on `alpha` also leaves the btrbk copies on the data disk|
+|A compromised Storage Box                   |Client-side encryption: the box only holds ciphertext                                                                     |
+|A compromised device deleting the repository|Automatic Storage Box snapshots of the whole box, managed only in the Hetzner Console, not over SSH                       |
+|A backup that fails or silently stops       |healthchecks.io alerts when a success ping is missing; `restic check` re-reads data on every run                          |
 
 ## Components
 
@@ -40,6 +41,22 @@ Hetzner Storage Box.
 - **A Storage Box snapshot covers the whole box**, so a rollback also restores
   the repository's `keys/` and the sub-account's `authorized_keys`, undoing any
   revocation done since. Hence the order in the compromise procedure below.
+
+## Local snapshots (`alpha`)
+
+[btrfs.nix](../modules/hosts/alpha/btrfs.nix) runs btrbk hourly, as root:
+
+- **Snapshots:** read-only snapshots of `/home` in `/.snapshots`, on the system
+  disk. All are kept for 6 hours, then hourly for 48 hours, daily for 7 days and
+  weekly for 4 weeks.
+- **Copies:** the first snapshot of each day is sent incrementally to
+  `/data/backup` on the data disk and kept daily for 14 days, weekly for 8 weeks
+  and monthly for 6 months.
+- **Limits:** Without `/data/backup` mounted the run fails, local snapshots
+  included. Nothing alerts on a failed run (`systemctl status btrbk-home`).
+
+To restore, copy from `/.snapshots/home.<timestamp>/<user>/` or
+`/data/backup/home.<timestamp>/<user>/`.
 
 ## Security model
 
@@ -182,12 +199,13 @@ key it offers with the one pinned in `restic.nix` before accepting it.
 ## Audits
 
 Checks and restore drills. Each holds for the configuration it ran against:
-rerun it after a change to `restic.nix`.
+rerun it after a change to `restic.nix` or `btrfs.nix`.
 
 To check:
 
 - both: restore drill ([Test restore](#test-restore)).
 
-|Date      |Host|Check                                                 |How                                                                             |Findings                                                                                     |
-|----------|----|------------------------------------------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-|2026-11-09|beta|The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|
+|Date      |Host |Check                                                 |How                                                                             |Findings                                                                                     |
+|----------|-----|------------------------------------------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+|2026-11-09|beta |The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|
+|2026-11-15|alpha|btrbk snapshot and copy                               |`systemctl start btrbk-home`, then the timer run; `journalctl -u btrbk-home`    |checked                                                                                      |

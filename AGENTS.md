@@ -50,6 +50,7 @@ change that touches the first column, make both commits.
 | `secure-boot.nix`, `disko.nix`, the boot loader, fwupd, TPM or lockdown       | `docs/SECURITY.md`, architecture / boot |
 | `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, supply chain        |
 | `restic.nix`: backed-up paths, schedule, retention, monitoring, credentials   | `docs/BACKUPS.md`, and the summary in `docs/SECURITY.md` |
+| `btrfs.nix` (btrbk, scrub)                                                   | `docs/BACKUPS.md`, local snapshots      |
 | `secrets.nix`, a `sops.secrets` declaration, the `secrets` or `sops-nix` input | `docs/SECRETS.md`, and `docs/SECURITY.md` supply chain |
 | `ssh.nix`, sudo, users and groups, login manager, screen lock                 | `docs/SECURITY.md`, architecture        |
 | `modules/system/desktop/nixpak/` (the shared sandbox policy, the Wayland helper) | `docs/SANDBOXING.md`, shared boundaries and Wayland |

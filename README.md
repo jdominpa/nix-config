@@ -50,6 +50,9 @@ sudo nix --experimental-features "nix-command flakes" run github:nix-community/d
   --flake /tmp/nix-config#<hostname>
 ```
 
+This formats every disk in the host's `disko.nix`. To format one disk only, use
+`#<hostname>-<disk>`.
+
 #### 3. Generate hardware configuration
 
 Generate it without file systems (disko manages those) and copy it into the
