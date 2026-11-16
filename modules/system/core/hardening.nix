@@ -105,7 +105,7 @@ in
         "dccp"
         "decnet"
         "econet"
-        # esp4/esp5/rxrpc were the vectors for the Dirty Frag LPE
+        # esp4/esp6/rxrpc were the vectors for the Dirty Frag LPE
         # (CVE-2026-43284, CVE-2026-43500). Remove esp4 and esp6 if an IPsec VPN
         # is ever needed.
         "esp4"

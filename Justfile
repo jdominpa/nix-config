@@ -16,7 +16,7 @@ update *INPUTS:
 history:
     nix profile history --profile /nix/var/nix/profiles/system
 
-# Open a nix shell with the flake
+# Open a nix repl with the flake
 [group('nix')]
 repl:
     nix repl -f flake:nixpkgs
@@ -77,7 +77,7 @@ switch hostname=`hostname` *FLAGS:
         --flake "{{justfile_directory()}}#{{hostname}}" {{FLAGS}}
 
 #
-#  Darwin related commands, harmonica is my macbook pro's hostname
+#  Darwin related commands
 #
 
 # Rollback configuration

@@ -73,11 +73,6 @@
           # Prevent Photos from opening automatically when devices are plugged in
           disableHotPlug = true;
         };
-        "com.apple.screensaver" = {
-          # Require password immediately after sleep or screen saver begins
-          askForPassword = 1;
-          askForPasswordDelay = 0;
-        };
         "com.apple.screencapture" = {
           location = "~/Desktop";
           show-thumbnail = false;
