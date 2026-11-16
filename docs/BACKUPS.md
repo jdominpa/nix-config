@@ -184,7 +184,10 @@ key it offers with the one pinned in `restic.nix` before accepting it.
 Checks and restore drills. Each holds for the configuration it ran against:
 rerun it after a change to `restic.nix`.
 
-|Date      |Host|Check                                                 |How                                                                             |Status |Findings                                                                                     |
-|----------|----|------------------------------------------------------|--------------------------------------------------------------------------------|-------|---------------------------------------------------------------------------------------------|
-|2026-11-09|beta|The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|checked|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|
-|—         |both|Restore drill (Test restore)                          |—                                                                               |pending|—                                                                                            |
+To check:
+
+- both: restore drill ([Test restore](#test-restore)).
+
+|Date      |Host|Check                                                 |How                                                                             |Findings                                                                                     |
+|----------|----|------------------------------------------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+|2026-11-09|beta|The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|

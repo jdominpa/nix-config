@@ -1,12 +1,8 @@
 # Documentation
 
-Canonical documentation index for this repository. Standalone reference material
-lives in this directory. Component runbooks stay next to the code they describe
-so they remain visible during maintenance, and every human-facing document is
-linked here.
-
-`README.md` and `AGENTS.md` remain at the repository root because GitHub and
-coding agents require those entry points.
+Canonical documentation index of this repository. `README.md` and `AGENTS.md`
+remain at the repository root because Github and coding agents require those
+entry points.
 
 ## Operations and policy
 

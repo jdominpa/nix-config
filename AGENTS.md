@@ -72,12 +72,12 @@ Rules for the docs:
 - When a control is removed or reverted, delete or rewrite its text and record
   why in the relevant "Not sandboxed" / "Known gaps" section; do not leave
   stale claims.
-- Record every check in the "Audits" table at the end of the document it
-  concerns: date, host, check, how, status (`checked` or `pending`) and
-  findings. A pending check has no date; when it is run, date it, set it to
-  `checked` and write what was found. In the text keep only a short marker next
-  to the claim ("checked" or "not checked", linking to Audits), not the
-  evidence. A check holds for the configuration it ran against, so rerun it
+- Record every check in the "Audits" section at the end of the document it
+  concerns. A check still to run is an item of its "To check" list: host, check,
+  and how to run it or what is expected. When it is run, move it to the table
+  with the date, host, check, how and findings. In the text keep only a short
+  marker next to the claim ("checked" or "not checked", linking to Audits), not
+  the evidence. A check holds for the configuration it ran against, so rerun it
   after a change that touches it.
 - `docs/BACKUPS.md` must never contain secrets (passwords, SSH keys, the monitor
   URL) or say where their recovery copies are kept. The paths the machines read

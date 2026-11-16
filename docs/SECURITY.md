@@ -31,22 +31,22 @@ noticeable performance cost. As implemented:
 
 ## Architecture and trust boundaries
 
-|Boundary      |Current design                                                                                                                                                                                                                                                                                                    |
-|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|Data at rest  |LUKS2 over the whole system partition (`aes-xts-plain64`, 512-bit key for new installs, `argon2id`, 5 s), with btrfs subvolumes `@`, `@nix`, `@home`, `@snapshots` and `@swap` inside, so swap is encrypted too. Unlocked by passphrase in the initrd. `allowDiscards` is on: TRIM reveals which blocks are in use|
-|Mounts        |`/boot` is not encrypted; its contents are signed, and it is mounted `noexec,nosuid,nodev` with `0600`/`0700` permissions. `/home` is `nosuid,nodev`, `/.snapshots` `noexec,nosuid,nodev`, `/tmp` a tmpfs emptied at boot                                                                                         |
-|Boot chain    |Lanzaboote signs the bootloader and the unified kernel images; Secure Boot is enabled with the keys of the user (`/var/lib/sbctl`). The boot menu editor is disabled, so `init=/bin/sh` cannot be appended at the menu. Ten generations are kept (`configurationLimit`)                                           |
-|Firmware      |`fwupd` is enabled, which also delivers Secure Boot revocation list (dbx) updates. The firmware administrator password is a manual step ([README](../README.md)) and cannot be checked from the OS                                                                                                                |
-|Kernel        |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                                                |
-|Administration|Only `wheel` may execute `sudo`. The user is in `wheel` and `networkmanager`. `sshd` is disabled on both hosts; if it is enabled, the settings in `hardening.nix` allow key-only logins for the one user, no root login                                                                                           |
-|Network       |Host firewall on; the open ports are listed below. Services that only need the machine itself listen on loopback                                                                                                                                                                                                  |
-|Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                                       |
-|Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                                                |
-|Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes ([SANDBOXING.md](SANDBOXING.md)); everything else runs with the full access of the user                                                                                                                                                                            |
-|Secrets       |sops-nix; user secrets and the age key are readable by any process of the user ([SECRETS.md](SECRETS.md)). Brave's cookie and password key comes from the Secret portal                                                                                                                                           |
-|Backups       |restic to a Hetzner Storage Box, encrypted on the client ([BACKUPS.md](BACKUPS.md))                                                                                                                                                                                                                               |
-|Recovery      |NixOS generations (10 in the boot menu; weekly garbage collection of generations older than 7 days, so about a week of rollback) and restic snapshots                                                                                                                                                            |
-|macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                                     |
+|Boundary      |Current design                                                                                                                                                                                                                                                                                   |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Data at rest  |LUKS2 over the whole system partition (`aes-xts-plain64`, 512-bit key, `argon2id`, 5 s), with btrfs subvolumes `@`, `@nix`, `@home`, `@snapshots` and `@swap` inside, so swap is encrypted too. Unlocked by passphrase in the initrd. `allowDiscards` is on: TRIM reveals which blocks are in use|
+|Mounts        |`/boot` is not encrypted; its contents are signed, and it is mounted `noexec,nosuid,nodev` with `0600`/`0700` permissions. `/home` is `nosuid,nodev`, `/.snapshots` `noexec,nosuid,nodev`, `/tmp` a tmpfs emptied at boot                                                                        |
+|Boot chain    |Lanzaboote signs the bootloader and the unified kernel images; Secure Boot is enabled with the keys of the user (`/var/lib/sbctl`). The boot menu editor is disabled, so `init=/bin/sh` cannot be appended at the menu. Ten generations are kept (`configurationLimit`)                          |
+|Firmware      |`fwupd` is enabled, which also delivers Secure Boot revocation list (dbx) updates. The firmware administrator password is a manual step ([README](../README.md)) and cannot be checked from the OS                                                                                               |
+|Kernel        |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                               |
+|Administration|Only `wheel` may execute `sudo`. The user is in `wheel` and `networkmanager`. `sshd` is disabled on both hosts; if it is enabled, the settings in `hardening.nix` allow key-only logins for the one user, no root login                                                                          |
+|Network       |Host firewall on; the open ports are listed below. Services that only need the machine itself listen on loopback                                                                                                                                                                                 |
+|Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                      |
+|Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                               |
+|Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes ([SANDBOXING.md](SANDBOXING.md)); everything else runs with the full access of the user                                                                                                                                                           |
+|Secrets       |sops-nix; user secrets and the age key are readable by any process of the user ([SECRETS.md](SECRETS.md)). Brave's cookie and password key comes from the Secret portal                                                                                                                          |
+|Backups       |restic to a Hetzner Storage Box, encrypted on the client ([BACKUPS.md](BACKUPS.md))                                                                                                                                                                                                              |
+|Recovery      |NixOS generations (10 in the boot menu; weekly garbage collection of generations older than 7 days, so about a week of rollback) and restic snapshots                                                                                                                                            |
+|macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                    |
 
 Sources: [hardening](../modules/system/core/hardening.nix),
 [secure boot](../modules/system/core/secure-boot.nix),
@@ -60,8 +60,8 @@ Sources: [hardening](../modules/system/core/hardening.nix),
 ## Network exposure
 
 The firewall is enabled and everything not listed is dropped. The ports below
-are opened by the modules named in the last column (checked from the evaluated
-configuration, not from the running ruleset, which needs root to read).
+are opened by the modules named in the last column (checked in the evaluated
+configuration, not in the running ruleset: [Audits](#audits)).
 
 |Ports                                            |Opened for                   |Source                                  |
 |-------------------------------------------------|-----------------------------|----------------------------------------|
@@ -73,7 +73,7 @@ Listening sockets besides the ports above, as last observed
 ([Audits](#audits)): Syncthing's GUI on `127.0.0.1:8384` (TLS, requires
 credentials), CUPS on `127.0.0.1:631` and `[::1]:631`, and the CoolerControl
 daemon on `127.0.0.1:11987` and `[::1]:11987` (answers 401 without credentials;
-make sure its default password was changed).
+whether its default password was changed is not checked).
 Loopback is not a boundary against the user's own unsandboxed applications or
 against sandboxes that share the host network (Brave).
 
@@ -82,62 +82,40 @@ enabled; neither is restricted further.
 
 ## Kernel and process baseline
 
-Implemented in [hardening.nix](../modules/system/core/hardening.nix), which
-holds the values; this section summarises them. Some values are already
-kernel/systemd/NixOS defaults.
+[hardening.nix](../modules/system/core/hardening.nix) holds the settings, each
+with a comment on what it does and what it costs. It sets kernel boot parameters
+(allocator hardening, randomisation, no vsyscall page, no debugfs), sysctls
+(kernel pointers and log hidden, BPF for root only, restricted ptrace and perf,
+maximum `mmap` ASLR, link and FIFO protections, no ICMP redirects or source
+routing), disables kexec and hibernation, forces page table isolation and blocks
+a list of kernel modules. Some values are already kernel, systemd or NixOS
+defaults; setting them explicitly makes the desired baseline reviewable. The
+values on the running system are not checked ([Audits](#audits)).
 
-### Boot parameters
+What you notice in daily use:
 
-|Parameter                   |Effect                                                                                                    |
-|----------------------------|----------------------------------------------------------------------------------------------------------|
-|`slab_nomerge`              |Do not merge slab caches of similar size; limits cross-cache heap exploits                                |
-|`init_on_alloc=1`           |Zero memory on allocation                                                                                 |
-|`page_alloc.shuffle=1`      |Randomise page allocator free lists                                                                       |
-|`randomize_kstack_offset=on`|Randomise the kernel stack offset on each syscall                                                         |
-|`vsyscall=none`             |Remove the fixed-address legacy vsyscall page                                                             |
-|`debugfs=off`               |Do not expose debugfs (`/sys/kernel/debug` is absent). Tools that need it, such as powertop, will complain|
+- `gdb -p` and `strace -p` on an unrelated process need sudo; debugging a
+  program you launch is unaffected.
+- No kernel profiling for unprivileged users, but user-space profiling still
+  works.
+- `/sys/kernel/debug` is absent and tools that need it, such as powertop,
+  complain.
+- No hibernation.
 
-`security.protectKernelImage` disables kexec and hibernation.
-`security.forcePageTableIsolation` forces PTI on.
-
-### Sysctls
-
-|Setting                                                                |Value |Effect and compatibility                                                                                                                              |
-|-----------------------------------------------------------------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`kernel.kptr_restrict`                                                 |2     |Hide kernel pointers, even from privileged readers                                                                                                    |
-|`kernel.dmesg_restrict`                                                |1     |Kernel log needs `CAP_SYSLOG`                                                                                                                         |
-|`kernel.unprivileged_bpf_disabled`                                     |1     |`bpf()` is root only                                                                                                                                  |
-|`net.core.bpf_jit_harden`                                              |2     |Harden the BPF JIT for everyone                                                                                                                       |
-|`kernel.yama.ptrace_scope`                                             |1     |A process may only trace its own descendants. `gdb -p` and `strace -p` on an unrelated process need sudo; debugging a program you launch is unaffected|
-|`kernel.perf_event_paranoid`                                           |2     |No kernel profiling for unprivileged users; user-space profiling works                                                                                |
-|`vm.unprivileged_userfaultfd`                                          |0     |Unprivileged userfaultfd only for user-mode faults                                                                                                    |
-|`dev.tty.ldisc_autoload`, `dev.tty.legacy_tiocsti`                     |0, 0  |No auto-loading of TTY line disciplines; no `TIOCSTI` keystroke injection                                                                             |
-|`vm.mmap_rnd_bits`, `vm.mmap_rnd_compat_bits`                          |32, 16|Maximum ASLR entropy for `mmap`                                                                                                                       |
-|`fs.protected_fifos`, `fs.protected_regular`                           |2, 2  |Stricter `O_CREAT` rules in world-writable sticky directories                                                                                         |
-|`fs.protected_symlinks`, `fs.protected_hardlinks`                      |1, 1  |Mitigate cross-user link attacks                                                                                                                      |
-|`net.ipv4.conf.*` and `net.ipv6.conf.*` redirects, source routing      |0     |Not a router: ignore ICMP redirects and source-routed packets, send no redirects                                                                      |
-|`net.ipv4.tcp_syncookies`, `tcp_rfc1337`, `icmp_echo_ignore_broadcasts`|1     |SYN flood and TIME-WAIT assassination protection; ignore broadcast pings                                                                              |
-
-### Module deny list
-
-These are blocked with `install <module> /bin/false`, which also stops an
-explicit `modprobe`, so an unprivileged `socket()` or `mount` cannot auto-load
-them:
-
-- network protocols: `af_802154`, `appletalk`, `atm`, `ax25`, `can`, `dccp`,
-  `decnet`, `econet`, `ipx`, `n-hdlc`, `netrom`, `p8022`, `p8023`, `psnap`,
-  `rds`, `rose`, `sctp`, `tipc`, `x25`, and `esp4`, `esp6`, `rxrpc` (WA-004 in
-  [WORKAROUNDS.md](WORKAROUNDS.md)).
-- filesystems `cramfs`, `freevxfs`, `jffs2`, and the video test driver `vivid`.
-
-The list does not unload modules that are already loaded, does not affect
-built-in code and does not stop a privileged module insertion.
+The module deny list covers obscure network protocols, three filesystems and
+the video test driver `vivid`; `esp4`, `esp6` and `rxrpc` are on it as WA-004
+([WORKAROUNDS.md](WORKAROUNDS.md)). The modules are blocked with
+`install <module> false`, which also stops an explicit `modprobe`, so an
+unprivileged `socket()` or `mount` cannot auto-load them. The list does not
+unload modules that are already loaded, does not affect built-in code and does
+not stop a privileged module insertion.
 
 ## Boot integrity
 
-- Kernel lockdown is **off**: `/sys/kernel/security/lockdown` reads `[none]
-  integrity confidentiality`. Module signature enforcement is not configured
-  either; the NVIDIA modules would have to be signed first.
+- Kernel lockdown is **off**: `/sys/kernel/security/lockdown` read `[none]
+  integrity confidentiality` (observed, date not recorded: [Audits](#audits)).
+  Module signature enforcement is not configured either; the NVIDIA modules
+  would have to be signed first.
 - A TPM 2.0 is present, but nothing uses it: no measured boot and no TPM-bound
   disk unlock. The disk always needs the passphrase.
 
@@ -147,6 +125,9 @@ built-in code and does not stop a privileged module insertion.
 - `nixpkgs` follows `nixos-unstable`: fixes arrive quickly, so do regressions.
 - The extra substituter `nix-community.cachix.org` is trusted through the option
   `nix.settings`.
+- `lanzaboote` runs as root at every rebuild and signs the boot files with the
+  Secure Boot keys: its bumps are the most security-relevant in a `flake.lock`
+  diff.
 - `nixpak` is a flake input and runs as the user on every launch of a sandboxed
   application: treat bumps of it, `xdg-dbus-proxy` and `bubblewrap` as
   security-relevant when reading a `flake.lock` diff.
@@ -154,11 +135,9 @@ built-in code and does not stop a privileged module insertion.
   bumps the same way. The `secrets` input is a private repository fetched over
   SSH. It is read as plain files (`flake = false`), so it adds ciphertext to the
   evaluation, not code.
-
-## Backups and recovery
-
-Restic encrypts on the client, so the Storage Box holds only ciphertext. The
-Storage Box host key is pinned.
+- On macOS, Homebrew casks and Mac App Store applications (Syncthing,
+  Bitwarden, LocalSend) are outside `flake.lock`: they are not pinned and
+  update on their own schedule.
 
 ## Known gaps and remaining work
 
@@ -208,8 +187,25 @@ restic-storagebox snapshots
 Results of the checks above; those of the secrets, sandboxes and backups are in
 their own documents. Each holds for the configuration it ran against.
 
-|Date      |Host |Check                                       |How                    |Status |Findings                                                |
-|----------|-----|--------------------------------------------|-----------------------|-------|--------------------------------------------------------|
-|2026-11-13|alpha|Listening sockets besides the firewall ports|Not recorded           |checked|Only the loopback services listed under Network exposure|
-|—         |alpha|Live firewall ruleset                       |`sudo nft list ruleset`|pending|The port table comes from the evaluated configuration   |
-|—         |beta |macOS settings in the architecture table    |—                      |pending|—                                                       |
+To check:
+
+- `alpha`: live firewall ruleset against the port table (`sudo nft list
+  ruleset`).
+- `alpha`: Secure Boot and signatures on the new disk (`bootctl status`, `sudo
+  sbctl verify`).
+- `alpha`: LUKS parameters of the new disk (`sudo cryptsetup luksDump`);
+  expected: a 512-bit key and `argon2id`.
+- `alpha`: mount options (`findmnt /boot /home /.snapshots /tmp`).
+- `alpha`: boot parameters and sysctls (`cat /proc/cmdline`, the `sysctl`
+  command above).
+- `alpha`: lockdown state (`cat /sys/kernel/security/lockdown`); `[none]` was
+  seen before, without a recorded date.
+- `alpha`: listening sockets again, on the new install (`ss -tulpn`).
+- `alpha`: the CoolerControl password is not the default one.
+- `beta`: the macOS settings in the architecture table.
+
+|Date      |Host |Check                                          |How                                                                                                |Findings                                                |
+|----------|-----|-----------------------------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+|2026-11-13|alpha|Listening sockets besides the firewall ports   |Not recorded                                                                                       |Only the loopback services listed under Network exposure|
+|2026-11-16|alpha|Open ports in the evaluated configuration      |`nix eval` of `networking.firewall.allowed{TCP,UDP}Ports` and `allowedUDPPortRanges`, run on `beta`|The ports in the Network exposure table and no others   |
+|2026-11-16|alpha|Boot menu editor in the evaluated configuration|`nix eval` of `boot.lanzaboote.settings`, run on `beta`                                            |`editor` is `false`                                     |

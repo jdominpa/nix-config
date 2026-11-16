@@ -181,7 +181,10 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   host listens on at `0.0.0.0` is reachable. Syncthing authenticates by device
   certificate.
 - **Brave's host network** reaches every service on the host's loopback:
-  Syncthing's GUI (needs credentials), CUPS and CoolerControl.
+  Syncthing's GUI (needs credentials), CUPS and CoolerControl. Sharing the
+  network namespace also exposes the host's abstract Unix sockets; whether one
+  that matters is listening (the X11 socket of `xwayland-satellite`) is not
+  checked ([Audits](#audits)).
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
@@ -212,9 +215,14 @@ Then add the application to the table above and to its section, and to
 Each check holds for the configuration it ran against: rerun it after a change
 to the shared policy, the helper, niri or the app's sandbox.
 
-|Date      |Host |Check                                               |How                                     |Status |Findings                                                                                                                                                                             |
-|----------|-----|----------------------------------------------------|----------------------------------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper       |checked|`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
-|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan|checked|Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
-|—         |alpha|Brave on the restricted socket                      |—                                       |pending|—                                                                                                                                                                                    |
-|—         |alpha|Vesktop on the restricted socket                    |—                                       |pending|—                                                                                                                                                                                    |
+To check:
+
+- `alpha`: Brave on the restricted socket.
+- `alpha`: Vesktop on the restricted socket.
+- `alpha`: abstract Unix sockets reachable from Brave (`ss -xl | grep '@'` on
+  the host, then a connection from inside the sandbox).
+
+|Date      |Host |Check                                               |How                                     |Findings                                                                                                                                                                             |
+|----------|-----|----------------------------------------------------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper       |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
+|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan|Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |

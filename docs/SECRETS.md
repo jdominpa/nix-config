@@ -30,12 +30,16 @@ of `nix-secrets`). sops-nix and the `sops` CLI read the same key file.
 
 - **One key, not one per host:** the key is on every machine where secrets are
   edited, readable by any process of the user, so per-host keys would add steps
-  without narrowing anything.
+  without narrowing anything. The tradeoff is that any process of the user can
+  decrypt every file.
 - **Per-host keys become worth it** for a host where secrets are not edited (a
   server, a CI runner), for secrets some hosts must not read, or before the
-  first `rootOnly` secret ([Limits](#limits)). Per host: create a root-only key
-  in `/var/lib/sops-nix/key.txt`, add it as a recipient of the host's file,
-  `sops updatekeys` it, and point `sops.age.keyFile` at it.
+  first `rootOnly` secret, which otherwise protects only the decrypted file.
+  Per host: create a root-only key in `/var/lib/sops-nix/key.txt`, add it as a
+  recipient of the host's file, `sops updatekeys` it, and point
+  `sops.age.keyFile` at it.
+- **The private repository only hides the ciphertext.** With read access to it
+  and a leaked key, every past version can be decrypted.
 - No SSH keys: sshd is off (`sops.age.sshKeyPaths = [ ]`), and an SSH agent only
   signs, it cannot decrypt.
 
@@ -58,7 +62,8 @@ sops.secrets."<name>" = config.secretPresets.userReadable;
 ```
 
 The group keeps the sops-nix default (the owner's primary group on NixOS,
-`staff` on macOS), and with mode `0400` it gets no access.
+`staff` on macOS), and with mode `0400` it gets no access. A `userReadable`
+secret is readable by any process of the user.
 
 A host's file must contain every secret declared by the modules it imports. What
 happens when one is missing is not checked yet ([Audits](#audits)).
@@ -77,19 +82,19 @@ example:
     -----END OPENSSH PRIVATE KEY-----
 ```
 
-Edit with the `sops` CLI from inside `nix-secrets`, because `.sops.yaml` is
-looked up from the current directory. It opens an editor and encrypts on save;
-for a new file the creation rule for its name picks the recipients:
+Edit a host's secrets file with the `sops` CLI inside `nix-secrets`
+(`.sops.yaml` is looked up from the current directory). For a new host file the
+creation rule for its name picks the recipients:
 
 ```sh
 cd ~/dev/nix-secrets
-nix shell nixpkgs#sops -c sops <host>.yaml
+nix run nixpkgs#sops <host>.yaml
 git commit -am "..." && git push
 ```
 
-Then, in this repository, declare the secret in the module that reads it
+Then, in this repository, declare the secret in the module that needs it
 (`sops.secrets."<name>"`, set to one of the
-[presets](#decrypted-file-permissions)) and move the lock:
+[presets](#decrypted-file-permissions)) and update `flake.lock`:
 
 ```sh
 just update secrets
@@ -102,22 +107,9 @@ the lock moves. An edit therefore takes two commits, one in `nix-secrets` and a
 ## Deploying secrets
 
 `modules/system/core/secrets.nix` imports the sops-nix module of each platform
-and points it at the host's file and key:
-
-```nix
-sops = {
-  defaultSopsFile = "${inputs.secrets}/${config.networking.hostName}.yaml";
-  age = {
-    inherit keyFile; # the key file of the platform, see the table above
-    sshKeyPaths = [ ]; # only the key above
-  };
-  gnupg.sshKeyPaths = [ ];
-};
-```
-
-On NixOS it also sets `fileSystems."/home".neededForBoot = true`, since secrets
-are decrypted at boot before the other file systems are mounted, and the key is
-on `/home`.
+and points it at the host's file and key. On NixOS it also sets
+`fileSystems."/home".neededForBoot = true`, since secrets are decrypted at boot
+before the other file systems are mounted, and the key is on `/home`.
 
 Evaluation fetches `nix-secrets` over SSH. On NixOS, `just switch` evaluates as
 the user (`nixos-rebuild --sudo`); on macOS, `darwin-rebuild` runs as root and
@@ -126,9 +118,9 @@ fetches it too (checked, [Audits](#audits)).
 ## Adding a new host
 
 Installing the system itself, including how the installer gets the private
-repository, is in the [README](../README.md#deployment).
+repository, is in the [README.md](../README.md#deployment).
 
-1. **Restore the personal key** from its recovery copy to the key file of the
+1. **Add the personal key** from its recovery copy to the key file of the
    platform:
 
    ```sh
@@ -186,40 +178,30 @@ host's own:
 - **A secret is missing in `/run/secrets`:** it is not declared in a module, or
   the switch has not run since the lock was bumped. `ls -l /run/secrets/…` shows
   the owner and mode.
-- **macOS:** a launchd daemon (`sops-install-secrets`) also writes the secrets
-  at boot. Where its output goes is not checked yet.
-
-## Limits
-
-- **Decrypted secrets are readable by their owner:** any process of the user can
-  read secrets using the `userReadable` preset.
-- **The key is readable by the user**, so any process of the user can decrypt
-  every file. `rootOnly` then protects only the decrypted file: give the host a
-  root-only key first.
-- **The private repository only hides the ciphertext.** With read access to it
-  and a leaked key, every past version can be decrypted.
-- **Evaluation needs GitHub access:** without the SSH agent (a fresh install,
-  `just check` elsewhere), pass a clone with `--override-input`.
-- **`sops-nix` runs as root** at every activation.
 
 ## Audits
 
 Each check holds for the configuration it ran against: rerun it after a change
 to `secrets.nix`, the `sops-nix` input or the key handling.
 
-|Date      |Host |Check                                              |How                                                                                                                 |Status |Findings                                                                                                                                                                   |
-|----------|-----|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Build without the key                              |Key file renamed, then built                                                                                        |checked|Builds: the key is read only at activation                                                                                                                                 |
-|2026-11-14|alpha|Switch without the key                             |Key file renamed, `just switch`                                                                                     |checked|Completes but exits non-zero: `setupSecrets` fails with `cannot read keyfile`, the other snippets run, no new generation is written and `/run/secrets` keeps generation `1`|
-|2026-11-14|alpha|Switch after restoring the key                     |`just switch`                                                                                                       |checked|Writes generation `2` and prunes `1`                                                                                                                                       |
-|2026-11-14|beta |Key only at the macOS path                         |`darwin-rebuild switch`, then `ls -l /run/secrets`                                                                  |checked|Completes; `/run/secrets` points to `/run/secrets.d/2`, owned by root; no `~/.config/sops/age/keys.txt` exists                                                             |
-|2026-11-14|beta |Root fetches `nix-secrets`                         |`sudo ssh -T git@github.com`; `sudo nix flake prefetch --refresh` on the input URL, which bypasses the fetcher cache|checked|Authenticates as `jdominpa` and fetches the input into the store                                                                                                           |
-|2026-11-14|beta |Metadata of the restic secrets                     |`stat` on `/run/secrets/restic/*`, without reading the values                                                       |checked|Owner `jdominpa`, mode `400`, not empty: the `userReadable` preset                                                                                                         |
-|2026-11-14|beta |Switch without the key, then with it               |Key file renamed, `just switch`, key restored, `just switch`                                                        |checked|As on `alpha`: the previous generation is kept, then a new one is written and the old one pruned                                                                           |
-|2026-11-14|beta |Key-restore commands of Adding a new host          |Run in zsh against a temporary `HOME` with a dummy key                                                              |checked|`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                  |
-|2026-11-14|beta |Reboot without the key                             |Key file renamed, reboot                                                                                            |checked|No `/run/secrets`; `/run/secrets.d` remounted but empty; the system comes up normally                                                                                      |
-|2026-11-14|beta |`/run/secrets.d` is a RAM disk                     |`hdiutil info`; `sysctl vm.swapusage`                                                                               |checked|`image-path : ram://131072` (64 MiB) and no shadow file; swap is `(encrypted)`                                                                                             |
-|—         |alpha|Boot without the key                               |—                                                                                                                   |pending|Expected: empty `/run/secrets`, normal boot                                                                                                                                |
-|—         |both |Key missing from the host's file                   |—                                                                                                                   |pending|Expected: activation fails rather than leaving the secret out                                                                                                              |
-|—         |beta |Output of the `sops-install-secrets` daemon at boot|—                                                                                                                   |pending|—                                                                                                                                                                          |
-|—         |beta |Install from scratch                               |—                                                                                                                   |pending|—                                                                                                                                                                          |
+To check:
+
+- `alpha`: boot without the key. Expected: empty `/run/secrets`, normal boot.
+- both: a declared secret missing from the host's file. Expected: activation
+  fails rather than leaving the secret out.
+- `beta`: where the output of the `sops-install-secrets` launchd daemon, which
+  also writes the secrets at boot, goes.
+- `beta`: install from scratch.
+
+|Date      |Host |Check                                    |How                                                                                                                 |Findings                                                                                                                                                                   |
+|----------|-----|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Build without the key                    |Key file renamed, then built                                                                                        |Builds: the key is read only at activation                                                                                                                                 |
+|2026-11-14|alpha|Switch without the key                   |Key file renamed, `just switch`                                                                                     |Completes but exits non-zero: `setupSecrets` fails with `cannot read keyfile`, the other snippets run, no new generation is written and `/run/secrets` keeps generation `1`|
+|2026-11-14|alpha|Switch after restoring the key           |`just switch`                                                                                                       |Writes generation `2` and prunes `1`                                                                                                                                       |
+|2026-11-14|beta |Key only at the macOS path               |`darwin-rebuild switch`, then `ls -l /run/secrets`                                                                  |Completes; `/run/secrets` points to `/run/secrets.d/2`, owned by root; no `~/.config/sops/age/keys.txt` exists                                                             |
+|2026-11-14|beta |Root fetches `nix-secrets`               |`sudo ssh -T git@github.com`; `sudo nix flake prefetch --refresh` on the input URL, which bypasses the fetcher cache|Authenticates as `jdominpa` and fetches the input into the store                                                                                                           |
+|2026-11-14|beta |Metadata of the restic secrets           |`stat` on `/run/secrets/restic/*`, without reading the values                                                       |Owner `jdominpa`, mode `400`, not empty: the `userReadable` preset                                                                                                         |
+|2026-11-14|beta |Switch without the key, then with it     |Key file renamed, `just switch`, key restored, `just switch`                                                        |As on `alpha`: the previous generation is kept, then a new one is written and the old one pruned                                                                           |
+|2026-11-14|beta |Key-restore commands of Adding a new host|Run in zsh against a temporary `HOME` with a dummy key                                                              |`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                  |
+|2026-11-14|beta |Reboot without the key                   |Key file renamed, reboot                                                                                            |No `/run/secrets`; `/run/secrets.d` remounted but empty; the system comes up normally                                                                                      |
+|2026-11-14|beta |`/run/secrets.d` is a RAM disk           |`hdiutil info`; `sysctl vm.swapusage`                                                                               |`image-path : ram://131072` (64 MiB) and no shadow file; swap is `(encrypted)`                                                                                             |
