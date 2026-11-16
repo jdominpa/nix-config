@@ -30,9 +30,14 @@ let
           content = {
             type = "luks";
             name = "crypted";
-            # TRIM for SSDs; slightly less secure, better performance
-            settings.allowDiscards = true;
-            # Add boot.initrd.luks.devices so initrd prompts for passphrase at boot
+            settings = {
+              # TRIM for SSDs; slightly less secure, better performance
+              allowDiscards = true;
+              # Try the TPM2 keyslot first; the passphrase still works as
+              # recovery
+              crypttabExtraOpts = [ "tpm2-device=auto" ];
+            };
+            # Add boot.initrd.luks.devices so initrd prompts for the PIN at boot
             initrdUnlock = true;
             extraFormatArgs = [
               "--type luks2"
@@ -104,10 +109,13 @@ let
           settings = {
             allowDiscards = true;
             # Boot does not wait for it if the disk is missing
-            crypttabExtraOpts = [ "nofail" ];
+            crypttabExtraOpts = [
+              "nofail"
+              "tpm2-device=auto"
+            ];
           };
-          # Unlocked in the initrd too: with the same passphrase as the system
-          # disk, systemd reuses the one typed at boot
+          # Unlocked in the initrd too: systemd reuses the PIN typed for the
+          # system disk
           initrdUnlock = true;
           extraFormatArgs = [
             "--type luks2"
