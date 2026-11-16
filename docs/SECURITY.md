@@ -31,22 +31,19 @@ noticeable performance cost. As implemented:
 
 ## Architecture and trust boundaries
 
-|Boundary      |Current design                                                                                                                                                                                                                                                                                                    |
-|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|Data at rest  |LUKS2 over the whole system partition (`aes-xts-plain64`, 512-bit key, `argon2id`, 5 s), with btrfs subvolumes `@`, `@nix`, `@home`, `@snapshots` and `@swap` inside, so swap is encrypted too. Unlocked by passphrase in the initrd. `allowDiscards` is on: TRIM reveals which blocks are in use. On `alpha`, the data disk (`@games`, `@backup`) has its own LUKS2 with the same settings and passphrase, unlocked in the initrd with the same prompt; it is `nofail`, so boot does not need it|
-|Mounts        |`/boot` is not encrypted; its contents are signed, and it is mounted `noexec,nosuid,nodev` with `0600`/`0700` permissions. `/home` is `nosuid,nodev`, `/.snapshots` and `/data/backup` `noexec,nosuid,nodev`, `/data/games` `nosuid,nodev`, `/tmp` a tmpfs emptied at boot                                                                                         |
-|Boot chain    |Lanzaboote signs the bootloader and the unified kernel images; Secure Boot is enabled with the keys of the user (`/var/lib/sbctl`). The boot menu editor is disabled, so `init=/bin/sh` cannot be appended at the menu. Ten generations are kept (`configurationLimit`)                                           |
-|Firmware      |`fwupd` is enabled, which also delivers Secure Boot revocation list (dbx) updates. The firmware administrator password is a manual step ([README](../README.md)) and cannot be checked from the OS                                                                                                                |
-|Kernel        |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                                                |
-|Administration|Only `wheel` may execute `sudo`. The btrbk module adds `NOPASSWD` rules for a `btrbk` user, unusable since it is not in `wheel`; btrbk runs as root instead. The user is in `wheel` and `networkmanager`. `sshd` is disabled on both hosts; if it is enabled, the settings in `hardening.nix` allow key-only logins for the one user, no root login                                                                                           |
-|Network       |Host firewall on; the open ports are listed below. Services that only need the machine itself listen on loopback                                                                                                                                                                                                  |
-|Nix           |Only `wheel` may use the Nix daemon (`allowed-users`); `trusted-users` is the default (root). Every flake input is pinned in `flake.lock`. Extra binary cache: `nix-community.cachix.org`, with its key pinned. Unfree packages are allowed                                                                       |
-|Session       |`noctalia-greeter` as login manager. noctalia locks the screen after 10 minutes of idle time and turns the screens off after 11; it also provides the polkit agent                                                                                                                                                |
-|Desktop apps  |Vesktop, Brave and mpv run in nixpak sandboxes ([SANDBOXING.md](SANDBOXING.md)); everything else runs with the full access of the user                                                                                                                                                                            |
-|Secrets       |sops-nix; user secrets and the age key are readable by any process of the user ([SECRETS.md](SECRETS.md)). Brave's cookie and password key comes from the Secret portal                                                                                                                                           |
-|Backups       |restic to a Hetzner Storage Box, encrypted on the client, and btrbk snapshots of `/home` on both local disks ([BACKUPS.md](BACKUPS.md))                                                                                                                                                                                                                               |
-|Recovery      |NixOS generations (10 in the boot menu; weekly garbage collection of generations older than 7 days, so about a week of rollback), btrbk and restic snapshots                                                                                                                                                            |
-|macOS         |Application firewall on with stealth mode, signed system services allowed, guest login off, automatic macOS updates, Remote Login off. FileVault and the screen lock delay are manual steps ([README](../README.md)); none of this was checked on the machine                                                     |
+|Boundary            |Current design                                                                                                                                                                                                                                                                            |Limitation                                                                                                                                                                                                                                                                                                                                                     |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Data at rest        |LUKS2 (`aes-xts-plain64`, 512-bit key, `argon2id`) on both disks, unlocked in the initrd by a TPM2 keyslot with a PIN bound to PCR 7; the passphrase keyslot is the recovery. The data disk is `nofail`                                                                                   |Keyslots are enrolled by hand. Only PCR 7 is bound: anything the enrolled keys sign unlocks with the PIN, and a PCR 7 change needs the passphrase and a new enrollment ([Boot integrity](#boot-integrity)). TRIM (`allowDiscards`) reveals which blocks are in use. After a wrong PIN the data disk can stay locked; unlock it with `systemd-cryptsetup attach`|
+|Boot and firmware   |Lanzaboote signs the bootloader and kernel images with the user's Secure Boot keys; the boot menu editor is disabled; 10 generations are kept. `fwupd` updates the firmware and the dbx. The firmware password is a manual step ([README](../README.md))                                  |Every kept generation boots, older vulnerable kernels included. The signing keys are files readable by root. `sbctl verify` is not run automatically and the firmware password cannot be checked from the OS                                                                                                                                                   |
+|Kernel              |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                        |No hardened kernel, lockdown or module signature enforcement (the NVIDIA modules are unsigned). No AppArmor, SELinux, USBGuard or auditd                                                                                                                                                                                                                       |
+|Administration      |Only `wheel` may use `sudo`. `sshd` is disabled; if enabled, key-only logins for the user, no root. btrbk runs as root                                                                                                                                                                    |The user password gives root and is also the disk PIN. The btrbk module adds unusable `NOPASSWD` rules for a `btrbk` user                                                                                                                                                                                                                                      |
+|Network             |Firewall on, open ports [below](#network-exposure). Local-only services listen on loopback                                                                                                                                                                                                |The Steam Remote Play ports are open because Steam is unsandboxed. The live ruleset is not checked automatically                                                                                                                                                                                                                                               |
+|Supply chain        |Only `wheel` may use the Nix daemon; the user is not in `trusted-users`. Every input is pinned in `flake.lock`. `lanzaboote` and `sops-nix` run as root at every rebuild, `nixpak` with every sandboxed app: review their bumps. Homebrew casks and App Store apps on macOS are not pinned|                                                                                                                                                                                                                                                                                                                                                               |
+|Session             |greetd logs the user in once per boot without a password. noctalia locks the screen after 10 minutes idle and is the polkit agent                                                                                                                                                         |The TPM PIN is the only secret at boot. After a logout the greeter needs a greetd restart or a reboot                                                                                                                                                                                                                                                          |
+|Desktop apps        |Vesktop, Brave and mpv run in nixpak sandboxes ([SANDBOXING.md](SANDBOXING.md))                                                                                                                                                                                                           |Everything else, Steam, Emacs, Bitwarden and the terminal included, reaches the whole home directory ([sandbox limits](SANDBOXING.md#limits))                                                                                                                                                                                                                  |
+|Secrets             |sops-nix ([SECRETS.md](SECRETS.md)). Brave's cookie and password key comes from the Secret portal                                                                                                                                                                                         |User secrets and the age key are readable by any process of the user                                                                                                                                                                                                                                                                                           |
+|Backups and recovery|NixOS generations, encrypted backups with restic to a Hetzner Storage Box; btrbk snapshots of `/home` on both local disks ([BACKUPS.md](BACKUPS.md))                                                                                                                                      |A compromised user process can delete the restic repository; only the Storage Box snapshots undo that, within 10 days. The btrbk copies stay on the same machine. A rollback does not undo compromised data                                                                                                                                                    |
+|macOS               |Application firewall with stealth mode, guest login and Remote Login off, automatic updates. FileVault and the screen lock delay are set by hand ([README](../README.md))                                                                                                                 |Not checked on the machine                                                                                                                                                                                                                                                                                                                                     |
 
 Sources: [hardening](../modules/system/core/hardening.nix),
 [secure boot](../modules/system/core/secure-boot.nix),
@@ -70,13 +67,13 @@ configuration, not in the running ruleset: [Audits](#audits)).
 |53317/tcp, 53317/udp                             |LocalSend                    |`programs.localsend`                    |
 |27036–27037/tcp, 27031–27036/udp, 10400–10401/udp|Steam Remote Play            |`programs.steam.remotePlay.openFirewall`|
 
-Listening sockets besides the ports above, as last observed
-([Audits](#audits)): Syncthing's GUI on `127.0.0.1:8384` (TLS, requires
-credentials), CUPS on `127.0.0.1:631` and `[::1]:631`, and the CoolerControl
-daemon on `127.0.0.1:11987` and `[::1]:11987` (answers 401 without credentials;
-whether its default password was changed is not checked).
-Loopback is not a boundary against the user's own unsandboxed applications or
-against sandboxes that share the host network (Brave).
+Listening sockets besides the ports above, as last observed ([Audits](#audits)):
+Syncthing's GUI on `127.0.0.1:8384` (TLS, requires credentials), CUPS on
+`127.0.0.1:631` and `[::1]:631`, and the CoolerControl daemon on
+`127.0.0.1:11987` and `[::1]:11987` (answers 401 without credentials; whether
+its default password was changed is not checked). Loopback is not a boundary
+against the user's own unsandboxed applications or against sandboxes that share
+the host network (Brave).
 
 Bluetooth is powered on at boot (`hardware.bluetooth.powerOnBoot`) and CUPS is
 enabled; neither is restricted further.
@@ -113,49 +110,16 @@ not stop a privileged module insertion.
 
 ## Boot integrity
 
-- Kernel lockdown is **off**: `/sys/kernel/security/lockdown` read `[none]
-  integrity confidentiality` (observed, date not recorded: [Audits](#audits)).
-  Module signature enforcement is not configured either; the NVIDIA modules
-  would have to be signed first.
-- A TPM 2.0 is present, but nothing uses it: no measured boot and no TPM-bound
-  disk unlock. The disk always needs the passphrase.
+The TPM2 releases the disk key only with the PIN and an unchanged PCR 7, which
+measures the Secure Boot state and keys. PCR 7 changes with a dbx update from
+`fwupd`, new `sbctl` keys or toggling Secure Boot. The boot then asks for the
+passphrase, and the TPM2 keyslot must be enrolled again on `disk-system-luks`
+and `disk-data-luks`:
 
-## Supply chain
-
-- `flake.lock` pins every input. Updates are a deliberate `just update`.
-- `nixpkgs` follows `nixos-unstable`: fixes arrive quickly, so do regressions.
-- The extra substituter `nix-community.cachix.org` is trusted through the option
-  `nix.settings`.
-- `lanzaboote` runs as root at every rebuild and signs the boot files with the
-  Secure Boot keys: its bumps are the most security-relevant in a `flake.lock`
-  diff.
-- `nixpak` is a flake input and runs as the user on every launch of a sandboxed
-  application: treat bumps of it, `xdg-dbus-proxy` and `bubblewrap` as
-  security-relevant when reading a `flake.lock` diff.
-- `sops-nix` runs as root at every activation to decrypt the secrets: treat its
-  bumps the same way. The `secrets` input is a private repository fetched over
-  SSH. It is read as plain files (`flake = false`), so it adds ciphertext to the
-  evaluation, not code.
-- On macOS, Homebrew casks and Mac App Store applications (Syncthing,
-  Bitwarden, LocalSend) are outside `flake.lock`: they are not pinned and
-  update on their own schedule.
-
-## Known gaps and remaining work
-
-- **No mandatory access control.** AppArmor, SELinux, USBGuard and auditd are
-  not configured. Systemd service sandboxing is whatever nixpkgs ships.
-- **Lockdown, module signing and TPM use are not enabled** (see Boot integrity).
-- **Most applications are unsandboxed**, including Steam, Emacs, Bitwarden and
-  the terminal. A compromise of any of them reaches the whole home directory,
-  the browser profiles, etc. For the sandbox limits see
-  [SANDBOXING.md](SANDBOXING.md#limits).
-- **Firewall ports for Steam Remote Play** are open only because Steam runs
-  unsandboxed; if it is sandboxed again they need a second look.
-- **Nothing verifies the live firewall ruleset or `sbctl verify`**
-  automatically. Run the checks below after a rebuild that touches them.
-- **A compromised user process can delete the backup repository**: restic runs
-  as the user. Only the Storage Box snapshots undo that, within 10 days, and
-  they are configured in the Hetzner Console, outside this repository.
+```sh
+sudo systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto \
+  --tpm2-with-pin=yes --tpm2-pcrs=7 /dev/disk/by-partlabel/<label>
+```
 
 ## Checking the live system
 
@@ -173,6 +137,10 @@ sudo sysctl kernel.kptr_restrict kernel.yama.ptrace_scope \
 # Firewall and listening sockets
 sudo nft list ruleset | grep -E 'dport|policy'
 ss -tulpn
+
+# Disk keyslots (expected: one password and one tpm2 slot per disk)
+sudo systemd-cryptenroll /dev/disk/by-partlabel/disk-system-luks
+sudo systemd-cryptenroll /dev/disk/by-partlabel/disk-data-luks
 
 # Mounts
 findmnt /boot /home /tmp /.snapshots /data/games /data/backup
@@ -203,10 +171,21 @@ To check:
   seen before, without a recorded date.
 - `alpha`: listening sockets again, on the new install (`ss -tulpn`).
 - `alpha`: the CoolerControl password is not the default one.
+- `alpha`: TPM2 enrollment of both disks (`sudo cryptsetup luksDump` on each);
+  expected: one password keyslot and a `systemd-tpm2` token with `tpm2-pcrs: 7`
+  and `tpm2-pin: true`.
+- `alpha`: the recovery passphrase of both disks after the TPM2 enrollment
+  (`sudo cryptsetup open --test-passphrase --disable-external-tokens` on each).
 - `beta`: the macOS settings in the architecture table.
 
-|Date      |Host |Check                                          |How                                                                                                |Findings                                                |
-|----------|-----|-----------------------------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------------------|
-|2026-11-13|alpha|Listening sockets besides the firewall ports   |Not recorded                                                                                       |Only the loopback services listed under Network exposure|
-|2026-11-16|alpha|Open ports in the evaluated configuration      |`nix eval` of `networking.firewall.allowed{TCP,UDP}Ports` and `allowedUDPPortRanges`, run on `beta`|The ports in the Network exposure table and no others   |
-|2026-11-16|alpha|Boot menu editor in the evaluated configuration|`nix eval` of `boot.lanzaboote.settings`, run on `beta`                                            |`editor` is `false`                                     |
+|Date      |Host |Check                                                             |How                                                                                                |Findings                                                                                                                                                           |
+|----------|-----|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-13|alpha|Listening sockets besides the firewall ports                      |Not recorded                                                                                       |Only the loopback services listed under Network exposure                                                                                                           |
+|2026-11-16|alpha|Open ports in the evaluated configuration                         |`nix eval` of `networking.firewall.allowed{TCP,UDP}Ports` and `allowedUDPPortRanges`, run on `beta`|The ports in the Network exposure table and no others                                                                                                              |
+|2026-11-16|alpha|Boot menu editor in the evaluated configuration                   |`nix eval` of `boot.lanzaboote.settings`, run on `beta`                                            |`editor` is `false`                                                                                                                                                |
+|2026-11-16|alpha|Recovery passphrase of the system disk, before the TPM2 enrollment|`cryptsetup open --test-passphrase --disable-external-tokens`                                      |Accepted                                                                                                                                                           |
+|2026-11-16|alpha|TPM2 unlock of both disks                                         |Boot journal of the 16:49 boot                                                                     |One PIN prompt; `crypted` and `cryptdata` unlocked, no passphrase asked                                                                                            |
+|2026-11-16|alpha|Wrong PIN at boot                                                 |Boot journal of the 18:26 boot                                                                     |The system disk asked again and unlocked; the data disk stayed locked, its prompt was dropped at the switch to the real root, `/data/*` were not mounted (`nofail`)|
+|2026-11-16|alpha|Auto-login                                                        |`loginctl list-sessions` and the user's report, 18:26 boot                                         |Session on `tty1` without the greeter                                                                                                                              |
+|2026-11-16|alpha|Login keyring after auto-login                                    |`busctl --user get-property` of `Locked` on the default collection; header of `login.keyring`      |Unlocked; the file is in the unencrypted `[keyring]` format                                                                                                        |
+|2026-11-16|alpha|Brave's secrets after auto-login                                  |`os_crypt.portal.prev_init_success` in `Local State`                                               |`true`, written in the auto-login session                                                                                                                          |

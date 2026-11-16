@@ -48,10 +48,10 @@ change that touches the first column, make both commits.
 | `modules/system/core/hardening.nix` (sysctls, kernel parameters, modprobe)    | `docs/SECURITY.md`, kernel baseline     |
 | Firewall or any service that opens a port or listens                          | `docs/SECURITY.md`, network exposure    |
 | `secure-boot.nix`, `disko.nix`, the boot loader, fwupd, TPM or lockdown       | `docs/SECURITY.md`, architecture / boot |
-| `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, supply chain        |
+| `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, Nix and supply chain row |
 | `restic.nix`: backed-up paths, schedule, retention, monitoring, credentials   | `docs/BACKUPS.md`, and the summary in `docs/SECURITY.md` |
 | `btrfs.nix` (btrbk, scrub)                                                   | `docs/BACKUPS.md`, local snapshots      |
-| `secrets.nix`, a `sops.secrets` declaration, the `secrets` or `sops-nix` input | `docs/SECRETS.md`, and `docs/SECURITY.md` supply chain |
+| `secrets.nix`, a `sops.secrets` declaration, the `secrets` or `sops-nix` input | `docs/SECRETS.md`, and the `docs/SECURITY.md` Nix and supply chain row |
 | `ssh.nix`, sudo, users and groups, login manager, screen lock                 | `docs/SECURITY.md`, architecture        |
 | `modules/system/desktop/nixpak/` (the shared sandbox policy, the Wayland helper) | `docs/SANDBOXING.md`, shared boundaries and Wayland |
 | A sandboxed app (`security.nixpak.apps.*`): paths, portals, D-Bus, network, sockets | `docs/SANDBOXING.md`, its table and section, plus limits |
@@ -69,9 +69,10 @@ Rules for the docs:
 - Describe what the source configures and what was checked on a running system
   separately. Never write that a control is active or verified unless it was
   checked, and say how and when (date). Mark what is unverified.
-- State limits and known gaps next to the control, not only the benefits.
+- State limits next to the control, not only the benefits: in `SECURITY.md`
+  the "Limitation" column of the architecture table.
 - When a control is removed or reverted, delete or rewrite its text and record
-  why in the relevant "Not sandboxed" / "Known gaps" section; do not leave
+  why in the relevant "Not sandboxed" section or "Limitation" cell; do not leave
   stale claims.
 - Record every check in the "Audits" section at the end of the document it
   concerns. A check still to run is an item of its "To check" list: host, check,
