@@ -203,9 +203,12 @@ rerun it after a change to `restic.nix` or `btrfs.nix`.
 
 To check:
 
-- both: restore drill ([Test restore](#test-restore)).
+- `beta`: restore drill ([Test restore](#test-restore)).
 
-|Date      |Host |Check                                                 |How                                                                             |Findings                                                                                     |
-|----------|-----|------------------------------------------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-|2026-11-09|beta |The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log|397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given|
-|2026-11-15|alpha|btrbk snapshot and copy                               |`systemctl start btrbk-home`, then the timer run; `journalctl -u btrbk-home`    |checked                                                                                      |
+|Date      |Host |Check                                                 |How                                                                                                                                                   |Findings                                                                                                   |
+|----------|-----|------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+|2026-11-09|beta |The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log                                                                      |397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given              |
+|2026-11-15|alpha|btrbk snapshot and copy                               |`systemctl start btrbk-home`, then the timer run; `journalctl -u btrbk-home`                                                                          |checked                                                                                                    |
+|2026-11-16|alpha|Incremental btrbk copy                                |`journalctl -u btrbk-home`, first run of the day (15:36)                                                                                              |`home.20261116T1536` sent to `/data/backup` as incremental; the later hourly runs only made local snapshots|
+|2026-11-16|alpha|Restore from a btrbk snapshot                         |A `Documents` folder copied out of `/.snapshots/home.20261116T1900`, and the same folder in `/data/backup/home.20261116T1536`, compared with `diff -r`|Both identical to the live folder; the snapshots are readable by the user and read-only                    |
+|2026-11-16|alpha|Restore drill                                         |[Test restore](#test-restore) on a `Documents` folder (6 files) from the snapshot of 15:37                                                            |Identical                                                                                                  |

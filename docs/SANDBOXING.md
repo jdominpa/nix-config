@@ -62,7 +62,8 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
 - **Audio:** The PulseAudio socket (this allows recording). The PipeWire socket
   is opt-in.
 - **Display:** A restricted Wayland socket; see [Wayland](#wayland).
-- **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices.
+- **Not granted:** X11 (except through the host network: [Limits](#limits)),
+  `/dev/input`, raw USB, serial or camera devices.
 
 ## Applications
 
@@ -148,8 +149,8 @@ memory.
 - The socket lives as long as any process of the sandbox does; the helper
   removes its path in `$XDG_RUNTIME_DIR` when the launched command exits.
 
-The restricted socket has been checked with `wayland-info` and mpv; Brave and
-Vesktop have not been checked on it yet ([Audits](#audits)).
+The restricted socket has been checked with `wayland-info`, mpv and Brave;
+Vesktop has not been checked on it yet ([Audits](#audits)).
 
 ## Browser secrets
 
@@ -182,9 +183,11 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   certificate.
 - **Brave's host network** reaches every service on the host's loopback:
   Syncthing's GUI (needs credentials), CUPS and CoolerControl. Sharing the
-  network namespace also exposes the host's abstract Unix sockets; whether one
-  that matters is listening (the X11 socket of `xwayland-satellite`) is not
-  checked ([Audits](#audits)).
+  network namespace also exposes the host's abstract Unix sockets, and one
+  matters: the X11 socket of `xwayland-satellite`, which asks for no
+  authentication. A compromised Brave can connect to it as an X client and so
+  reach the other X11 applications, which the restricted Wayland socket does not
+  prevent (checked, [Audits](#audits)).
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
@@ -217,12 +220,11 @@ to the shared policy, the helper, niri or the app's sandbox.
 
 To check:
 
-- `alpha`: Brave on the restricted socket.
 - `alpha`: Vesktop on the restricted socket.
-- `alpha`: abstract Unix sockets reachable from Brave (`ss -xl | grep '@'` on
-  the host, then a connection from inside the sandbox).
 
-|Date      |Host |Check                                               |How                                     |Findings                                                                                                                                                                             |
-|----------|-----|----------------------------------------------------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper       |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
-|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan|Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
+|Date      |Host |Check                                               |How                                                                                           |Findings                                                                                                                                                                             |
+|----------|-----|----------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper                                                             |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
+|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan                                                      |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
+|2026-11-16|alpha|Brave on the restricted socket                      |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                              |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                |
+|2026-11-16|alpha|Abstract Unix sockets reachable from Brave          |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`|Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox          |

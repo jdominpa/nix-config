@@ -23,11 +23,9 @@ application can reach; it does not make arbitrary code safe.
 The hardening is meant to be proportionate: small, reversible and without a
 noticeable performance cost. As implemented:
 
-- user namespaces stay enabled (bubblewrap, nixpak and Chromium's own sandbox
-  need them);
-- no hardened kernel, no module signature enforcement, no `init_on_free`;
-- every knob in [hardening.nix](../modules/system/core/hardening.nix) carries a
-  comment saying what it costs and how to back it out.
+- User namespaces stay enabled (bubblewrap, nixpak and Chromium's own sandbox
+  need them).
+- No hardened kernel, no module signature enforcement, no `init_on_free`.
 
 ## Architecture and trust boundaries
 
@@ -59,7 +57,7 @@ Sources: [hardening](../modules/system/core/hardening.nix),
 
 The firewall is enabled and everything not listed is dropped. The ports below
 are opened by the modules named in the last column (checked in the evaluated
-configuration, not in the running ruleset: [Audits](#audits)).
+configuration and in the running ruleset: [Audits](#audits)). Ping is answered.
 
 |Ports                                            |Opened for                   |Source                                  |
 |-------------------------------------------------|-----------------------------|----------------------------------------|
@@ -69,11 +67,11 @@ configuration, not in the running ruleset: [Audits](#audits)).
 
 Listening sockets besides the ports above, as last observed ([Audits](#audits)):
 Syncthing's GUI on `127.0.0.1:8384` (TLS, requires credentials), CUPS on
-`127.0.0.1:631` and `[::1]:631`, and the CoolerControl daemon on
-`127.0.0.1:11987` and `[::1]:11987` (answers 401 without credentials; whether
-its default password was changed is not checked). Loopback is not a boundary
-against the user's own unsandboxed applications or against sandboxes that share
-the host network (Brave).
+`127.0.0.1:631`, and the CoolerControl daemon on `127.0.0.1:11987` and
+`[::1]:11987`, which needs a password and refuses the default one (checked).
+Syncthing also holds two UDP ports picked at random, which the firewall does not
+open. Loopback is not a boundary against the user's own unsandboxed applications
+or against sandboxes that share the host network (Brave).
 
 Bluetooth is powered on at boot (`hardware.bluetooth.powerOnBoot`) and CUPS is
 enabled; neither is restricted further.
@@ -88,7 +86,8 @@ maximum `mmap` ASLR, link and FIFO protections, no ICMP redirects or source
 routing), disables kexec and hibernation, forces page table isolation and blocks
 a list of kernel modules. Some values are already kernel, systemd or NixOS
 defaults; setting them explicitly makes the desired baseline reviewable. The
-values on the running system are not checked ([Audits](#audits)).
+boot parameters and sysctls on the running system match the configuration
+(checked, [Audits](#audits)).
 
 What you notice in daily use:
 
@@ -143,7 +142,9 @@ sudo systemd-cryptenroll /dev/disk/by-partlabel/disk-system-luks
 sudo systemd-cryptenroll /dev/disk/by-partlabel/disk-data-luks
 
 # Mounts
-findmnt /boot /home /tmp /.snapshots /data/games /data/backup
+for m in /boot /home /tmp /.snapshots /data/games /data/backup; do
+  findmnt -n -o TARGET,OPTIONS "$m"
+done
 
 # Backup
 systemctl status restic-backups-storagebox.timer
@@ -158,34 +159,30 @@ their own documents. Each holds for the configuration it ran against.
 
 To check:
 
-- `alpha`: live firewall ruleset against the port table (`sudo nft list
-  ruleset`).
-- `alpha`: Secure Boot and signatures on the new disk (`bootctl status`, `sudo
-  sbctl verify`).
-- `alpha`: LUKS parameters of the new disk (`sudo cryptsetup luksDump`);
-  expected: a 512-bit key and `argon2id`.
-- `alpha`: mount options (`findmnt /boot /home /.snapshots /tmp`).
-- `alpha`: boot parameters and sysctls (`cat /proc/cmdline`, the `sysctl`
-  command above).
-- `alpha`: lockdown state (`cat /sys/kernel/security/lockdown`); `[none]` was
-  seen before, without a recorded date.
-- `alpha`: listening sockets again, on the new install (`ss -tulpn`).
-- `alpha`: the CoolerControl password is not the default one.
-- `alpha`: TPM2 enrollment of both disks (`sudo cryptsetup luksDump` on each);
-  expected: one password keyslot and a `systemd-tpm2` token with `tpm2-pcrs: 7`
-  and `tpm2-pin: true`.
-- `alpha`: the recovery passphrase of both disks after the TPM2 enrollment
-  (`sudo cryptsetup open --test-passphrase --disable-external-tokens` on each).
 - `beta`: the macOS settings in the architecture table.
 
-|Date      |Host |Check                                                             |How                                                                                                |Findings                                                                                                                                                           |
-|----------|-----|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-13|alpha|Listening sockets besides the firewall ports                      |Not recorded                                                                                       |Only the loopback services listed under Network exposure                                                                                                           |
-|2026-11-16|alpha|Open ports in the evaluated configuration                         |`nix eval` of `networking.firewall.allowed{TCP,UDP}Ports` and `allowedUDPPortRanges`, run on `beta`|The ports in the Network exposure table and no others                                                                                                              |
-|2026-11-16|alpha|Boot menu editor in the evaluated configuration                   |`nix eval` of `boot.lanzaboote.settings`, run on `beta`                                            |`editor` is `false`                                                                                                                                                |
-|2026-11-16|alpha|Recovery passphrase of the system disk, before the TPM2 enrollment|`cryptsetup open --test-passphrase --disable-external-tokens`                                      |Accepted                                                                                                                                                           |
-|2026-11-16|alpha|TPM2 unlock of both disks                                         |Boot journal of the 16:49 boot                                                                     |One PIN prompt; `crypted` and `cryptdata` unlocked, no passphrase asked                                                                                            |
-|2026-11-16|alpha|Wrong PIN at boot                                                 |Boot journal of the 18:26 boot                                                                     |The system disk asked again and unlocked; the data disk stayed locked, its prompt was dropped at the switch to the real root, `/data/*` were not mounted (`nofail`)|
-|2026-11-16|alpha|Auto-login                                                        |`loginctl list-sessions` and the user's report, 18:26 boot                                         |Session on `tty1` without the greeter                                                                                                                              |
-|2026-11-16|alpha|Login keyring after auto-login                                    |`busctl --user get-property` of `Locked` on the default collection; header of `login.keyring`      |Unlocked; the file is in the unencrypted `[keyring]` format                                                                                                        |
-|2026-11-16|alpha|Brave's secrets after auto-login                                  |`os_crypt.portal.prev_init_success` in `Local State`                                               |`true`, written in the auto-login session                                                                                                                          |
+|Date      |Host |Check                                                             |How                                                                                                |Findings                                                                                                                                                                                                                 |
+|----------|-----|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-13|alpha|Listening sockets besides the firewall ports                      |Not recorded                                                                                       |Only the loopback services listed under Network exposure                                                                                                                                                                 |
+|2026-11-16|alpha|Open ports in the evaluated configuration                         |`nix eval` of `networking.firewall.allowed{TCP,UDP}Ports` and `allowedUDPPortRanges`, run on `beta`|The ports in the Network exposure table and no others                                                                                                                                                                    |
+|2026-11-16|alpha|Boot menu editor in the evaluated configuration                   |`nix eval` of `boot.lanzaboote.settings`, run on `beta`                                            |`editor` is `false`                                                                                                                                                                                                      |
+|2026-11-16|alpha|Recovery passphrase of the system disk, before the TPM2 enrollment|`cryptsetup open --test-passphrase --disable-external-tokens`                                      |Accepted                                                                                                                                                                                                                 |
+|2026-11-16|alpha|TPM2 unlock of both disks                                         |Boot journal of the 16:49 boot                                                                     |One PIN prompt; `crypted` and `cryptdata` unlocked, no passphrase asked                                                                                                                                                  |
+|2026-11-16|alpha|Wrong PIN at boot                                                 |Boot journal of the 18:26 boot                                                                     |The system disk asked again and unlocked; the data disk stayed locked, its prompt was dropped at the switch to the real root, `/data/*` were not mounted (`nofail`)                                                      |
+|2026-11-16|alpha|Auto-login                                                        |`loginctl list-sessions` and the user's report, 18:26 boot                                         |Session on `tty1` without the greeter                                                                                                                                                                                    |
+|2026-11-16|alpha|Login keyring after auto-login                                    |`busctl --user get-property` of `Locked` on the default collection; header of `login.keyring`      |Unlocked; the file is in the unencrypted `[keyring]` format                                                                                                                                                              |
+|2026-11-16|alpha|Brave's secrets after auto-login                                  |`os_crypt.portal.prev_init_success` in `Local State`                                               |`true`, written in the auto-login session                                                                                                                                                                                |
+|2026-11-16|alpha|Secure Boot state                                                 |`bootctl status`                                                                                   |`enabled (user)`; booted through `lanzastub` and `systemd-boot`                                                                                                                                                          |
+|2026-11-16|alpha|Disk cipher                                                       |Journal of `systemd-cryptsetup` in the 16:27 boot                                                  |`aes`, `xts-plain64`, 512-bit key on both disks                                                                                                                                                                          |
+|2026-11-16|alpha|Mount options                                                     |`findmnt` on each mount point                                                                      |As in the Mounts row, on all six mounts; `/boot` has `fmask=0177,dmask=0077`                                                                                                                                             |
+|2026-11-16|alpha|Boot parameters                                                   |`/proc/cmdline` against `nix eval` of `boot.kernelParams`                                          |Identical                                                                                                                                                                                                                |
+|2026-11-16|alpha|Sysctls                                                           |`/proc/sys` against `nix eval` of `boot.kernel.sysctl`                                             |All match; `net.core.bpf_jit_harden`, `vm.mmap_rnd_bits` and `vm.mmap_rnd_compat_bits` cannot be read without root                                                                                                       |
+|2026-11-16|alpha|Lockdown state                                                    |`cat /sys/kernel/security/lockdown`                                                                |`[none]`: off                                                                                                                                                                                                            |
+|2026-11-16|alpha|Listening sockets on the new install                              |`ss -tuln -e`; owners from the cgroup (UDP) or the known port (TCP)                                |TCP: Syncthing on `*:22000` and `127.0.0.1:8384`, CUPS on `127.0.0.1:631`, CoolerControl on `127.0.0.1:11987` and `[::1]:11987`. UDP: Syncthing on 22000, 21027 and two random ports, Brave's mDNS on `224.0.0.251:5353` |
+|2026-11-16|alpha|CoolerControl default password                                    |`POST /login` with the default credentials, before and after setting a password                    |Accepted before (200); refused after (401), as is a request without credentials                                                                                                                                          |
+|2026-11-16|alpha|Live firewall ruleset                                             |`sudo nft list ruleset`                                                                            |Input accepts loopback, established connections, the ports of the Network exposure table and no others, ping, ICMPv6 and DHCPv6 replies; everything else is dropped. Same rules for IPv4 and IPv6, through `iptables-nft`|
+|2026-11-16|alpha|Signatures of the boot files                                      |`sudo sbctl verify`                                                                                |`BOOTX64.EFI`, `systemd-bootx64.efi` and the five generations are signed. The kernel in `EFI/nixos` is not, as Lanzaboote intends: the signed stub of each generation carries its hash                                   |
+|2026-11-16|alpha|LUKS keyslots of both disks                                       |`sudo cryptsetup luksDump` on each                                                                 |Keyslot 0: `argon2id`, 1 GiB, 512-bit key (the passphrase). Keyslot 1: held by the `systemd-tpm2` token. `aes-xts-plain64`, `allow-discards`. No other keyslots                                                          |
+|2026-11-16|alpha|Recovery passphrase of both disks after the TPM2 enrollment       |`sudo cryptsetup open --test-passphrase --disable-external-tokens` on each, by the user            |Accepted on both                                                                                                                                                                                                         |
+|2026-11-16|alpha|Sysctls only root can read                                        |`sudo sysctl net.core.bpf_jit_harden vm.mmap_rnd_bits vm.mmap_rnd_compat_bits`, by the user        |The configured values                                                                                                                                                                                                    |
+|2026-11-16|alpha|PCR binding and PIN of the TPM2 keyslots                          |`sudo cryptsetup luksDump --dump-json-metadata` on each disk, by the user                          |`"tpm2-pcrs":[7]` and `"tpm2-pin":true`                                                                                                                                                                                  |
