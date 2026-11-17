@@ -83,11 +83,11 @@ with a comment on what it does and what it costs. It sets kernel boot parameters
 (allocator hardening, randomisation, no vsyscall page, no debugfs), sysctls
 (kernel pointers and log hidden, BPF for root only, restricted ptrace and perf,
 maximum `mmap` ASLR, link and FIFO protections, no ICMP redirects or source
-routing), disables kexec and hibernation, forces page table isolation and blocks
-a list of kernel modules. Some values are already kernel, systemd or NixOS
-defaults; setting them explicitly makes the desired baseline reviewable. The
-boot parameters and sysctls on the running system match the configuration
-(checked, [Audits](#audits)).
+routing), disables kexec and hibernation, forces page table isolation, does not
+store core dumps and blocks a list of kernel modules. Some values are already
+kernel, systemd or NixOS defaults; setting them explicitly makes the desired
+baseline reviewable. The boot parameters and sysctls on the running system match
+the configuration (checked, [Audits](#audits)).
 
 What you notice in daily use:
 
@@ -97,6 +97,7 @@ What you notice in daily use:
   works.
 - `/sys/kernel/debug` is absent and tools that need it, such as powertop,
   complain.
+- A crash is logged in the journal, but `coredumpctl debug` has no dump to open.
 - No hibernation.
 
 The module deny list covers obscure network protocols, three filesystems and
@@ -188,3 +189,4 @@ To check: nothing pending.
 |2026-11-17|beta |Guest login and Remote Login                                      |`defaults read /Library/Preferences/com.apple.loginwindow GuestEnabled`; `launchctl print system/com.openssh.sshd`; `nc -z 127.0.0.1 22`|Guest `0`; sshd not loaded, port 22 closed                                                                                                                                                                                 |
 |2026-11-17|beta |FileVault and screen lock delay                                   |`fdesetup status`; `sysadminctl -screenLock status`                                                                                     |`FileVault is On.`; `screenLock delay is immediate`                                                                                                                                                                        |
 |2026-11-17|beta |Automatic macOS updates                                           |`defaults read /Library/Preferences/com.apple.SoftwareUpdate`; `sw_vers`                                                                |`AutomaticallyInstallMacOSUpdates`, `AutomaticDownload` and `CriticalUpdateInstall` are `1`, but the last install was 26.6.2 on 2026-09-03; 26.7.3 (offered 2026-11-10) and Safari 27.2 are pending. Cause not investigated|
+|2026-11-17|alpha|Core dumps not stored                                             |`systemd-analyze cat-config systemd/coredump.conf`; `kill -SEGV` of a `sleep`, then `coredumpctl list` and `ls /var/lib/systemd/coredump`|`Storage=none`; the crash is listed with `COREFILE` `none` and the directory is empty. The journal still gets the stack trace (addresses and symbols, no memory contents)                                                  |
