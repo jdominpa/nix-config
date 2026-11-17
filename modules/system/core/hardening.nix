@@ -34,10 +34,10 @@ in
         # Don't merge slab caches of similar size; makes heap exploitation of
         # one cache less likely to reach objects of another.
         "slab_nomerge"
-        # Zero memory on allocation. `init_on_free=1` is the stronger sibling
-        # but costs a few percent in allocation-heavy workloads. Worth it if it
-        # doesn't affect performance significantly.
+        # Zero memory on allocation and on free, so freed buffers don't keep
+        # their contents.
         "init_on_alloc=1"
+        "init_on_free=1"
         # Randomise the page allocator free lists and the kernel stack offset
         # on each syscall.
         "page_alloc.shuffle=1"
