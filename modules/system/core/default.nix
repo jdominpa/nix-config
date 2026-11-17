@@ -12,7 +12,6 @@
       nix
       pipewire
       power-profiles
-      printing
       secrets
       secure-boot
       ssh
