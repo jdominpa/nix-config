@@ -26,6 +26,10 @@ in
       security.protectKernelImage = true;
       security.forcePageTableIsolation = true;
 
+      # A crash is still logged in the journal, but the dump is not stored since
+      # it would hold what was in memory (such as browser cookies).
+      systemd.coredump.settings.Coredump.Storage = "none";
+
       boot.kernelParams = [
         # Don't merge slab caches of similar size; makes heap exploitation of
         # one cache less likely to reach objects of another.
