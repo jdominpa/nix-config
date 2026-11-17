@@ -21,23 +21,10 @@ history:
 repl:
     nix repl -f flake:nixpkgs
 
-# Remove all generations older than 7 days
-[group('nix')]
-clean:
-    # On darwin you may need to switch to root user to run this command
-    sudo nix profile wipe-history \
-        --profile /nix/var/nix/profiles/system \
-        --older-than 7d
-    nix store gc
-
-# Garbage collect all unused nix store entries
+# Delete generations older than 7 days and garbage collect the nix store
 [group('nix')]
 gc:
-    # garbage collect all unused nix store entries (system-wide)
     sudo nix-collect-garbage --delete-older-than 7d
-    # garbage collect all unused nix store entries (for the user - home-manager)
-    # https://github.com/NixOS/nix/issues/8508
-    nix-collect-garbage --delete-older-than 7d
 
 # Check whether the flake evaluates and run its tests
 [group('nix')]
