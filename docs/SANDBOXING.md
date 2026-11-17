@@ -149,8 +149,8 @@ memory.
 - The socket lives as long as any process of the sandbox does; the helper
   removes its path in `$XDG_RUNTIME_DIR` when the launched command exits.
 
-The restricted socket has been checked with `wayland-info`, mpv and Brave;
-Vesktop has not been checked on it yet ([Audits](#audits)).
+The restricted socket has been checked with `wayland-info`, mpv, Brave and
+Vesktop ([Audits](#audits)).
 
 ## Browser secrets
 
@@ -218,13 +218,10 @@ Then add the application to the table above and to its section, and to
 Each check holds for the configuration it ran against: rerun it after a change
 to the shared policy, the helper, niri or the app's sandbox.
 
-To check:
-
-- `alpha`: Vesktop on the restricted socket.
-
 |Date      |Host |Check                                               |How                                                                                           |Findings                                                                                                                                                                             |
 |----------|-----|----------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper                                                             |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
 |2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan                                                      |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
 |2026-11-16|alpha|Brave on the restricted socket                      |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                              |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                |
 |2026-11-16|alpha|Abstract Unix sockets reachable from Brave          |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`|Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox          |
+|2026-11-17|alpha|Vesktop on the restricted socket                    |`/proc/<pid>/mountinfo` of the running Vesktop; `niri msg windows`                            |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window (`--ozone-platform=wayland`)                                                                  |
