@@ -33,15 +33,19 @@ style of the surrounding code by hand.
 ## Documentation
 
 `docs/` describes what the configuration does, why, and what has been
-verified. **Every code change that alters behavior the docs describe is
-followed by a docs update, in a separate commit.** This matters most for the
-security docs, because a document that overstates the protection is worse than
-none.
+verified. **Every code change that alters behavior the docs describe updates
+them in the same commit.** This matters most for the security docs, because a
+document that overstates the protection is worse than none.
 
-The order is: commit the code change first, then check the table below and
-commit the docs update right after it. Never mix documentation and code in one
-commit, and do not postpone the docs update to "later". When asked to commit a
-change that touches the first column, make both commits.
+Check the table below before committing. The code and the docs that describe it
+are one commit, typed by the code (`fix(hardening): …`), so that one revert
+undoes both and no commit leaves the docs out of step with the configuration.
+Do not postpone the docs update to "later".
+
+A check that needs the switched system cannot be in that commit. Describe the
+new behavior as "not checked" and add the check to the "To check" list. After
+the user has switched and the check has run, record it in a separate
+`docs(scope): record …` commit.
 
 | If you change…                                                                | Update                                  |
 | ----------------------------------------------------------------------------- | --------------------------------------- |
@@ -84,9 +88,9 @@ Rules for the docs:
 - `docs/BACKUPS.md` must never contain secrets (passwords, SSH keys, the monitor
   URL) or say where their recovery copies are kept. The paths the machines read
   them from are already in `restic.nix` and may be mentioned.
-- The docs commit is `docs(scope): …` with the scope naming the document or
-  area, for example `docs(security): document the new sysctls`,
-  `docs(sandboxing): add vesktop screen-share limits` or
+- A commit that only changes docs is `docs(scope): …` with the scope naming the
+  document or area, for example `docs(security): record the sysctl audit`,
+  `docs(sandboxing): record the vesktop audit` or
   `docs(backups): record the restore drill`.
 
 ## Commits
@@ -97,7 +101,7 @@ identifiers in backticks.
     feat(emacs): add `agent-shell` for llm integration with emacs
     fix(darwin): assert homebrew is enabled in modules before using it
     chore: update `flake.lock`
-    docs(security): document the new sysctls
+    docs(security): record the sysctl audit
 
 ## Emacs configuration
 
