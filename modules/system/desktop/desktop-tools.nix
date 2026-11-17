@@ -31,9 +31,35 @@
             };
           };
         };
+      # Sandboxed localsend
+      security.nixpak.apps.localsend.configuration =
+        { sloth, ... }:
+        {
+          app.package = pkgs.localsend;
+          flatpak.appId = "org.localsend.localsend_app";
+          portals = [
+            "FileChooser"
+            "Notification"
+            "OpenURI"
+          ];
+          # Discovery needs multicast, which pasta cannot pass through
+          pasta.enable = false;
+          bubblewrap = {
+            network = true;
+            bind.rw = [
+              # Settings, device name and TLS identity (`shared_preferences.json`)
+              (sloth.mkdir (sloth.concat' sloth.xdgDataHome "/org.localsend.localsend_app"))
+              (sloth.mkdir sloth.xdgDownloadDir)
+            ];
+          };
+        };
+      # Transfers and multicast discovery of the LocalSend sandbox
+      networking.firewall = {
+        allowedTCPPorts = [ 53317 ];
+        allowedUDPPorts = [ 53317 ];
+      };
 
       programs = {
-        localsend.enable = true;
         thunar = {
           enable = true;
           plugins = with pkgs; [

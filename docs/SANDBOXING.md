@@ -17,6 +17,7 @@ treating the applications as malicious:
 - **Vesktop** is an Electron chat client that displays content from strangers
   (images, links, embeds) and runs community plugins.
 - **mpv** parses arbitrary media files and streams.
+- **LocalSend** accepts connections and files from any device on the LAN.
 
 Each sandbox grants only the paths, sockets, portals and network its documented
 use needs.
@@ -73,15 +74,16 @@ is opt-in, so each sandbox's definition lists what it gets.
 
 ## Applications
 
-|Application|App ID                 |Network            |Wayland   |Audio               |
-|-----------|-----------------------|-------------------|----------|--------------------|
-|Vesktop    |`dev.vencord.Vesktop`  |pasta              |restricted|PulseAudio, PipeWire|
-|Brave      |`org.chromium.Chromium`|pasta, 2 host ports|restricted|PulseAudio          |
-|mpv        |`io.mpv.Mpv`           |pasta              |restricted|PulseAudio          |
+|Application|App ID                       |Network            |Wayland   |Audio               |
+|-----------|-----------------------------|-------------------|----------|--------------------|
+|Vesktop    |`dev.vencord.Vesktop`        |pasta              |restricted|PulseAudio, PipeWire|
+|Brave      |`org.chromium.Chromium`      |pasta, 2 host ports|restricted|PulseAudio          |
+|mpv        |`io.mpv.Mpv`                 |pasta              |restricted|PulseAudio          |
+|LocalSend  |`org.localsend.localsend_app`|host network       |restricted|none                |
 
 Definitions: [discord.nix](../modules/features/discord.nix),
-[brave.nix](../modules/features/brave.nix) and the `mpv` block of
-[desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
+[brave.nix](../modules/features/brave.nix) and the `mpv` and `localsend` blocks
+of [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
 
 ### Vesktop
 
@@ -122,6 +124,19 @@ Definitions: [discord.nix](../modules/features/discord.nix),
   running player.
 - No portals beyond reading settings, no D-Bus names beyond its own. mpv
   needs the network to play streams.
+
+### LocalSend
+
+- Writable: `~/.local/share/org.localsend.localsend_app` (settings, device name
+  and TLS identity) and `~/Downloads`, where it receives. Files to send come
+  through the file chooser.
+- Portals: FileChooser, Notification, OpenURI. No audio socket.
+- **Shares the host network** (`pasta` off, WA-009 in
+  [WORKAROUNDS.md](WORKAROUNDS.md)). Discovery is UDP multicast on
+  `224.0.0.167:53317` and pasta has no IGMP proxy, so inside pasta the sandbox
+  and other devices do not see each other. The firewall opens 53317/tcp and
+  53317/udp for it. What the host network exposes is under [Limits](#limits).
+- Not checked on the switched system ([Audits](#audits)).
 
 ## Wayland
 
@@ -191,18 +206,24 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   certificate.
 - **Brave's forwarded ports** reach Syncthing's GUI (needs credentials) and
   CoolerControl (needs a password).
+- **LocalSend shares the host network**, so it reaches every service on the
+  host's loopback and the host's abstract Unix sockets. From the host network
+  namespace, the X11 socket `@/tmp/.X11-unix/X0` accepted a connection without
+  authentication (2026-11-16, Brave audit); from LocalSend that would allow
+  reading and injecting input in X11 windows such as Steam's. Not checked from
+  the LocalSend sandbox itself.
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
   whatever its portals allow: open links, read a user-chosen file, share the
   screen after the user picks a source.
-- **Downloads.** `~/Downloads` is writable by Brave and readable by mpv, so a
-  compromised Brave can plant files there.
+- **Downloads.** `~/Downloads` is writable by Brave and LocalSend and readable
+  by mpv, so a compromised Brave or LocalSend can plant files there.
 
 ## Adding an application
 
 Declare `security.nixpak.apps.<name>.configuration` where the package is
-configured (see the existing three). Set `app.package` and `flatpak.appId`, then
+configured (see the existing ones). Set `app.package` and `flatpak.appId`, then
 grant only what the use needs:
 
 |Option                                             |Purpose                                          |
@@ -223,6 +244,22 @@ Then add the application to the table above and to its section, and to
 
 Each check holds for the configuration it ran against: rerun it after a change
 to the shared policy, the helper, niri or the app's sandbox.
+
+To check:
+
+- alpha, mpv without `PATH`: the policy no longer sets `PATH` for sandboxes
+  without the OpenURI portal. mpv still plays a local file and a stream through
+  `yt-dlp` (its wrapper puts `yt-dlp` on `PATH`).
+- alpha, LocalSend discovery and transfer: with the sandbox running, alpha
+  appears on the phone and the phone on alpha; a file sent each way arrives (on
+  alpha, in `~/Downloads`).
+- alpha, LocalSend on the restricted socket: `/proc/<pid>/mountinfo` of the
+  running `localsend_app` shows the helper's `nixpak-wayland-<pid>` socket as
+  `wayland-0`; `niri msg windows` lists it.
+- alpha, LocalSend sandbox contents: `nsenter` into the running sandbox. Only
+  the two writable paths are in the home directory, the device name survives a
+  restart, and `xdpyinfo` against `@/tmp/.X11-unix/X0` shows whether the X11
+  limit applies.
 
 |Date      |Host |Check                                               |How                                                                                                   |Findings                                                                                                                                                                             |
 |----------|-----|----------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
