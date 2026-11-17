@@ -34,6 +34,7 @@
             "8384,11987"
           ];
           bubblewrap = {
+            network = true;
             sockets.pulse = true;
             bind.rw = [
               (sloth.mkdir (sloth.concat' sloth.homeDir "/.config/BraveSoftware/Brave-Browser"))

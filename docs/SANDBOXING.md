@@ -24,21 +24,24 @@ use needs.
 ## Shared boundaries
 
 Every application declared in `security.nixpak.apps` gets the `defaults` of
-`nixpak/default.nix`:
+`nixpak/default.nix`. They hold what every graphical application needs (display,
+fonts, GPU); a privilege only some need (network, audio, portals, D-Bus names)
+is opt-in, so each sandbox's definition lists what it gets.
 
 - **Filesystem:** The root is a fresh tmpfs and `/nix/store` is read-only. The
   real home directory, `/etc`, `/var`, `/run` and `/root` are not there; only
   the paths an application lists are bind-mounted, plus read-only host
-  fontconfig, time zone, CA bundle, EGL configuration, the system icon themes
-  (for the cursor) and `/run/opengl-driver`. Binds use `--bind-try`, so a source
+  fontconfig, time zone, CA bundle and the system icon themes (for the cursor),
+  and the GPU files below. Binds use `--bind-try`, so a source
   that does not exist at launch is skipped silently: create directories the
   application needs with `sloth.mkdir`.
 - **`/tmp`** is `$XDG_RUNTIME_DIR/nixpak-<appId>-tmp`, shared by the instances
   of one application only and gone at logout.
 - **Environment** is cleared (`--clearenv`) and a short fixed list is set by the
-  policy: `HOME`, `USER`, `PATH` (`xdg-utils` alone), the `XDG_*` session
-  variables, locale and time zone, the cursor theme, and the display and bus
-  addresses.
+  policy: `HOME`, `USER`, the `XDG_*` session variables, locale and time zone,
+  the cursor theme, and the display and bus addresses. With the OpenURI portal,
+  also `PATH` (`xdg-utils` alone) and `NIXOS_XDG_OPEN_USE_PORTAL`, so that
+  `xdg-open` goes through the portal.
 - **Namespaces:** User, IPC, PID, UTS and cgroup are unshared; `--new-session`
   blocks `TIOCSTI` keystroke injection into the terminal and `--die-with-parent`
   ties the sandbox to its launcher.
@@ -53,12 +56,15 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
   `xdg-desktop-portal` treats the process as a Flatpak application: files
   chosen in the file chooser arrive through the document portal, and the
   Secret portal hands out a key per application ID.
-- **Network:** `pasta` in isolate mode: the sandbox has a loopback of its own
-  (host services on `127.0.0.1` are out of reach), a fixed fake address, no
-  inbound connections and no port forwarding. Internet and LAN work. An
-  application that needs the host network turns `pasta` off.
-- **GPU:** `/dev/dri`, the NVIDIA device nodes (`/dev/nvidia0`, `nvidiactl`,
-  `nvidia-modeset`, `nvidia-uvm`), `/run/opengl-driver` and the PCI sysfs.
+- **Network:** None by default (`bubblewrap.network`, opt-in). An application
+  that opts in gets `pasta` in isolate mode: a loopback of its own (host
+  services on `127.0.0.1` are out of reach), a fixed fake address, no inbound
+  connections and no port forwarding. Internet and LAN work. An application
+  that needs the host network also turns `pasta` off.
+- **GPU:** On by default (`gpu.enable`): `/dev/dri`, the NVIDIA device nodes
+  (`/dev/nvidia0`, `nvidiactl`, `nvidia-modeset`, `nvidia-uvm`), the NVIDIA EGL
+  configuration in `/etc/egl`, `/run/opengl-driver` and the PCI sysfs. An
+  application that sets `gpu.enable = false` gets none of them.
 - **Audio:** None by default. Each application opts in to the PulseAudio
   socket (`bubblewrap.sockets.pulse`, which allows recording) and the PipeWire
   socket (`bubblewrap.sockets.pipewire`); the table below shows which.
@@ -204,7 +210,9 @@ grant only what the use needs:
 |`portals = [ "FileChooser" … ]`                    |Portal interfaces the application may call       |
 |`dbus.policies."<name>" = "talk"`                  |Bus names it may talk to (`see`, `talk`, `own`)  |
 |`bubblewrap.bind.rw` / `.ro`                       |Paths to mount; use `sloth.mkdir` for directories|
+|`bubblewrap.network = true`                        |Network, through `pasta` unless that is turned off|
 |`pasta.args = lib.mkAfter [ "--tcp-ns" "<ports>" ]`|Host loopback ports reachable from the sandbox   |
+|`gpu.enable = false`                               |No GPU devices or drivers                        |
 |`bubblewrap.sockets.pulse`                         |PulseAudio socket (playback and recording)       |
 |`bubblewrap.sockets.pipewire`                      |PipeWire socket                                  |
 

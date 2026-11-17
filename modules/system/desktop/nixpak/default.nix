@@ -96,7 +96,7 @@
 
             config = {
               # /dev/dri and the drivers in /run/opengl-driver
-              gpu.enable = true;
+              gpu.enable = lib.mkDefault true;
               etc.sslCertificates.enable = true;
               pasta = {
                 enable = lib.mkDefault true;
@@ -127,7 +127,8 @@
               };
 
               bubblewrap = {
-                network = true;
+                # Opt-in per application; nixpak's own default is on
+                network = lib.mkDefault false;
                 # Nothing of the session environment leaks in, only `env`
                 clearEnv = true;
                 dieWithParent = true;
@@ -154,9 +155,8 @@
                     ]
                     "/etc/localtime"
                     "/etc/zoneinfo"
-                    # EGL configuration of the NVIDIA driver
-                    "/etc/egl"
-                    "/etc/static/egl"
+                  ]
+                  ++ [
                     icons
                     # `sloth.env` fails when the variable is not set, so the
                     # sandbox never starts without the restricted socket
@@ -164,10 +164,15 @@
                       (sloth.env "NIXPAK_WAYLAND_SOCKET")
                       (sloth.concat' sloth.runtimeDir "/wayland-0")
                     ]
+                  ]
+                  # EGL configuration of the NVIDIA driver
+                  ++ lib.optionals config.gpu.enable [
+                    "/etc/egl"
+                    "/etc/static/egl"
                   ];
                   # The NVIDIA driver needs its own device nodes besides
                   # /dev/dri
-                  dev = [
+                  dev = lib.optionals config.gpu.enable [
                     "/dev/nvidia0"
                     "/dev/nvidiactl"
                     "/dev/nvidia-modeset"
@@ -177,9 +182,6 @@
                 env = {
                   HOME = sloth.homeDir;
                   USER = sloth.env "USER";
-                  # `xdg-open` to open links, which it does through the portal
-                  PATH = lib.makeBinPath [ pkgs.xdg-utils ];
-                  NIXOS_XDG_OPEN_USE_PORTAL = "1";
                   XDG_RUNTIME_DIR = sloth.runtimeDir;
                   XDG_CURRENT_DESKTOP = sloth.envOr "XDG_CURRENT_DESKTOP" "niri";
                   XDG_SESSION_TYPE = "wayland";
@@ -195,6 +197,11 @@
                 }
                 // i18n.extraLocaleSettings
                 // lib.optionalAttrs (lib.elem "FileChooser" config.portals) { GTK_USE_PORTAL = "1"; }
+                # `xdg-open` to open links, which it does through the portal
+                // lib.optionalAttrs (lib.elem "OpenURI" config.portals) {
+                  PATH = lib.makeBinPath [ pkgs.xdg-utils ];
+                  NIXOS_XDG_OPEN_USE_PORTAL = "1";
+                }
                 # /etc/localtime is a plain file inside the sandbox, so the name
                 # of the time zone cannot be read from its link target
                 // lib.optionalAttrs (time.timeZone != null) { TZ = time.timeZone; };

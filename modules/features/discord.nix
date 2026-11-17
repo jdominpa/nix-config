@@ -23,6 +23,7 @@
             "org.kde.StatusNotifierWatcher" = "talk";
           };
           bubblewrap = {
+            network = true;
             sockets = {
               pulse = true;
               pipewire = true; # needed for screen-share audio

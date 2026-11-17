@@ -14,6 +14,7 @@
           app.package = pkgs.mpv;
           flatpak.appId = "io.mpv.Mpv";
           bubblewrap = {
+            network = true;
             sockets.pulse = true;
             bind = {
               rw = [
