@@ -59,8 +59,9 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
   application that needs the host network turns `pasta` off.
 - **GPU:** `/dev/dri`, the NVIDIA device nodes (`/dev/nvidia0`, `nvidiactl`,
   `nvidia-modeset`, `nvidia-uvm`), `/run/opengl-driver` and the PCI sysfs.
-- **Audio:** The PulseAudio socket (this allows recording). The PipeWire socket
-  is opt-in.
+- **Audio:** None by default. Each application opts in to the PulseAudio
+  socket (`bubblewrap.sockets.pulse`, which allows recording) and the PipeWire
+  socket (`bubblewrap.sockets.pipewire`); the table below shows which.
 - **Display:** A restricted Wayland socket; see [Wayland](#wayland).
 - **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices.
 
@@ -204,6 +205,7 @@ grant only what the use needs:
 |`dbus.policies."<name>" = "talk"`                  |Bus names it may talk to (`see`, `talk`, `own`)  |
 |`bubblewrap.bind.rw` / `.ro`                       |Paths to mount; use `sloth.mkdir` for directories|
 |`pasta.args = lib.mkAfter [ "--tcp-ns" "<ports>" ]`|Host loopback ports reachable from the sandbox   |
+|`bubblewrap.sockets.pulse`                         |PulseAudio socket (playback and recording)       |
 |`bubblewrap.sockets.pipewire`                      |PipeWire socket                                  |
 
 Then add the application to the table above and to its section, and to

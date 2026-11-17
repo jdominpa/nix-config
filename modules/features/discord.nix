@@ -23,7 +23,10 @@
             "org.kde.StatusNotifierWatcher" = "talk";
           };
           bubblewrap = {
-            sockets.pipewire = true; # needed for screen-share audio
+            sockets = {
+              pulse = true;
+              pipewire = true; # needed for screen-share audio
+            };
             bind.rw = [
               (sloth.mkdir (sloth.concat' sloth.homeDir "/.config/vesktop"))
               # Shader and font caches, rebuilt on every start otherwise

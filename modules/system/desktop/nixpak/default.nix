@@ -132,7 +132,6 @@
                 clearEnv = true;
                 dieWithParent = true;
                 newSession = true;
-                sockets.pulse = lib.mkDefault true;
                 bind = {
                   rw = [
                     # A /tmp shared by the instances of one application only

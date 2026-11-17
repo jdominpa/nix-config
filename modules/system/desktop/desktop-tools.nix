@@ -13,18 +13,21 @@
         {
           app.package = pkgs.mpv;
           flatpak.appId = "io.mpv.Mpv";
-          bubblewrap.bind = {
-            rw = [
-              (sloth.mkdir (sloth.concat' sloth.xdgConfigHome "/mpv"))
-              # Positions saved with `quit-watch-later`
-              (sloth.mkdir (sloth.concat' sloth.xdgStateHome "/mpv"))
-              (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/mpv"))
-            ];
-            ro = [
-              sloth.xdgDocumentsDir
-              sloth.xdgDownloadDir
-              sloth.xdgPicturesDir
-            ];
+          bubblewrap = {
+            sockets.pulse = true;
+            bind = {
+              rw = [
+                (sloth.mkdir (sloth.concat' sloth.xdgConfigHome "/mpv"))
+                # Positions saved with `quit-watch-later`
+                (sloth.mkdir (sloth.concat' sloth.xdgStateHome "/mpv"))
+                (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/mpv"))
+              ];
+              ro = [
+                sloth.xdgDocumentsDir
+                sloth.xdgDownloadDir
+                sloth.xdgPicturesDir
+              ];
+            };
           };
         };
 

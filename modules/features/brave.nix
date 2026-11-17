@@ -1,8 +1,4 @@
 {
-  # Brave keeps its profile, its cache and the downloads directory. The rest of
-  # the home directory it sees is empty and gone when it exits; other files
-  # reach it through the file chooser. Chromium's own sandbox for the web
-  # content runs inside this one, as usual.
   flake.modules.nixos.brave =
     { lib, pkgs, ... }:
     {
@@ -37,11 +33,14 @@
             "--tcp-ns"
             "8384,11987"
           ];
-          bubblewrap.bind.rw = [
-            (sloth.mkdir (sloth.concat' sloth.homeDir "/.config/BraveSoftware/Brave-Browser"))
-            (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/BraveSoftware/Brave-Browser"))
-            (sloth.mkdir sloth.xdgDownloadDir)
-          ];
+          bubblewrap = {
+            sockets.pulse = true;
+            bind.rw = [
+              (sloth.mkdir (sloth.concat' sloth.homeDir "/.config/BraveSoftware/Brave-Browser"))
+              (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/BraveSoftware/Brave-Browser"))
+              (sloth.mkdir sloth.xdgDownloadDir)
+            ];
+          };
         };
     };
 
