@@ -62,16 +62,15 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
 - **Audio:** The PulseAudio socket (this allows recording). The PipeWire socket
   is opt-in.
 - **Display:** A restricted Wayland socket; see [Wayland](#wayland).
-- **Not granted:** X11 (except through the host network: [Limits](#limits)),
-  `/dev/input`, raw USB, serial or camera devices.
+- **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices.
 
 ## Applications
 
-|Application|App ID                 |Network     |Wayland   |Audio               |
-|-----------|-----------------------|------------|----------|--------------------|
-|Vesktop    |`dev.vencord.Vesktop`  |pasta       |restricted|PulseAudio, PipeWire|
-|Brave      |`org.chromium.Chromium`|host network|restricted|PulseAudio          |
-|mpv        |`io.mpv.Mpv`           |pasta       |restricted|PulseAudio          |
+|Application|App ID                 |Network            |Wayland   |Audio               |
+|-----------|-----------------------|-------------------|----------|--------------------|
+|Vesktop    |`dev.vencord.Vesktop`  |pasta              |restricted|PulseAudio, PipeWire|
+|Brave      |`org.chromium.Chromium`|pasta, 2 host ports|restricted|PulseAudio          |
+|mpv        |`io.mpv.Mpv`           |pasta              |restricted|PulseAudio          |
 
 Definitions: [discord.nix](../modules/features/discord.nix),
 [brave.nix](../modules/features/brave.nix) and the `mpv` block of
@@ -98,8 +97,10 @@ Definitions: [discord.nix](../modules/features/discord.nix),
   granted, so web pages cannot use the webcam.
 - D-Bus: `org.freedesktop.Notifications`, and ownership of
   `org.mpris.MediaPlayer2.brave.*` for media controls in the bar.
-- It keeps the **host network** (`pasta` off) for the Syncthing GUI and local
-  development servers on localhost (see [Limits](#limits)).
+- Two host loopback ports are forwarded into its `pasta` network: 8384 (the
+  Syncthing GUI) and 11987 (CoolerControl). Other host services, local
+  development servers included, and the host's abstract Unix sockets are out of
+  reach (checked, [Audits](#audits)).
 - Chromium's own sandbox for web content runs inside this one.
 - The app ID is `org.chromium.Chromium`, not Brave's. See
   [Browser secrets](#browser-secrets).
@@ -181,13 +182,8 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   the LAN address of the host, on Syncthing's sync port, succeeded: anything the
   host listens on at `0.0.0.0` is reachable. Syncthing authenticates by device
   certificate.
-- **Brave's host network** reaches every service on the host's loopback:
-  Syncthing's GUI (needs credentials), CUPS and CoolerControl. Sharing the
-  network namespace also exposes the host's abstract Unix sockets, and one
-  matters: the X11 socket of `xwayland-satellite`, which asks for no
-  authentication. A compromised Brave can connect to it as an X client and so
-  reach the other X11 applications, which the restricted Wayland socket does not
-  prevent (checked, [Audits](#audits)).
+- **Brave's forwarded ports** reach Syncthing's GUI (needs credentials) and
+  CoolerControl (needs a password).
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
@@ -202,13 +198,13 @@ Declare `security.nixpak.apps.<name>.configuration` where the package is
 configured (see the existing three). Set `app.package` and `flatpak.appId`, then
 grant only what the use needs:
 
-|Option                           |Purpose                                          |
-|---------------------------------|-------------------------------------------------|
-|`portals = [ "FileChooser" … ]`  |Portal interfaces the application may call       |
-|`dbus.policies."<name>" = "talk"`|Bus names it may talk to (`see`, `talk`, `own`)  |
-|`bubblewrap.bind.rw` / `.ro`     |Paths to mount; use `sloth.mkdir` for directories|
-|`pasta.enable = false`           |Host network instead of the isolated one         |
-|`bubblewrap.sockets.pipewire`    |PipeWire socket                                  |
+|Option                                             |Purpose                                          |
+|---------------------------------------------------|-------------------------------------------------|
+|`portals = [ "FileChooser" … ]`                    |Portal interfaces the application may call       |
+|`dbus.policies."<name>" = "talk"`                  |Bus names it may talk to (`see`, `talk`, `own`)  |
+|`bubblewrap.bind.rw` / `.ro`                       |Paths to mount; use `sloth.mkdir` for directories|
+|`pasta.args = lib.mkAfter [ "--tcp-ns" "<ports>" ]`|Host loopback ports reachable from the sandbox   |
+|`bubblewrap.sockets.pipewire`                      |PipeWire socket                                  |
 
 Then add the application to the table above and to its section, and to
 [SECURITY.md](SECURITY.md) if it changes a boundary.
@@ -218,10 +214,12 @@ Then add the application to the table above and to its section, and to
 Each check holds for the configuration it ran against: rerun it after a change
 to the shared policy, the helper, niri or the app's sandbox.
 
-|Date      |Host |Check                                               |How                                                                                           |Findings                                                                                                                                                                             |
-|----------|-----|----------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper                                                             |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
-|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan                                                      |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
-|2026-11-16|alpha|Brave on the restricted socket                      |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                              |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                |
-|2026-11-16|alpha|Abstract Unix sockets reachable from Brave          |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`|Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox          |
-|2026-11-17|alpha|Vesktop on the restricted socket                    |`/proc/<pid>/mountinfo` of the running Vesktop; `niri msg windows`                            |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window (`--ozone-platform=wayland`)                                                                  |
+|Date      |Host |Check                                               |How                                                                                                   |Findings                                                                                                                                                                             |
+|----------|-----|----------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper                                                                     |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
+|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan                                                              |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
+|2026-11-16|alpha|Brave on the restricted socket                      |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                                      |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                |
+|2026-11-16|alpha|Abstract Unix sockets reachable from Brave          |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`        |Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox          |
+|2026-11-17|alpha|Vesktop on the restricted socket                    |`/proc/<pid>/mountinfo` of the running Vesktop; `niri msg windows`                                    |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window (`--ozone-platform=wayland`)                                                                  |
+|2026-11-17|alpha|Brave's `pasta` arguments, outside the sandbox      |`pasta` run by hand with the arguments evaluated for Brave; `/dev/tcp` to host ports, `/proc/net/unix`|Host ports 8384 and 11987 reachable, 631 and 22000 not; no abstract X11 socket; internet reachable. pasta rejects the ports if they come before `--tcp-ns none`                      |
+|2026-11-17|alpha|Running Brave with `--tcp-ns 8384,11987`            |`nsenter` into its namespaces; `/dev/tcp` to `127.0.0.1` and `::1`; `/proc/net/unix`                  |`127.0.0.1:8384` and `:11987` answer `200`, 631 and 22000 closed; `[::1]:8384` is accepted and reset, so `localhost:8384` fails in Brave; no abstract X11 socket                     |
