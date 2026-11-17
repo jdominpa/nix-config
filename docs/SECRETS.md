@@ -149,7 +149,7 @@ repository, is in the [README.md](../README.md#deployment).
    ```
 
 Until the key is in place the host builds and boots without secrets:
-`/run/secrets` stays empty and decryption fails at activation (see
+there is no `/run/secrets` and decryption fails at activation (see
 [Audits](#audits)).
 
 ## A host is lost or compromised
@@ -186,12 +186,6 @@ host's own:
 Each check holds for the configuration it ran against: rerun it after a change
 to `secrets.nix`, the `sops-nix` input or the key handling.
 
-To check:
-
-- `alpha`: boot without the key. Expected: empty `/run/secrets`, normal boot.
-- `alpha`: a declared secret missing from the host's file. Expected: the build
-  fails, as on `beta`.
-
 |Date      |Host |Check                                              |How                                                                                                                 |Findings                                                                                                                                                                                                                    |
 |----------|-----|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |2026-11-14|alpha|Build without the key                              |Key file renamed, then built                                                                                        |Builds: the key is read only at activation                                                                                                                                                                                  |
@@ -207,3 +201,6 @@ To check:
 |2026-11-17|beta |Secret missing from the host's file                |`nix build` of the system with an extra `sops.secrets."audit/missing"` (`extendModules`), nothing activated         |The build fails in the manifest check: `the key 'audit' cannot be found`                                                                                                                                                    |
 |2026-11-17|beta |Output of the `sops-install-secrets` daemon at boot|`/Library/LaunchDaemons/org.nixos.sops-install-secrets.plist`; `launchctl print`; `log show --last boot`            |No `StandardOutPath` or `StandardErrorPath`, so the output is discarded and not in the unified log. `launchctl print` shows `runs = 1`, `last exit code = 1` for the 2026-11-14 19:08 boot, the reboot without the key above|
 |2026-11-17|beta |Copy of the age key in `/run/secrets.d`            |`ls -l /run/secrets.d`; the sops-nix source (`main.go`)                                                             |`age-keys.txt`, owner `root`, mode `600`; sops-install-secrets copies the key file there on every run                                                                                                                       |
+|2026-11-17|alpha|Secret missing from the host's file                |`nix build` of the system with an extra declared secret                                                             |The build fails, as on `beta`                                                                                                                                                                                               |
+|2026-11-17|alpha|Reboot without the key                             |Key file renamed to `keys.txt.off`, reboot                                                                          |No `/run/secrets`; the system boots normally                                                                                                                                                                                |
+
