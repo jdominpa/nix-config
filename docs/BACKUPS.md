@@ -201,9 +201,7 @@ key it offers with the one pinned in `restic.nix` before accepting it.
 Checks and restore drills. Each holds for the configuration it ran against:
 rerun it after a change to `restic.nix` or `btrfs.nix`.
 
-To check:
-
-- `beta`: restore drill ([Test restore](#test-restore)).
+To check: nothing pending.
 
 |Date      |Host |Check                                                 |How                                                                                                                                                   |Findings                                                                                                   |
 |----------|-----|------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
@@ -212,3 +210,4 @@ To check:
 |2026-11-16|alpha|Incremental btrbk copy                                |`journalctl -u btrbk-home`, first run of the day (15:36)                                                                                              |`home.20261116T1536` sent to `/data/backup` as incremental; the later hourly runs only made local snapshots|
 |2026-11-16|alpha|Restore from a btrbk snapshot                         |A `Documents` folder copied out of `/.snapshots/home.20261116T1900`, and the same folder in `/data/backup/home.20261116T1536`, compared with `diff -r`|Both identical to the live folder; the snapshots are readable by the user and read-only                    |
 |2026-11-16|alpha|Restore drill                                         |[Test restore](#test-restore) on a `Documents` folder (6 files) from the snapshot of 15:37                                                            |Identical                                                                                                  |
+|2026-11-17|beta |Restore drill                                         |[Test restore](#test-restore) on a `Documents` folder (18 files) from the snapshot of 2026-11-16 12:00                                                |Identical                                                                                                  |

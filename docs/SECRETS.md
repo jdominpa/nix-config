@@ -14,9 +14,11 @@ own file of the private repository with it:
 |NixOS   |`~/.config/sops/age/keys.txt`                    |
 |macOS   |`~/Library/Application Support/sops/age/keys.txt`|
 
-The files stay encrypted when fetched and in `/nix/store`. sops-nix decrypts
+The files stay encrypted when fetched and in the `/nix/store`. sops-nix decrypts
 them at every activation into `/run/secrets`, which is in RAM (a tmpfs on NixOS,
-a RAM disk on macOS), so the plain values are never on disk.
+a RAM disk on macOS), so the plain values are never on disk. sops-nix also
+copies the age key there, as `/run/secrets.d/age-keys.txt`, readable by root
+only.
 
 The module [secrets.nix](../modules/system/core/secrets.nix), part of `core` on
 both hosts, configures `sops-nix`. The modules that use a secret declare it next
@@ -64,9 +66,6 @@ sops.secrets."<name>" = config.secretPresets.userReadable;
 The group keeps the sops-nix default (the owner's primary group on NixOS,
 `staff` on macOS), and with mode `0400` it gets no access. A `userReadable`
 secret is readable by any process of the user.
-
-A host's file must contain every secret declared by the modules it imports. What
-happens when one is missing is not checked yet ([Audits](#audits)).
 
 ## Adding or updating secrets
 
@@ -175,6 +174,9 @@ host's own:
   -y`) is among the `age` recipients listed at the bottom of `<host>.yaml`.
   After a reboot on NixOS, also check that `/home` was mounted in the initrd
   (`journalctl -b | grep -i sops`).
+- **macOS, after a boot:** the `sops-install-secrets` daemon's output is
+  discarded; `launchctl print system/org.nixos.sops-install-secrets` shows its
+  `last exit code`.
 - **A secret is missing in `/run/secrets`:** it is not declared in a module, or
   the switch has not run since the lock was bumped. `ls -l /run/secrets/…` shows
   the owner and mode.
@@ -187,21 +189,21 @@ to `secrets.nix`, the `sops-nix` input or the key handling.
 To check:
 
 - `alpha`: boot without the key. Expected: empty `/run/secrets`, normal boot.
-- both: a declared secret missing from the host's file. Expected: activation
-  fails rather than leaving the secret out.
-- `beta`: where the output of the `sops-install-secrets` launchd daemon, which
-  also writes the secrets at boot, goes.
-- `beta`: install from scratch.
+- `alpha`: a declared secret missing from the host's file. Expected: the build
+  fails, as on `beta`.
 
-|Date      |Host |Check                                    |How                                                                                                                 |Findings                                                                                                                                                                   |
-|----------|-----|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Build without the key                    |Key file renamed, then built                                                                                        |Builds: the key is read only at activation                                                                                                                                 |
-|2026-11-14|alpha|Switch without the key                   |Key file renamed, `just switch`                                                                                     |Completes but exits non-zero: `setupSecrets` fails with `cannot read keyfile`, the other snippets run, no new generation is written and `/run/secrets` keeps generation `1`|
-|2026-11-14|alpha|Switch after restoring the key           |`just switch`                                                                                                       |Writes generation `2` and prunes `1`                                                                                                                                       |
-|2026-11-14|beta |Key only at the macOS path               |`darwin-rebuild switch`, then `ls -l /run/secrets`                                                                  |Completes; `/run/secrets` points to `/run/secrets.d/2`, owned by root; no `~/.config/sops/age/keys.txt` exists                                                             |
-|2026-11-14|beta |Root fetches `nix-secrets`               |`sudo ssh -T git@github.com`; `sudo nix flake prefetch --refresh` on the input URL, which bypasses the fetcher cache|Authenticates as `jdominpa` and fetches the input into the store                                                                                                           |
-|2026-11-14|beta |Metadata of the restic secrets           |`stat` on `/run/secrets/restic/*`, without reading the values                                                       |Owner `jdominpa`, mode `400`, not empty: the `userReadable` preset                                                                                                         |
-|2026-11-14|beta |Switch without the key, then with it     |Key file renamed, `just switch`, key restored, `just switch`                                                        |As on `alpha`: the previous generation is kept, then a new one is written and the old one pruned                                                                           |
-|2026-11-14|beta |Key-restore commands of Adding a new host|Run in zsh against a temporary `HOME` with a dummy key                                                              |`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                  |
-|2026-11-14|beta |Reboot without the key                   |Key file renamed, reboot                                                                                            |No `/run/secrets`; `/run/secrets.d` remounted but empty; the system comes up normally                                                                                      |
-|2026-11-14|beta |`/run/secrets.d` is a RAM disk           |`hdiutil info`; `sysctl vm.swapusage`                                                                               |`image-path : ram://131072` (64 MiB) and no shadow file; swap is `(encrypted)`                                                                                             |
+|Date      |Host |Check                                              |How                                                                                                                 |Findings                                                                                                                                                                                                                    |
+|----------|-----|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Build without the key                              |Key file renamed, then built                                                                                        |Builds: the key is read only at activation                                                                                                                                                                                  |
+|2026-11-14|alpha|Switch without the key                             |Key file renamed, `just switch`                                                                                     |Completes but exits non-zero: `setupSecrets` fails with `cannot read keyfile`, the other snippets run, no new generation is written and `/run/secrets` keeps generation `1`                                                 |
+|2026-11-14|alpha|Switch after restoring the key                     |`just switch`                                                                                                       |Writes generation `2` and prunes `1`                                                                                                                                                                                        |
+|2026-11-14|beta |Key only at the macOS path                         |`darwin-rebuild switch`, then `ls -l /run/secrets`                                                                  |Completes; `/run/secrets` points to `/run/secrets.d/2`, owned by root; no `~/.config/sops/age/keys.txt` exists                                                                                                              |
+|2026-11-14|beta |Root fetches `nix-secrets`                         |`sudo ssh -T git@github.com`; `sudo nix flake prefetch --refresh` on the input URL, which bypasses the fetcher cache|Authenticates as `jdominpa` and fetches the input into the store                                                                                                                                                            |
+|2026-11-14|beta |Metadata of the restic secrets                     |`stat` on `/run/secrets/restic/*`, without reading the values                                                       |Owner `jdominpa`, mode `400`, not empty: the `userReadable` preset                                                                                                                                                          |
+|2026-11-14|beta |Switch without the key, then with it               |Key file renamed, `just switch`, key restored, `just switch`                                                        |As on `alpha`: the previous generation is kept, then a new one is written and the old one pruned                                                                                                                            |
+|2026-11-14|beta |Key-restore commands of Adding a new host          |Run in zsh against a temporary `HOME` with a dummy key                                                              |`sops/age` created with mode `700`, `keys.txt` with `600`                                                                                                                                                                   |
+|2026-11-14|beta |Reboot without the key                             |Key file renamed, reboot                                                                                            |No `/run/secrets`; `/run/secrets.d` remounted but empty; the system comes up normally                                                                                                                                       |
+|2026-11-14|beta |`/run/secrets.d` is a RAM disk                     |`hdiutil info`; `sysctl vm.swapusage`                                                                               |`image-path : ram://131072` (64 MiB) and no shadow file; swap is `(encrypted)`                                                                                                                                              |
+|2026-11-17|beta |Secret missing from the host's file                |`nix build` of the system with an extra `sops.secrets."audit/missing"` (`extendModules`), nothing activated         |The build fails in the manifest check: `the key 'audit' cannot be found`                                                                                                                                                    |
+|2026-11-17|beta |Output of the `sops-install-secrets` daemon at boot|`/Library/LaunchDaemons/org.nixos.sops-install-secrets.plist`; `launchctl print`; `log show --last boot`            |No `StandardOutPath` or `StandardErrorPath`, so the output is discarded and not in the unified log. `launchctl print` shows `runs = 1`, `last exit code = 1` for the 2026-11-14 19:08 boot, the reboot without the key above|
+|2026-11-17|beta |Copy of the age key in `/run/secrets.d`            |`ls -l /run/secrets.d`; the sops-nix source (`main.go`)                                                             |`age-keys.txt`, owner `root`, mode `600`; sops-install-secrets copies the key file there on every run                                                                                                                       |
