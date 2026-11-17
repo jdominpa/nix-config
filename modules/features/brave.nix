@@ -4,7 +4,7 @@
   # reach it through the file chooser. Chromium's own sandbox for the web
   # content runs inside this one, as usual.
   flake.modules.nixos.brave =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     {
       security.nixpak.apps.brave.configuration =
         { sloth, ... }:
@@ -31,9 +31,12 @@
             # Media controls, as `org.mpris.MediaPlayer2.brave.instance<pid>`
             "org.mpris.MediaPlayer2.brave.*" = "own";
           };
-          # The localhost of the host stays reachable: the Syncthing GUI and
-          # local development servers live there
-          pasta.enable = false;
+          # Only forward the Syncthing GUI and CoolerControl ports. Added after
+          # nixpak's `--tcp-ns none`; pasta rejects them before it.
+          pasta.args = lib.mkAfter [
+            "--tcp-ns"
+            "8384,11987"
+          ];
           bubblewrap.bind.rw = [
             (sloth.mkdir (sloth.concat' sloth.homeDir "/.config/BraveSoftware/Brave-Browser"))
             (sloth.mkdir (sloth.concat' sloth.xdgCacheHome "/BraveSoftware/Brave-Browser"))
