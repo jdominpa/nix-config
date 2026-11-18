@@ -29,13 +29,11 @@ Every application declared in `security.nixpak.apps` gets the `defaults` of
 fonts, GPU); a privilege only some need (network, audio, portals, D-Bus names)
 is opt-in, so each sandbox's definition lists what it gets.
 
-- **Filesystem:** The root is a fresh tmpfs and `/nix/store` is read-only. The
+- **Filesystem:** the root is a fresh tmpfs and `/nix/store` is read-only. The
   real home directory, `/etc`, `/var`, `/run` and `/root` are not there; only
   the paths an application lists are bind-mounted, plus read-only host
   fontconfig, time zone, CA bundle and the system icon themes (for the cursor),
-  and the GPU files below. Binds use `--bind-try`, so a source
-  that does not exist at launch is skipped silently: create directories the
-  application needs with `sloth.mkdir`.
+  and the GPU files below.
 - **`/tmp`** is `$XDG_RUNTIME_DIR/nixpak-<appId>-tmp`, shared by the instances
   of one application only and gone at logout.
 - **Environment** is cleared (`--clearenv`) and a short fixed list is set by the
@@ -43,33 +41,33 @@ is opt-in, so each sandbox's definition lists what it gets.
   the cursor theme, and the display and bus addresses. With the OpenURI portal,
   also `PATH` (`xdg-utils` alone) and `NIXOS_XDG_OPEN_USE_PORTAL`, so that
   `xdg-open` goes through the portal.
-- **Namespaces:** User, IPC, PID, UTS and cgroup are unshared; `--new-session`
+- **Namespaces:** user, IPC, PID, UTS and cgroup are unshared; `--new-session`
   blocks `TIOCSTI` keystroke injection into the terminal and `--die-with-parent`
   ties the sandbox to its launcher.
-- **D-Bus:** Only a filtered copy of the session bus (`xdg-dbus-proxy`). There
+- **D-Bus:** only a filtered copy of the session bus (`xdg-dbus-proxy`). There
   is no system bus (`/run/dbus` does not exist), no systemd user bus, no secret
   service, no SSH or GPG agent. An application may own `<appId>` and
   `<appId>.*`; every other name it talks to is listed explicitly.
-- **Portals:** Calls to `org.freedesktop.portal.Desktop` are allowed per
+- **Portals:** calls to `org.freedesktop.portal.Desktop` are allowed per
   interface through the `portals` option. Reading settings and closing its own
   requests and sessions are always allowed.
-- **Portal identity:** nixpak writes a `/.flatpak-info`, so
-  `xdg-desktop-portal` treats the process as a Flatpak application: files
-  chosen in the file chooser arrive through the document portal, and the
-  Secret portal hands out a key per application ID.
-- **Network:** None by default (`bubblewrap.network`, opt-in). An application
+- **Portal identity:** nixpak writes a `/.flatpak-info`, so `xdg-desktop-portal`
+  treats the process as a Flatpak application: files chosen in the file chooser
+  arrive through the document portal, and the Secret portal hands out a key per
+  application ID.
+- **Network:** none by default (`bubblewrap.network`, opt-in). An application
   that opts in gets `pasta` in isolate mode: a loopback of its own (host
   services on `127.0.0.1` are out of reach), a fixed fake address, no inbound
-  connections and no port forwarding. Internet and LAN work. An application
-  that needs the host network also turns `pasta` off.
-- **GPU:** On by default (`gpu.enable`): `/dev/dri`, the NVIDIA device nodes
+  connections and no port forwarding. Internet and LAN work. An application that
+  needs the host network also turns `pasta` off.
+- **GPU:** on by default (`gpu.enable`). `/dev/dri`, the NVIDIA device nodes
   (`/dev/nvidia0`, `nvidiactl`, `nvidia-modeset`, `nvidia-uvm`), the NVIDIA EGL
   configuration in `/etc/egl`, `/run/opengl-driver` and the PCI sysfs. An
   application that sets `gpu.enable = false` gets none of them.
-- **Audio:** None by default. Each application opts in to the PulseAudio
-  socket (`bubblewrap.sockets.pulse`, which allows recording) and the PipeWire
-  socket (`bubblewrap.sockets.pipewire`); the table below shows which.
-- **Display:** A restricted Wayland socket; see [Wayland](#wayland).
+- **Audio:** none by default. Each application opts in to the PulseAudio socket
+  (`bubblewrap.sockets.pulse`, which allows recording) and the PipeWire socket
+  (`bubblewrap.sockets.pipewire`); the table below shows which.
+- **Display:** a restricted Wayland socket; see [Wayland](#wayland).
 - **Not granted:** X11, `/dev/input`, raw USB, serial or camera devices.
 
 ## Applications
@@ -130,13 +128,20 @@ of [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
 - Writable: `~/.local/share/org.localsend.localsend_app` (settings, device name
   and TLS identity) and `~/Downloads`, where it receives. Files to send come
   through the file chooser.
+- Read-only: `~/.config/user-dirs.dirs`, the directory names from
+  [user-dirs.nix](../modules/system/desktop/user-dirs.nix). The default
+  destination is `xdg-user-dir DOWNLOAD`, which nixpkgs makes LocalSend call by
+  its store path; without the file it answers the home directory, which in the
+  sandbox is gone at exit. With it, `~/Downloads` (not checked,
+  [Audits](#audits)).
 - Portals: FileChooser, Notification, OpenURI. No audio socket.
 - **Shares the host network** (`pasta` off, WA-009 in
   [WORKAROUNDS.md](WORKAROUNDS.md)). Discovery is UDP multicast on
   `224.0.0.167:53317` and pasta has no IGMP proxy, so inside pasta the sandbox
   and other devices do not see each other. The firewall opens 53317/tcp and
   53317/udp for it. What the host network exposes is under [Limits](#limits).
-- Not checked on the switched system ([Audits](#audits)).
+- Restricted socket, mounts, host network and a persistent identity checked;
+  discovery with another device not checked yet ([Audits](#audits)).
 
 ## Wayland
 
@@ -208,10 +213,10 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   CoolerControl (needs a password).
 - **LocalSend shares the host network**, so it reaches every service on the
   host's loopback and the host's abstract Unix sockets. From the host network
-  namespace, the X11 socket `@/tmp/.X11-unix/X0` accepted a connection without
-  authentication (2026-11-16, Brave audit); from LocalSend that would allow
-  reading and injecting input in X11 windows such as Steam's. Not checked from
-  the LocalSend sandbox itself.
+  namespace, without the socket file or `XAUTHORITY`, the X11 display `:0`
+  accepts a connection through its abstract socket `@/tmp/.X11-unix/X0`
+  (checked, [Audits](#audits)). A compromised LocalSend can therefore read and
+  inject input in X11 windows, such as Steam's.
 - **No seccomp filter** beyond what an application sets for itself, and the
   whole `/nix/store` is readable.
 - **Portal grants are real grants.** A compromised application can still do
@@ -219,6 +224,9 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   screen after the user picks a source.
 - **Downloads.** `~/Downloads` is writable by Brave and LocalSend and readable
   by mpv, so a compromised Brave or LocalSend can plant files there.
+- **Writes outside the mounted paths are lost.** The home directory a sandbox
+  sees is a tmpfs: a file saved anywhere else in it seems to save, and is gone
+  when the application exits, without an error.
 
 ## Adding an application
 
@@ -237,6 +245,10 @@ grant only what the use needs:
 |`bubblewrap.sockets.pulse`                         |PulseAudio socket (playback and recording)       |
 |`bubblewrap.sockets.pipewire`                      |PipeWire socket                                  |
 
+If the application picks where to save from the XDG user directories, also mount
+`~/.config/user-dirs.dirs` read-only (see LocalSend); otherwise it may save into
+the sandbox's home, which is lost at exit.
+
 Then add the application to the table above and to its section, and to
 [SECURITY.md](SECURITY.md) if it changes a boundary.
 
@@ -247,26 +259,17 @@ to the shared policy, the helper, niri or the app's sandbox.
 
 To check:
 
-- alpha, mpv without `PATH`: the policy no longer sets `PATH` for sandboxes
-  without the OpenURI portal. mpv still plays a local file and a stream through
-  `yt-dlp` (its wrapper puts `yt-dlp` on `PATH`).
-- alpha, LocalSend discovery and transfer: with the sandbox running, alpha
-  appears on the phone and the phone on alpha; a file sent each way arrives (on
-  alpha, in `~/Downloads`).
-- alpha, LocalSend on the restricted socket: `/proc/<pid>/mountinfo` of the
-  running `localsend_app` shows the helper's `nixpak-wayland-<pid>` socket as
-  `wayland-0`; `niri msg windows` lists it.
-- alpha, LocalSend sandbox contents: `nsenter` into the running sandbox. Only
-  the two writable paths are in the home directory, the device name survives a
-  restart, and `xdpyinfo` against `@/tmp/.X11-unix/X0` shows whether the X11
-  limit applies.
-
-|Date      |Host |Check                                               |How                                                                                                   |Findings                                                                                                                                                                             |
-|----------|-----|----------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|2026-11-14|alpha|Privileged protocols hidden on the restricted socket|`wayland-info` through the helper                                                                     |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered|
-|2026-11-14|alpha|GPU rendering on the restricted socket              |mpv playing a test stream through Vulkan                                                              |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                             |
-|2026-11-16|alpha|Brave on the restricted socket                      |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                                      |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                |
-|2026-11-16|alpha|Abstract Unix sockets reachable from Brave          |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`        |Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox          |
-|2026-11-17|alpha|Vesktop on the restricted socket                    |`/proc/<pid>/mountinfo` of the running Vesktop; `niri msg windows`                                    |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window (`--ozone-platform=wayland`)                                                                  |
-|2026-11-17|alpha|Brave's `pasta` arguments, outside the sandbox      |`pasta` run by hand with the arguments evaluated for Brave; `/dev/tcp` to host ports, `/proc/net/unix`|Host ports 8384 and 11987 reachable, 631 and 22000 not; no abstract X11 socket; internet reachable. pasta rejects the ports if they come before `--tcp-ns none`                      |
-|2026-11-17|alpha|Running Brave with `--tcp-ns 8384,11987`            |`nsenter` into its namespaces; `/dev/tcp` to `127.0.0.1` and `::1`; `/proc/net/unix`                  |`127.0.0.1:8384` and `:11987` answer `200`, 631 and 22000 closed; `[::1]:8384` is accepted and reset, so `localhost:8384` fails in Brave; no abstract X11 socket                     |
+|Date      |Host |Check                                                      |How                                                                                                                                                                                       |Findings                                                                                                                                                                                      |
+|----------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|2026-11-14|alpha|Privileged protocols hidden on the restricted socket       |`wayland-info` through the helper                                                                                                                                                         |`zwp_linux_dmabuf_v1` still offered; screencopy, virtual keyboard and pointer, both data-control managers, layer shell, session lock and `wp_security_context_manager_v1` not offered         |
+|2026-11-14|alpha|GPU rendering on the restricted socket                     |mpv playing a test stream through Vulkan                                                                                                                                                  |Played, with `zwp_linux_dmabuf_v1` bound                                                                                                                                                      |
+|2026-11-16|alpha|Brave on the restricted socket                             |`/proc/<pid>/mountinfo` of the running Brave; `niri msg windows`                                                                                                                          |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window, playing video                                                                                         |
+|2026-11-16|alpha|Abstract Unix sockets reachable from Brave                 |`ss -xl` on the host; `xdpyinfo` run inside the namespaces of the running Brave with `nsenter`                                                                                            |Same network namespace as the host. `@/tmp/.X11-unix/X0` is listening and `xdpyinfo` connected without authentication, though the socket file is not mounted in the sandbox                   |
+|2026-11-17|alpha|Vesktop on the restricted socket                           |`/proc/<pid>/mountinfo` of the running Vesktop; `niri msg windows`                                                                                                                        |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window (`--ozone-platform=wayland`)                                                                           |
+|2026-11-17|alpha|Brave's `pasta` arguments, outside the sandbox             |`pasta` run by hand with the arguments evaluated for Brave; `/dev/tcp` to host ports, `/proc/net/unix`                                                                                    |Host ports 8384 and 11987 reachable, 631 and 22000 not; no abstract X11 socket; internet reachable. pasta rejects the ports if they come before `--tcp-ns none`                               |
+|2026-11-17|alpha|Running Brave with `--tcp-ns 8384,11987`                   |`nsenter` into its namespaces; `/dev/tcp` to `127.0.0.1` and `::1`; `/proc/net/unix`                                                                                                      |`127.0.0.1:8384` and `:11987` answer `200`, 631 and 22000 closed; `[::1]:8384` is accepted and reset, so `localhost:8384` fails in Brave; no abstract X11 socket                              |
+|2026-11-17|alpha|mpv without `PATH` from the policy                         |Test clip in `~/Downloads` played with `--vo=null --ao=pulse`; `/proc/<pid>/environ`; a YouTube stream played with `--length=4`                                                           |Clip played through PulseAudio. `PATH` holds only the Lua env and `yt-dlp` from mpv's wrapper; no `xdg-utils`, no `NIXOS_XDG_OPEN_USE_PORTAL`. The stream resolved through `yt-dlp` and played|
+|2026-11-17|alpha|LocalSend on the restricted socket                         |`/proc/<pid>/mountinfo` of the running `localsend_app`; `niri msg windows`                                                                                                                |Its `wayland-0` is the helper's `nixpak-wayland-<pid>` socket; a native Wayland window with app ID `org.localsend.localsend_app`                                                              |
+|2026-11-17|alpha|LocalSend mounts and network                               |`/proc/<pid>/root` of the running app; `/proc/<pid>/ns/net` against the host's; `ss -tulnp`                                                                                               |Home holds only `~/Downloads` and `~/.local/share/org.localsend.localsend_app`. Same network namespace as the host; listens on `*:53317` TCP and UDP, IPv4 and IPv6                           |
+|2026-11-17|alpha|LocalSend identity across a restart                        |Device name in `shared_preferences.json`; SHA-256 of the certificate served on `127.0.0.1:53317` after a restart against the one stored in the file                                       |Same device name; the served certificate is the stored one                                                                                                                                    |
+|2026-11-17|alpha|X11 from the host network namespace without the socket file|`nsenter` into LocalSend's namespaces is not permitted unprivileged, so a bwrap probe in the same network namespace (same inode) with an empty `/tmp`, no `XAUTHORITY`, `xdpyinfo` on `:0`|Connected to the X.Org server through the abstract socket                                                                                                                                     |

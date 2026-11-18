@@ -12,6 +12,7 @@
       niri
       nixpak
       noctalia
+      user-dirs
     ];
   };
 
