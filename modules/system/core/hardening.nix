@@ -14,6 +14,8 @@ in
     {
       # Only wheel may even execute the setuid `sudo` binary.
       security.sudo.execWheelOnly = true;
+      # Only wheel may use `su` (shadow's `su` reads only this PAM service).
+      security.pam.services.su.requireWheel = true;
 
       # Without this, anyone at the keyboard can append `init=/bin/sh` or
       # `rd.systemd.debug_shell` to the kernel command line from the boot menu.
@@ -41,12 +43,28 @@ in
         # Randomise the page allocator free lists and the kernel stack offset
         # on each syscall.
         "page_alloc.shuffle=1"
+        # Bounds checks on copies between kernel and user memory.
+        "hardened_usercopy=1"
         "randomize_kstack_offset=on"
         # Remove the fixed-address legacy vsyscall page.
         "vsyscall=none"
         # debugfs exposes a lot of kernel internals. Remove this line if a
         # tool you use (powertop, some GPU debugging tools) complains.
         "debugfs=off"
+        # Writes to /proc/<pid>/mem obey the ptrace rules (ptrace_scope below)
+        # instead of bypassing them.
+        "proc_mem.force_override=ptrace"
+        # Use the IOMMU to keep PCIe devices from reading or writing arbitrary
+        # memory (DMA attacks), with no gap before the kernel takes over from
+        # the firmware. Strict mode invalidates stale mappings at once, at a
+        # small I/O cost. Does nothing if VT-d is off in the firmware.
+        "intel_iommu=on"
+        "iommu=force"
+        "iommu.strict=1"
+        "efi=disable_early_pci_dma"
+        # The block device under a mounted filesystem cannot be written to, a
+        # way of corrupting the filesystem under the kernel's feet.
+        "bdev_allow_write_mounted=0"
       ];
 
       boot.kernel.sysctl = {
@@ -65,6 +83,11 @@ in
         # Unprivileged userfaultfd only for faults in user mode; stalling
         # kernel-mode faults is a common aid in exploits.
         "vm.unprivileged_userfaultfd" = 0;
+        # io_uring has been a steady source of kernel privilege escalations and
+        # nothing here uses it.
+        "kernel.io_uring_disabled" = 2;
+        # Setuid programs never dump core.
+        "fs.suid_dumpable" = 0;
         # Don't auto-load TTY line disciplines and forbid TIOCSTI keystroke
         # injection, both recurring sources of local privilege escalation.
         "dev.tty.ldisc_autoload" = 0;
@@ -135,7 +158,18 @@ in
       # /tmp in RAM, mounted nosuid and nodev, and emptied on every boot.
       boot.tmp.useTmpfs = true;
 
-      networking.firewall.enable = true;
+      networking = {
+        firewall.enable = true;
+        # Only take effect if NetworkManager is enabled.
+        networkmanager = {
+          # A new random MAC address on every Wi-Fi connection. For a network
+          # that needs a fixed one: `nmcli connection modify <name>
+          # 802-11-wireless.cloned-mac-address permanent`.
+          wifi.macAddress = "random";
+          # IPv6 temporary addresses for outgoing connections.
+          connectionConfig."ipv6.ip6-privacy" = 2;
+        };
+      };
 
       # Only takes effect if sshd is enabled. Key-only logins for one user.
       services.openssh.settings = {

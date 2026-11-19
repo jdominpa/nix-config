@@ -33,8 +33,8 @@ noticeable performance cost. As implemented:
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |Data at rest        |LUKS2 (`aes-xts-plain64`, 512-bit key, `argon2id`) on both disks, unlocked in the initrd by a TPM2 keyslot with a PIN bound to PCR 7; the passphrase keyslot is the recovery. The data disk is `nofail`                                                                                   |Keyslots are enrolled by hand. Only PCR 7 is bound: anything the enrolled keys sign unlocks with the PIN, and a PCR 7 change needs the passphrase and a new enrollment ([Boot integrity](#boot-integrity)). TRIM (`allowDiscards`) reveals which blocks are in use. After a wrong PIN the data disk can stay locked; unlock it with `systemd-cryptsetup attach`|
 |Boot and firmware   |Lanzaboote signs the bootloader and kernel images with the user's Secure Boot keys; the boot menu editor is disabled; 10 generations are kept. `fwupd` updates the firmware and the dbx. The firmware password is a manual step ([README](../README.md))                                  |Every kept generation boots, older vulnerable kernels included. The signing keys are files readable by root. `sbctl verify` is not run automatically and the firmware password cannot be checked from the OS                                                                                                                                                   |
-|Kernel              |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                        |No hardened kernel, lockdown or module signature enforcement (the NVIDIA modules are unsigned). No AppArmor, SELinux, USBGuard or auditd                                                                                                                                                                                                                       |
-|Administration      |Only `wheel` may use `sudo`. `sshd` is disabled; if enabled, key-only logins for the user, no root. btrbk runs as root                                                                                                                                                                    |The user password gives root and is also the disk PIN. The btrbk module adds unusable `NOPASSWD` rules for a `btrbk` user                                                                                                                                                                                                                                      |
+|Kernel              |The [baseline](#kernel-and-process-baseline) below                                                                                                                                                                                                                                        |No hardened kernel, lockdown or module signature enforcement (the NVIDIA modules are unsigned). No AppArmor, SELinux, USBGuard or auditd. The IOMMU only stops DMA attacks if VT-d is on in the firmware (not checked, [Audits](#audits))                                                                                                                      |
+|Administration      |Only `wheel` may use `sudo` and `su`. `sshd` is disabled; if enabled, key-only logins for the user, no root. btrbk runs as root                                                                                                                                                           |The user password gives root and is also the disk PIN. The btrbk module adds unusable `NOPASSWD` rules for a `btrbk` user                                                                                                                                                                                                                                      |
 |Network             |Firewall on, open ports [below](#network-exposure). Local-only services listen on loopback                                                                                                                                                                                                |The Steam Remote Play ports are open because Steam is unsandboxed. The live ruleset is not checked automatically                                                                                                                                                                                                                                               |
 |Supply chain        |Only `wheel` may use the Nix daemon; the user is not in `trusted-users`. Every input is pinned in `flake.lock`. `lanzaboote` and `sops-nix` run as root at every rebuild, `nixpak` with every sandboxed app: review their bumps. Homebrew casks and App Store apps on macOS are not pinned|                                                                                                                                                                                                                                                                                                                                                               |
 |Session             |greetd logs the user in once per boot without a password. noctalia locks the screen after 10 minutes idle and is the polkit agent                                                                                                                                                         |The TPM PIN is the only secret at boot. After a logout the greeter needs a greetd restart or a reboot                                                                                                                                                                                                                                                          |
@@ -66,41 +66,48 @@ configuration and in the running ruleset: [Audits](#audits)). Ping is answered.
 |27036–27037/tcp, 27031–27036/udp, 10400–10401/udp|Steam Remote Play            |`programs.steam.remotePlay.openFirewall`|
 
 Listening sockets besides the ports above, as last observed ([Audits](#audits)):
-Syncthing's GUI on `127.0.0.1:8384` (TLS, requires credentials), CUPS on
-`127.0.0.1:631`, and the CoolerControl daemon on `127.0.0.1:11987` and
-`[::1]:11987`, which needs a password and refuses the default one (checked).
-Syncthing also holds two UDP ports picked at random, which the firewall does not
-open. Loopback is not a boundary against the user's own unsandboxed applications,
-the ports forwarded into Brave's sandbox (Syncthing's GUI and CoolerControl) or
-LocalSend's sandbox, which shares the host network.
+Syncthing's GUI on `127.0.0.1:8384` (TLS, requires credentials) and the
+CoolerControl daemon on `127.0.0.1:11987` and `[::1]:11987`, which needs a
+password and refuses the default one (checked). Syncthing also holds two UDP
+ports picked at random, which the firewall does not open. Loopback is not a
+boundary against the user's own unsandboxed applications, the ports forwarded
+into Brave's sandbox (Syncthing's GUI and CoolerControl) or LocalSend's sandbox,
+which shares the host network.
 
-Bluetooth is powered on at boot (`hardware.bluetooth.powerOnBoot`) and CUPS is
-enabled; neither is restricted further.
+The Bluetooth adapter is off at boot (`hardware.bluetooth.powerOnBoot`). When it
+is on, pairable and discoverable modes end after 30 seconds and it uses private
+addresses. NetworkManager uses a new random MAC address on every Wi-Fi
+connection and IPv6 temporary addresses (not checked). The router sees a new
+device each time, so DHCP reservations, port forwards and captive portal logins
+do not persist; a network that needs a fixed address can be set to `permanent`
+with `nmcli`.
 
 ## Kernel and process baseline
 
 [hardening.nix](../modules/system/core/hardening.nix) holds the settings, each
 with a comment on what it does and what it costs. It sets kernel boot parameters
 (allocator hardening, memory zeroed on allocation and on free, randomisation, no
-vsyscall page, no debugfs), sysctls (kernel pointers and log hidden, BPF for
-root only, restricted ptrace and perf, maximum `mmap` ASLR, link and FIFO
-protections, no ICMP redirects or source routing), disables kexec and
-hibernation, forces page table isolation, does not store core dumps and blocks a
-list of kernel modules. Some values are already kernel, systemd or NixOS
-defaults; setting them explicitly makes the desired baseline reviewable. The
-boot parameters and sysctls on the running system match the configuration
-(checked, [Audits](#audits)).
+vsyscall page, no debugfs, hardened usercopy, ptrace rules for writes to
+`/proc/<pid>/mem`, a forced strict IOMMU, no writes to the block devices of
+mounted filesystems), sysctls (kernel pointers and log hidden, BPF for root
+only, io_uring off, restricted ptrace and perf, no core dumps of setuid
+programs, maximum `mmap` ASLR, link and FIFO protections, no ICMP redirects or
+source routing), disables kexec and hibernation, forces page table isolation,
+does not store core dumps and blocks a list of kernel modules. Some values are
+already kernel, systemd or NixOS defaults; setting them explicitly makes the
+desired baseline reviewable.
 
 What you notice in daily use:
 
-- `gdb -p` and `strace -p` on an unrelated process need sudo; debugging a
-  program you launch is unaffected.
+- `gdb -p` and `strace -p` on an unrelated process need sudo.
 - No kernel profiling for unprivileged users, but user-space profiling still
   works.
 - `/sys/kernel/debug` is absent and tools that need it, such as powertop,
   complain.
 - A crash is logged in the journal, but `coredumpctl debug` has no dump to open.
 - No hibernation.
+- Programs that need io_uring fail or fall back to other I/O.
+- `iommu.strict=1` costs some I/O speed (not measured).
 
 The module deny list covers obscure network protocols, three filesystems and
 the video test driver `vivid`; `esp4`, `esp6` and `rxrpc` are on it as WA-004
@@ -131,6 +138,7 @@ bootctl status | grep 'Secure Boot'
 sudo sbctl status && sudo sbctl verify
 cat /sys/kernel/security/lockdown
 cat /proc/cmdline
+ls /sys/class/iommu  # empty means the IOMMU is off
 
 # Sysctls (the first group needs sudo for two keys)
 sudo sysctl kernel.kptr_restrict kernel.yama.ptrace_scope \
@@ -160,7 +168,21 @@ restic-storagebox snapshots
 Results of the checks above; those of the secrets, sandboxes and backups are in
 their own documents. Each holds for the configuration it ran against.
 
-To check: nothing pending.
+To check, on `alpha` after switching to the additions of 2026-11-19:
+
+- Boot parameters: `/proc/cmdline` against `nix eval` of `boot.kernelParams`.
+- Sysctls: `kernel.io_uring_disabled` is 2 and `fs.suid_dumpable` is 0.
+- IOMMU: `/sys/class/iommu` lists a `dmar` device and `journalctl -k -g DMAR`
+  shows it enabled (the directory was empty on 2026-11-18; if it still is, turn
+  on VT-d in the firmware). The GPU, NVMe disks and Wi-Fi still work. Measure the
+  cost of `iommu.strict=1` with the `hyperfine` build of the `init_on_free` row.
+- `su`: `/etc/pam.d/su` has `pam_wheel`.
+- Bluetooth: `bluetoothctl show` says `Powered: no` after boot;
+  `/etc/bluetooth/main.conf` has `AutoEnable=false`, both timeouts and
+  `Privacy=device`; paired devices still connect once it is turned on.
+- Wi-Fi: `nmcli -f GENERAL.HWADDR device show wlo1` differs from
+  `ethtool -P wlo1`; `ip -6 addr show wlo1` has a `temporary` address if the
+  network has IPv6.
 
 |Date      |Host |Check                                                             |How                                                                                                                                                                                    |Findings                                                                                                                                                                                                                   |
 |----------|-----|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
