@@ -116,9 +116,9 @@ and password are in place.
 
 Notes: a second NixOS host needs `pruneOpts` removed (two pruners contend for
 the lock). Until the service has run once, `restic-storagebox` on NixOS needs
-`--no-cache`. On macOS no Full Disk Access grant has been needed so far
-([Audits](#audits)), but it may be tied to the Nix store path of `restic`: after
-a restic update check the log for "operation not permitted" (exit status 3).
+`--no-cache`. On macOS no Full Disk Access grant has been needed so far, but it
+may be tied to the Nix store path of `restic`: after a restic update check the
+log for "operation not permitted" (exit status 3).
 
 ### Verifying
 
@@ -142,8 +142,7 @@ restic-storagebox restore "latest:$HOME/Documents/<folder>" \
 diff -r "$t" ~/Documents/<folder> && echo identical; rm -rf "$t"
 ```
 
-Only files changed since the last backup should differ. Record each run in
-[Audits](#audits).
+Only files changed since the last backup should differ.
 
 ### A host is stolen or compromised
 
@@ -195,19 +194,3 @@ restic -o sftp.args="-i $HOME/.ssh/storagebox" \
 
 It asks for a restic password. On a fresh machine, compare the Storage Box host
 key it offers with the one pinned in `restic.nix` before accepting it.
-
-## Audits
-
-Checks and restore drills. Each holds for the configuration it ran against:
-rerun it after a change to `restic.nix` or `btrfs.nix`.
-
-To check: nothing pending.
-
-|Date      |Host |Check                                                 |How                                                                                                                                                   |Findings                                                                                                   |
-|----------|-----|------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
-|2026-11-09|beta |The agent reads `~/Documents` without Full Disk Access|First scheduled runs; `restic-storagebox ls latest --host beta`; the agent's log                                                                      |397 entries under `~/Documents` in the snapshot and no permission errors, with no grant given              |
-|2026-11-15|alpha|btrbk snapshot and copy                               |`systemctl start btrbk-home`, then the timer run; `journalctl -u btrbk-home`                                                                          |checked                                                                                                    |
-|2026-11-16|alpha|Incremental btrbk copy                                |`journalctl -u btrbk-home`, first run of the day (15:36)                                                                                              |`home.20261116T1536` sent to `/data/backup` as incremental; the later hourly runs only made local snapshots|
-|2026-11-16|alpha|Restore from a btrbk snapshot                         |A `Documents` folder copied out of `/.snapshots/home.20261116T1900`, and the same folder in `/data/backup/home.20261116T1536`, compared with `diff -r`|Both identical to the live folder; the snapshots are readable by the user and read-only                    |
-|2026-11-16|alpha|Restore drill                                         |[Test restore](#test-restore) on a `Documents` folder (6 files) from the snapshot of 15:37                                                            |Identical                                                                                                  |
-|2026-11-17|beta |Restore drill                                         |[Test restore](#test-restore) on a `Documents` folder (18 files) from the snapshot of 2026-11-16 12:00                                                |Identical                                                                                                  |

@@ -32,24 +32,20 @@ style of the surrounding code by hand.
 
 ## Documentation
 
-`docs/` describes what the configuration does, why, and what has been
-verified. **Every code change that alters behavior the docs describe updates
-them in the same commit.** This matters most for the security docs, because a
-document that overstates the protection is worse than none.
+`docs/` records intent: what the configuration protects and why, its limits, and
+what the code cannot express (manual steps, recovery procedures). Settings are
+documented by the comments next to them in the code; do not repeat them in the
+docs. **A code change that alters the intent, a limit or a procedure the docs
+describe updates them in the same commit.**
 
 Check the table below before committing. The code and the docs that describe it
 are one commit, typed by the code (`fix(hardening): …`), so that one revert
 undoes both and no commit leaves the docs out of step with the configuration.
 Do not postpone the docs update to "later".
 
-A check that needs the switched system cannot be in that commit. Describe the
-new behavior as "not checked" and add the check to the "To check" list. After
-the user has switched and the check has run, record it in a separate
-`docs(scope): record …` commit.
-
 | If you change…                                                                | Update                                  |
 | ----------------------------------------------------------------------------- | --------------------------------------- |
-| `modules/system/core/hardening.nix` (sysctls, kernel parameters, modprobe)    | `docs/SECURITY.md`, kernel baseline     |
+| `modules/system/core/hardening.nix` (sysctls, kernel parameters, modprobe)    | Its comments; `docs/SECURITY.md` only where it states the intent or a limit |
 | Firewall or any service that opens a port or listens                          | `docs/SECURITY.md`, network exposure    |
 | `secure-boot.nix`, `disko.nix`, the boot loader, fwupd, TPM or lockdown       | `docs/SECURITY.md`, architecture / boot |
 | `nix.nix`, flake inputs that run with privileges, binary caches               | `docs/SECURITY.md`, Nix and supply chain row |
@@ -70,28 +66,21 @@ Rules for the docs:
   their details. Link only where the reader needs to go next.
 - Be brief: state the fact and its limit, without background the reader does
   not need.
-- Describe what the source configures and what was checked on a running system
-  separately. Never write that a control is active or verified unless it was
-  checked, and say how and when (date). Mark what is unverified.
+- Describe the configuration, not observed state: never write that a control is
+  active or verified. A document that overstates the protection is worse than
+  none.
 - State limits next to the control, not only the benefits: in `SECURITY.md`
   the "Limitation" column of the architecture table.
 - When a control is removed or reverted, delete or rewrite its text and record
   why in the relevant "Not sandboxed" section or "Limitation" cell; do not leave
   stale claims.
-- Record every check in the "Audits" section at the end of the document it
-  concerns. A check still to run is an item of its "To check" list: host, check,
-  and how to run it or what is expected. When it is run, move it to the table
-  with the date, host, check, how and findings. In the text keep only a short
-  marker next to the claim ("checked" or "not checked", linking to Audits), not
-  the evidence. A check holds for the configuration it ran against, so rerun it
-  after a change that touches it.
 - `docs/BACKUPS.md` must never contain secrets (passwords, SSH keys, the monitor
   URL) or say where their recovery copies are kept. The paths the machines read
   them from are already in `restic.nix` and may be mentioned.
 - A commit that only changes docs is `docs(scope): …` with the scope naming the
-  document or area, for example `docs(security): record the sysctl audit`,
-  `docs(sandboxing): record the vesktop audit` or
-  `docs(backups): record the restore drill`.
+  document or area, for example `docs(security): note the login keyring limit`,
+  `docs(sandboxing): describe the localsend sandbox` or
+  `docs(backups): add the btrbk restore steps`.
 
 ## Commits
 
@@ -101,7 +90,7 @@ identifiers in backticks.
     feat(emacs): add `agent-shell` for llm integration with emacs
     fix(darwin): assert homebrew is enabled in modules before using it
     chore: update `flake.lock`
-    docs(security): record the sysctl audit
+    docs(security): note the login keyring limit
 
 ## Emacs configuration
 
