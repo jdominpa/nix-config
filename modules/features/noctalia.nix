@@ -94,7 +94,7 @@ in
             "niri"
           ];
         };
-        wallpaper.directory = "${homeDirectory.linux}/Imatges/Wallpapers";
+        wallpaper.directory = "${homeDirectory.linux}/Pictures/Wallpapers";
         widget = {
           bluetooth = {
             hide_when_no_connected_device = true;
