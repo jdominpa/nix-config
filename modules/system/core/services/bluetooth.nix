@@ -8,6 +8,8 @@
         PairableTimeout = 30;
         DiscoverableTimeout = 30;
         Privacy = "device";
+        # Forget unpaired devices seen in scans right away.
+        TemporaryTimeout = 0;
       };
     };
   };

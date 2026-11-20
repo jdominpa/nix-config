@@ -6,6 +6,7 @@
   flake.modules.nixos.core = {
     imports = with self.modules.nixos; [
       bluetooth
+      chrony
       fonts
       hardening
       locale

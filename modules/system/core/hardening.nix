@@ -12,10 +12,14 @@ in
       blockModule = module: "install ${module} ${lib.getExe' pkgs.coreutils "false"}\n";
     in
     {
-      # Only wheel may even execute the setuid `sudo` binary.
-      security.sudo.execWheelOnly = true;
-      # Only wheel may use `su` (shadow's `su` reads only this PAM service).
-      security.pam.services.su.requireWheel = true;
+      security = {
+        # Only wheel may even execute the setuid `sudo` binary.
+        sudo.execWheelOnly = true;
+        # Only wheel may use `su` (shadow's `su` reads only this PAM service).
+        pam.services.su.requireWheel = true;
+      };
+      # No root password: root is reached only through `sudo`.
+      users.users.root.hashedPassword = "!";
 
       # Without this, anyone at the keyboard can append `init=/bin/sh` or
       # `rd.systemd.debug_shell` to the kernel command line from the boot menu.
@@ -25,8 +29,10 @@ in
 
       # Disables kexec and hibernation, both of which let root replace or read
       # back the running kernel.
-      security.protectKernelImage = true;
-      security.forcePageTableIsolation = true;
+      security = {
+        protectKernelImage = true;
+        forcePageTableIsolation = true;
+      };
 
       # A crash is still logged in the journal, but the dump is not stored since
       # it would hold what was in memory (such as browser cookies).
@@ -58,6 +64,7 @@ in
         # memory (DMA attacks), with no gap before the kernel takes over from
         # the firmware. Strict mode invalidates stale mappings at once, at a
         # small I/O cost. Does nothing if VT-d is off in the firmware.
+        "amd_iommu=force_isolation"
         "intel_iommu=on"
         "iommu=force"
         "iommu.strict=1"
@@ -65,6 +72,16 @@ in
         # The block device under a mounted filesystem cannot be written to, a
         # way of corrupting the filesystem under the kernel's feet.
         "bdev_allow_write_mounted=0"
+        # Don't let the CPU's random number generator or the bootloader's seed
+        # alone count as enough entropy; both are still mixed in.
+        "random.trust_cpu=off"
+        "random.trust_bootloader=off"
+        # Flush the L1 data cache on context switches for processes that ask
+        # for it with prctl(PR_SET_SPECULATION_CTRL); free for everything else.
+        "l1d_flush=on"
+        # No virtual machines inside virtual machines.
+        "kvm-intel.nested=0"
+        "kvm-amd.nested=0"
       ];
 
       boot.kernel.sysctl = {
@@ -88,6 +105,8 @@ in
         "kernel.io_uring_disabled" = 2;
         # Setuid programs never dump core.
         "fs.suid_dumpable" = 0;
+        # No magic SysRq keys from the keyboard (NixOS allows only sync, 16).
+        "kernel.sysrq" = 0;
         # Don't auto-load TTY line disciplines and forbid TIOCSTI keystroke
         # injection, both recurring sources of local privilege escalation.
         "dev.tty.ldisc_autoload" = 0;
@@ -119,40 +138,94 @@ in
         "net.ipv4.icmp_echo_ignore_broadcasts" = 1;
       };
 
-      # Obscure network protocols and filesystems (plus `vivid`, a video test
-      # driver) that any unprivileged process can otherwise get auto-loaded with
-      # a single `socket()` or `mount` call. `install ... false` blocks explicit
-      # `modprobe` too, which a plain blacklist entry does not.
+      # Unused kernel code that any unprivileged process can otherwise get
+      # auto-loaded with a single `socket()` call, or a USB drive with a single
+      # (auto)mount. `install ... false` blocks explicit `modprobe` too, which a
+      # plain blacklist entry does not. Names must match the running kernel's
+      # modules: a name it does not have blocks nothing.
       boot.extraModprobeConfig = lib.concatMapStrings blockModule [
-        "af_802154"
+        # Network protocols.
         "appletalk"
         "atm"
         "ax25"
+        "caif_socket"
         "can"
-        "dccp"
-        "decnet"
-        "econet"
-        # esp4/esp6/rxrpc were the vectors for the Dirty Frag LPE
-        # (CVE-2026-43284, CVE-2026-43500). Remove esp4 and esp6 if an IPsec VPN
-        # is ever needed.
-        "esp4"
-        "esp6"
-        "ipx"
-        "n-hdlc"
+        "hv_sock" # Hyper-V guests
+        "ieee802154_socket"
+        "kcm"
+        "llc2"
+        "mpls_router"
+        "n_hdlc" # a TTY line discipline
         "netrom"
-        "p8022"
-        "p8023"
+        "nfc"
+        "phonet"
+        "pppox"
         "psnap"
+        "qrtr"
         "rds"
         "rose"
         "rxrpc"
         "sctp"
+        "smc"
         "tipc"
+        "vmw_vsock_vmci_transport" # VMware guests
         "x25"
+        # IPsec and L2TP. esp4/esp6/rxrpc were the vectors for the Dirty Frag LPE
+        # (CVE-2026-43284, CVE-2026-43500). Remove this group if an IPsec VPN is
+        # ever needed.
+        "af_key"
+        "ah4"
+        "ah6"
+        "esp4"
+        "esp6"
+        "ip6_vti"
+        "ip_vti"
+        "ipcomp"
+        "ipcomp6"
+        "l2tp_core"
+        "l2tp_eth"
+        "l2tp_ip"
+        "l2tp_ip6"
+        "l2tp_netlink"
+        "l2tp_ppp"
+        "xfrm_user"
+        # Filesystems nothing here uses, including network ones (gvfs reaches
+        # SMB shares from user space). The common disk formats stay, HFS+
+        # included.
+        "9p"
+        "adfs"
+        "affs"
+        "befs"
+        "bfs"
+        "ceph"
+        "cifs"
+        "coda"
         "cramfs"
+        "ecryptfs"
+        "efs"
         "freevxfs"
+        "gfs2"
+        "hpfs"
         "jffs2"
-        "vivid"
+        "jfs"
+        "kafs"
+        "ksmbd"
+        "minix"
+        "nfs"
+        "nfsv3"
+        "nfsv4"
+        "nilfs2"
+        "ocfs2"
+        "ocfs2_dlmfs"
+        "omfs"
+        "orangefs"
+        "qnx4"
+        "qnx6"
+        "romfs"
+        "ubifs"
+        "ufs"
+        "vboxsf"
+        "zonefs"
       ];
 
       # /tmp in RAM, mounted nosuid and nodev, and emptied on every boot.
@@ -162,10 +235,14 @@ in
         firewall.enable = true;
         # Only take effect if NetworkManager is enabled.
         networkmanager = {
-          # A new random MAC address on every Wi-Fi connection. For a network
-          # that needs a fixed one: `nmcli connection modify <name>
+          # A new random MAC address on every internet connection. For a wifi
+          # network that needs a fixed one: `nmcli connection modify <name>
           # 802-11-wireless.cloned-mac-address permanent`.
-          wifi.macAddress = "random";
+          ethernet.macAddress = "random";
+          wifi = {
+            macAddress = "random";
+            scanRandMacAddress = true;
+          };
           # IPv6 temporary addresses for outgoing connections.
           connectionConfig."ipv6.ip6-privacy" = 2;
         };

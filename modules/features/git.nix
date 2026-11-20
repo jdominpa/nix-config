@@ -25,6 +25,11 @@ in
         gpg.format = "ssh";
         # Automatically track remote branch
         push.autoSetupRemote = true;
+        # Check every object received by fetch, clone and push, so malformed
+        # objects (an attack vector against git itself) are refused. For an old
+        # repository with broken history use `git -c transfer.fsckObjects=false
+        # clone ...`.
+        transfer.fsckObjects = true;
         core.editor = "emacsclient -r";
         # GIT_CONFIG_GLOBAL replaces ~/.gitconfig entirely and it is read-only.
         # This keeps an option for per-machine settings
