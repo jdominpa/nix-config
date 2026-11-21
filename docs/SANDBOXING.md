@@ -5,6 +5,8 @@ sandboxes (bubblewrap, `xdg-dbus-proxy`, `pasta` and a restricted Wayland
 socket). The shared policy is in
 [nixpak/default.nix](../modules/system/desktop/nixpak/default.nix); each
 application declares only what it needs next to its own package configuration.
+Steam is not one of them: it runs in a weaker container, described in
+[Steam](#steam).
 
 ## Why these applications are sandboxed
 
@@ -18,6 +20,8 @@ treating the applications as malicious:
   (images, links, embeds) and runs community plugins.
 - **mpv** parses arbitrary media files and streams.
 - **LocalSend** accepts connections and files from any device on the LAN.
+- **Steam** runs proprietary games, mods and workshop content, Windows ones
+  under Proton, where Wine maps `/` to the `Z:` drive.
 
 Each sandbox grants only the paths, sockets, portals and network its documented
 use needs.
@@ -141,6 +145,30 @@ of [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
   `224.0.0.167:53317` and pasta has no IGMP proxy, so inside pasta the sandbox
   and other devices do not see each other. The firewall opens 53317/tcp and
   53317/udp for it. What the host network exposes is under [Limits](#limits).
+
+## Steam
+
+Steam hangs at startup in a nixpak sandbox (WA-005 in
+[WORKAROUNDS.md](WORKAROUNDS.md)). Instead,
+[steam.nix](../modules/features/steam.nix) adds bubblewrap arguments to the
+container nixpkgs already runs Steam in, which otherwise binds every top-level
+host directory. None of the [shared boundaries](#shared-boundaries) apply.
+
+- **Home:** `~/.local/share/steam-home` is the home directory of Steam, Proton
+  and every game. The real home is hidden, apart from `~/.config/MangoHud`
+  read-only.
+- **Snapshots:** `/.snapshots` and `/data/backup` are empty, since the btrbk
+  snapshots there hold copies of `/home`.
+- **Library:** `/data/games`, writable, with the Proton prefixes.
+- **Still reachable:** the real session bus and all of `/run/user/1000` (the
+  Wayland, PipeWire and PulseAudio sockets among them), X11, all of `/dev`, the
+  host network and the other top-level directories. `/tmp` is private.
+
+This stops code that only reads files, such as a stealer in a game running under
+Proton. It is not a boundary against native code that uses the session bus:
+through the systemd user manager it can start a process outside the container,
+and through the Secret Service it can read the login keyring, Brave's key
+included.
 
 ## Wayland
 
