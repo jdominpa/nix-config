@@ -2,8 +2,8 @@
 
 Selected desktop applications run in [nixpak](https://github.com/nixpak/nixpak)
 sandboxes (bubblewrap, `xdg-dbus-proxy`, `pasta` and a restricted Wayland
-socket). The shared policy is in
-[nixpak/default.nix](../modules/system/desktop/nixpak/default.nix); each
+socket). The shared default policy is in
+[nixpak/default.nix](../modules/system/desktop/nixpak/default.nix), and each
 application declares only what it needs next to its own package configuration.
 Steam is not one of them: it runs in a weaker container, described in
 [Steam](#steam).
@@ -28,16 +28,18 @@ use needs.
 
 ## Shared boundaries
 
-Every application declared in `security.nixpak.apps` gets the `defaults` of
-`nixpak/default.nix`. They hold what every graphical application needs (display,
-fonts, GPU); a privilege only some need (network, audio, portals, D-Bus names)
-is opt-in, so each sandbox's definition lists what it gets.
+Every application declared in `security.nixpak.apps` gets the defaults of
+`nixpak/default.nix`, which hold what every graphical application needs
+(display, fonts, GPU). A privilege only some need (network, audio, portals,
+D-Bus names) is opt-in, so each sandbox's definition lists what it gets.
 
 - **Filesystem:** the root is a fresh tmpfs and `/nix/store` is read-only. The
-  real home directory, `/etc`, `/var`, `/run` and `/root` are not there; only
+  real home directory, `/etc`, `/var`, `/run` and `/root` are not there. Only
   the paths an application lists are bind-mounted, plus read-only host
-  fontconfig, time zone, CA bundle and the system icon themes (for the cursor),
-  and the GPU files below.
+  fontconfig, time zone, CA bundle, the system icon themes (for the cursor) and
+  the GPU files below. `~/.config/user-dirs.dirs` is the store file
+  [user-dirs.nix](../modules/system/desktop/user-dirs.nix) builds so lookups
+  such as `xdg-user-dir DOWNLOAD` do not answer the sandbox's home directory.
 - **`/tmp`** is `$XDG_RUNTIME_DIR/nixpak-<appId>-tmp`, shared by the instances
   of one application only and gone at logout.
 - **Environment** is cleared (`--clearenv`) and a short fixed list is set by the
@@ -133,12 +135,6 @@ of [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
 - Writable: `~/.local/share/org.localsend.localsend_app` (settings, device name
   and TLS identity) and `~/Downloads`, where it receives. Files to send come
   through the file chooser.
-- Read-only: `~/.config/user-dirs.dirs`, the directory names from
-  [user-dirs.nix](../modules/system/desktop/user-dirs.nix). It's needed because
-  the default destination for recieved files is the result of `xdg-user-dir
-  DOWNLOAD`, which nixpkgs makes LocalSend call by its store path. Without the
-  `user-dirs.dirs` file, the command answers the home directory, which in the
-  sandbox is gone at exit.
 - Portals: FileChooser, Notification, OpenURI. No audio socket.
 - **Shares the host network** (`pasta` off, WA-009 in
   [WORKAROUNDS.md](WORKAROUNDS.md)). Discovery is UDP multicast on
@@ -250,7 +246,9 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   by mpv, so a compromised Brave or LocalSend can plant files there.
 - **Writes outside the mounted paths are lost.** The home directory a sandbox
   sees is a tmpfs: a file saved anywhere else in it seems to save, and is gone
-  when the application exits, without an error.
+  when the application exits, without an error. Every sandbox gets
+  `user-dirs.dirs`, so an application may default to a user directory it does
+  not mount (`~/Pictures` in Brave); a file saved there is lost the same way.
 
 ## Adding an application
 
@@ -271,10 +269,6 @@ grant only what the use needs:
 
 pasta rejects the ports if they come before the policy's `--tcp-ns none`, hence
 the need for `lib.mkAfter`.
-
-If the application picks where to save from the XDG user directories, also mount
-`~/.config/user-dirs.dirs` read-only (see LocalSend); otherwise it may save into
-the sandbox's home, which is lost at exit.
 
 Then add the application to the table above and to its section, and to
 [SECURITY.md](SECURITY.md) if it changes a boundary.

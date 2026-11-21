@@ -52,14 +52,6 @@
                 (sloth.mkdir (sloth.concat' sloth.xdgDataHome "/org.localsend.localsend_app"))
                 (sloth.mkdir sloth.xdgDownloadDir)
               ];
-              # The default destination comes from `xdg-user-dir DOWNLOAD`, which
-              # answers the home directory without this file
-              ro = [
-                [
-                  (sloth.concat' sloth.xdgConfigHome "/user-dirs.dirs")
-                  (sloth.concat' sloth.homeDir "/.config/user-dirs.dirs")
-                ]
-              ];
             };
           };
         };

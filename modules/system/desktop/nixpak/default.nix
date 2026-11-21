@@ -12,7 +12,6 @@
     }:
     let
       inherit (config) i18n time;
-      cfg = config.security.nixpak;
       # Icon themes of the system, for the cursor theme
       icons = "/run/current-system/sw/share/icons";
 
@@ -66,7 +65,7 @@
       imports = [ inputs.nixpak.nixosModules.default ];
 
       # These take precedence over the packages nixpak installs
-      environment.systemPackages = lib.pipe cfg.apps [
+      environment.systemPackages = lib.pipe config.security.nixpak.apps [
         (lib.filterAttrs (_: app: app.expose))
         (lib.mapAttrsToList (_: app: lib.hiPrio (restrictWayland app.output.config)))
       ];
@@ -155,9 +154,14 @@
                     ]
                     "/etc/localtime"
                     "/etc/zoneinfo"
-                  ]
-                  ++ [
                     icons
+                    # Names of the XDG user directories. Without them, lookups
+                    # such as `xdg-user-dir DOWNLOAD` answer the home directory,
+                    # which is gone at exit
+                    [
+                      "${config.userDirs.file}" # from `user-dirs.nix` module
+                      (sloth.concat' sloth.homeDir "/.config/user-dirs.dirs")
+                    ]
                     # `sloth.env` fails when the variable is not set, so the
                     # sandbox never starts without the restricted socket
                     [
