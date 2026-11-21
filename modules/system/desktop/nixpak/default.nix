@@ -14,6 +14,8 @@
       inherit (config) i18n time;
       # Icon themes of the system, for the cursor theme
       icons = "/run/current-system/sw/share/icons";
+      # From the `user-dirs.nix` module
+      userDirs = config.userDirs.file;
 
       waylandSecurityContext = pkgs.stdenv.mkDerivation {
         name = "wayland-security-context";
@@ -159,7 +161,7 @@
                     # such as `xdg-user-dir DOWNLOAD` answer the home directory,
                     # which is gone at exit
                     [
-                      "${config.userDirs.file}" # from `user-dirs.nix` module
+                      "${userDirs}"
                       (sloth.concat' sloth.homeDir "/.config/user-dirs.dirs")
                     ]
                     # `sloth.env` fails when the variable is not set, so the
