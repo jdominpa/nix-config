@@ -109,7 +109,8 @@ of [desktop-tools.nix](../modules/system/desktop/desktop-tools.nix).
   Notification, OpenURI, Print, ScreenCast, Secret. The Camera portal is not
   granted, so web pages cannot use the webcam.
 - D-Bus: `org.freedesktop.Notifications`, and ownership of
-  `org.mpris.MediaPlayer2.brave.*` for media controls in the bar.
+  `org.mpris.MediaPlayer2.brave.*` for media controls in the bar, and
+  `org.freedesktop.FileManager1` for "Show in folder".
 - Two host loopback ports are forwarded into its `pasta` network: 8384 (the
   Syncthing GUI) and 11987 (CoolerControl). Other host services, local
   development servers included, and the host's abstract Unix sockets are out of
@@ -244,6 +245,9 @@ in [WORKAROUNDS.md](WORKAROUNDS.md)).
   screen after the user picks a source.
 - **Downloads.** `~/Downloads` is writable by Brave and LocalSend and readable
   by mpv, so a compromised Brave or LocalSend can plant files there.
+- **Brave can call the file manager.** Through `org.freedesktop.FileManager1` it
+  can make the file manager open any folder or show any file on the host. It
+  reveals them on screen, it does not give the sandbox their contents.
 - **Writes outside the mounted paths are lost.** The home directory a sandbox
   sees is a tmpfs: a file saved anywhere else in it seems to save, and is gone
   when the application exits, without an error. Every sandbox gets

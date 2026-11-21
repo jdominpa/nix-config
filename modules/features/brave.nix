@@ -24,6 +24,9 @@
           ];
           dbus.policies = {
             "org.freedesktop.Notifications" = "talk";
+            # "Show in folder" asks the file manager (Thunar) to reveal the
+            # download; the folder opens on the host, outside the sandbox
+            "org.freedesktop.FileManager1" = "talk";
             # Media controls, as `org.mpris.MediaPlayer2.brave.instance<pid>`
             "org.mpris.MediaPlayer2.brave.*" = "own";
           };
