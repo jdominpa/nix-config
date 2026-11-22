@@ -12,24 +12,30 @@ let
   repository = "sftp://${subAccount}@${resticStoragebox}:23/restic";
   exclude = [ ".stversions" ];
   retryLock = "--retry-lock 30m";
-  paths =
+  # Kill a run that is still going after this long, so that a stalled run is
+  # reported as a failure and the next scheduled run can start.
+  runTimeout = "6h";
+  # Keepalives make ssh drop a dead connection after about five minutes,
+  # instead of leaving restic waiting on it forever.
+  sftpArgsForKey = sshKey: "-i ${sshKey} -o ServerAliveInterval=60 -o ServerAliveCountMax=5";
+  pathsForHome =
     home:
     map (dir: "${home}/${dir}") [
       "Documents"
       "Pictures"
       "GrapheneOS"
     ];
-  secretNames = {
+  secretsNames = {
     passwordFile = "restic/password";
     healthcheckFile = "restic/healthcheck-url";
     sshKey = "restic/storagebox-ssh-key";
   };
-  secretSettings =
+  secretsSettings =
     { config, ... }:
     {
-      sops.secrets = lib.genAttrs (lib.attrValues secretNames) (_: config.secretPresets.userReadable);
+      sops.secrets = lib.genAttrs (lib.attrValues secretsNames) (_: config.secretPresets.userReadable);
     };
-  secretPaths = config: lib.mapAttrs (_: name: config.sops.secrets.${name}.path) secretNames;
+  secretsForConfig = config: lib.mapAttrs (_: name: config.sops.secrets.${name}.path) secretsNames;
   sshSettings = {
     programs.ssh.knownHosts.storagebox = {
       hostNames = [
@@ -39,46 +45,49 @@ let
       publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIICf9svRenC/PLKIL9nk6K/pxQgoiFC41wTNvoIncOxs";
     };
   };
-  # Monitors and reports the outcome of a run: the bare URL on success or
-  # `<url>/fail` on failure. A failure that cannot be reported (no network)
-  # still surfaces, because the monitor alerts when the success ping stops
-  # arriving.
+  # Reports a run to the monitor: `start` when it begins, then its exit status
+  # (0 is success, anything else a failure; a non-numeric status, such as the
+  # signal name of a killed run, is sent as `fail`). A failure that cannot be
+  # reported (no network) still surfaces, because the monitor alerts when the
+  # success ping stops arriving, or when a started run does not finish.
   mkPing =
     pkgs: healthcheckFile:
     pkgs.writeShellScript "restic-storagebox-ping" ''
-      # usage: restic-storagebox-ping success|fail
+      # usage: restic-storagebox-ping start|<exit status>
       set -eu
       url=$(< ${lib.escapeShellArg healthcheckFile})
-      if [ "''${1:-fail}" != success ]; then
-        url="$url/fail"
-      fi
+      case "''${1:-}" in
+        start) url="$url/start" ;;
+        "" | *[!0-9]*) url="$url/fail" ;;
+        *) url="$url/$1" ;;
+      esac
       exec ${lib.getExe pkgs.curl} --fail --silent --show-error \
-        --max-time 10 --retry 5 --output /dev/null "$url"
+        --max-time 10 --retry 3 --output /dev/null "$url"
     '';
 in
 {
   flake.modules.nixos.restic =
     { config, pkgs, ... }:
     let
-      secrets = secretPaths config;
+      secrets = secretsForConfig config;
       ping = mkPing pkgs secrets.healthcheckFile;
     in
     {
       imports = [
-        secretSettings
+        secretsSettings
         sshSettings
       ];
       services.restic.backups.storagebox = {
-        initialize = true;
         user = username;
         inherit exclude repository;
         inherit (secrets) passwordFile;
-        paths = paths homeDirectory.linux;
-        extraOptions = [ "sftp.args='-i ${secrets.sshKey}'" ];
+        paths = pathsForHome homeDirectory.linux;
+        extraOptions = [ "sftp.args='${sftpArgsForKey secrets.sshKey}'" ];
+        extraBackupArgs = [ retryLock ];
         checkOpts = [
           retryLock
-          # Besides the structural check, re-read a random sample of the pack
-          # files on every run, to catch bit rot.
+          # Re-read a random sample of the pack files on every run, to catch bit
+          # rot.
           "--read-data-subset 500M"
         ];
         timerConfig = {
@@ -93,23 +102,10 @@ in
           retryLock
         ];
       };
-      systemd.services = {
-        # The unit runs backup, `forget --prune` and `check` in turn, so
-        # success is reported only when all three succeeded.
-        restic-backups-storagebox = {
-          onSuccess = [ "restic-storagebox-ping@success.service" ];
-          onFailure = [ "restic-storagebox-ping@fail.service" ];
-        };
-        "restic-storagebox-ping@" = {
-          description = "Report the restic backup result (%i) to the monitor";
-          wants = [ "network-online.target" ];
-          after = [ "network-online.target" ];
-          serviceConfig = {
-            Type = "oneshot";
-            User = username;
-            ExecStart = "${ping} %i";
-          };
-        };
+      systemd.services.restic-backups-storagebox = {
+        preStart = lib.mkBefore "${ping} start || true";
+        postStop = lib.mkAfter ''${ping} "$EXIT_STATUS" || true'';
+        serviceConfig.TimeoutStartSec = runTimeout;
       };
     };
 
@@ -121,16 +117,16 @@ in
       ...
     }:
     let
-      secrets = secretPaths config;
+      secrets = secretsForConfig config;
       home = homeDirectory.darwin;
       logFile = "${home}/Library/Logs/restic-backups-storagebox.log";
       ping = mkPing pkgs secrets.healthcheckFile;
       # `-o sftp.args` mirrors `extraOptions` in the nixos module.
-      sftpOption = "-o sftp.args=${lib.escapeShellArg "-i ${secrets.sshKey}"}";
+      sftpOption = "-o sftp.args=${lib.escapeShellArg (sftpArgsForKey secrets.sshKey)}";
     in
     {
       imports = [
-        secretSettings
+        secretsSettings
         sshSettings
       ];
       assertions = [
@@ -154,7 +150,7 @@ in
       # `services.restic` on darwin. Pruning stays on the nixos host.
       launchd.user.agents.restic-backups-storagebox = {
         path = [
-          pkgs.coreutils # `date`, `tail`, `wc`, `cat`, `rm` in the script below
+          pkgs.coreutils # `date`, `tail`, `wc`, `cat`, `rm`, `seq`, `sleep`, `timeout` below
           pkgs.openssh # the sftp backend shells out to `ssh`
           pkgs.restic
         ];
@@ -178,22 +174,29 @@ in
           fi
 
           echo "=== $(date '+%F %T') backup started ==="
+          # After a wake, launchd starts a missed run before the network is
+          # back. Wait up to 10 minutes for the Storage Box to answer; if it
+          # never does, run anyway, so that the failure is logged and reported.
+          for _ in $(seq 20); do
+            /usr/bin/nc -z -G 5 ${resticStoragebox} 23 2> /dev/null && break
+            sleep 30
+          done
+          ${ping} start || true
+
           status=0
-          restic ${sftpOption} backup \
+          # `timeout` exits with 124 when it kills a stalled run.
+          timeout --kill-after=5m ${runTimeout} \
+            restic ${sftpOption} backup \
             --host ${lib.escapeShellArg config.networking.hostName} \
             ${retryLock} \
             ${lib.concatMapStringsSep " " (p: "--exclude ${lib.escapeShellArg p}") exclude} \
-            ${lib.escapeShellArgs (paths home)} || status=$?
+            ${lib.escapeShellArgs (pathsForHome home)} || status=$?
           echo "=== $(date '+%F %T') backup finished, exit status $status ==="
 
           # Only exit status 0 counts as success. Status 3 means a snapshot was
           # written but some files could not be read, which is how a TCC denial
           # would show up, so it is reported as a failure on purpose.
-          if [ "$status" -eq 0 ]; then
-            ${ping} success || true
-          else
-            ${ping} fail || true
-          fi
+          ${ping} "$status" || true
           exit "$status"
         '';
         serviceConfig = {

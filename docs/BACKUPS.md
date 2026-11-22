@@ -31,10 +31,15 @@ Hetzner Storage Box. On `alpha`, btrbk also keeps local snapshots of `/home`
   Mac never runs `forget`. Retention groups by host, so each machine keeps its
   own 7/5/12 and a change of backed-up paths does not strand old snapshots.
 - **Monitoring** is one healthchecks.io check per host (period 1 day, grace long
-  enough for the machine being off or offline). `alpha` reports success only
-  when backup, prune and check all pass. `beta` reports success only on exit
-  status 0; status 3 (some files unreadable, e.g. a macOS TCC denial) counts as
-  a failure. Without the ping URL secret the ping unit fails.
+  enough for the machine being off or offline). Each run pings at its start and
+  then with its exit status, so the monitor also alerts on a run that started
+  but never finished. `alpha` reports success only when backup, prune and check
+  all pass. `beta` reports success only on exit status 0; status 3 (some files
+  unreadable, e.g. a macOS TCC denial) counts as a failure. Without the ping URL
+  secret the ping fails; the run itself does not.
+- **Stalled runs** are killed after 6 hours and reported as failures; SSH
+  keepalives drop a dead connection after about five minutes. After a wake,
+  `beta` waits up to 10 minutes for the Storage Box to answer before running.
 - **`restic-storagebox`** is a wrapper that supplies the repository, password
   file and SSH key, so plain restic arguments can be appended. It exists on both
   hosts.
@@ -71,8 +76,9 @@ To restore, copy from `/.snapshots/home.<timestamp>/<user>/` or
    later data.
 3. **Undo (Storage Box snapshots):** even if a device with valid keys deletes
    the repository, which anything running as the user can do, the Storage Box
-   snapshots can be used to recover the data. Reaches back only as far as the
-   10-day window.
+   snapshots can be used to recover the data within a 10-day window. A deleted
+   repository makes the next run fail instead of creating a new one, so the
+   monitor alerts while the snapshots can still undo it.
 
 ## Credentials
 
